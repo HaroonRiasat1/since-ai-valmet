@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Equipment Room Field-Service Navigator</title>
+<style>
+  :root { --bg:#0f1216; --panel:rgba(18,22,28,.92); --line:#2a313b; --text:#e6e9ee; --mut:#8b95a3;
+          --ok:#3ecf8e; --watch:#f5b942; --bad:#ff5d5d; --none:#7d8794; --acc:#5aa9ff; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--text);
+              font:13px/1.45 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; overflow:hidden; }
+  #c { position:fixed; inset:0; }
+  .panel { position:fixed; background:var(--panel); border:1px solid var(--line); border-radius:10px;
+           backdrop-filter:blur(6px); }
+  #top { top:12px; left:12px; padding:10px 12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; max-width:calc(100% - 420px); }
+  #top h1 { font-size:14px; margin:0 8px 0 0; font-weight:600; }
+  button { background:#1d242d; color:var(--text); border:1px solid var(--line); border-radius:6px;
+           padding:6px 10px; font:inherit; cursor:pointer; }
+  button:hover { border-color:var(--acc); }
+  button.on { background:#20354d; border-color:var(--acc); }
+  label { color:var(--mut); display:flex; align-items:center; gap:6px; }
+  input[type=range] { width:90px; }
+  #side { top:12px; right:12px; bottom:12px; width:390px; padding:12px; overflow:auto; }
+  #side h2 { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--mut); margin:4px 0 8px; }
+  .card { border:1px solid var(--line); border-radius:8px; padding:8px 10px; margin-bottom:8px; background:#141920; }
+  .card .row { display:flex; justify-content:space-between; gap:8px; }
+  .tag { font-weight:600; }
+  .pill { font-size:11px; padding:1px 7px; border-radius:20px; border:1px solid; white-space:nowrap; }
+  .mut { color:var(--mut); font-size:12px; }
+  .kv { display:grid; grid-template-columns:auto auto; gap:0 10px; font-size:12px; margin-top:4px; color:#c5ccd6; }
+  #status { bottom:12px; left:12px; padding:8px 12px; color:var(--mut); }
+  #load { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:10px; z-index:9; background:var(--bg); }
+  #bar { width:320px; height:6px; background:#222a33; border-radius:4px; overflow:hidden; }
+  #bar i { display:block; height:100%; width:0; background:var(--acc); }
+  .lbl { position:fixed; pointer-events:none; transform:translate(-50%,-100%); font-size:11px; padding:2px 7px;
+         border-radius:5px; background:rgba(12,15,20,.85); border:1px solid; white-space:nowrap; }
+  #copilot { display:none; }
+  #copilot.show { display:block; }
+  #copilot .card { border-color:#5a3434; background:#1b1416; }
+  #copilot h3 { margin:10px 0 4px; font-size:12px; color:#ffb4b4; }
+  #copilot ul { margin:4px 0; padding-left:18px; }
+  #copilot li { margin:2px 0; }
+  code { font-size:11px; color:#9fc6ff; }
+  svg text { fill:var(--mut); font-size:9px; }
+  select { background:#1d242d; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:5px 6px; font:inherit; max-width:230px; }
+  #pick-hint { position:fixed; top:70px; left:50%; transform:translateX(-50%); padding:6px 12px; display:none; }
+  .stop { display:flex; gap:6px; align-items:center; font-size:12px; padding:2px 0; }
+  .stop i { width:8px; height:8px; border-radius:50%; display:inline-block; }
+  .stop.done { opacity:.45; }
+  #coords input { background:#0f1216; color:var(--text); border:1px solid var(--line); border-radius:5px; padding:3px 5px; font:inherit; }
+  #avpanel { left:12px; padding:10px 12px; width:260px; display:none; }
+  #avpanel .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin:6px 0 8px; }
+  #avpanel .grid button { padding:5px 2px; font-size:12px; }
+  #avpanel label { justify-content:space-between; margin:5px 0; }
+  #avpanel input[type=color] { width:40px; height:22px; padding:0; border:1px solid var(--line); border-radius:4px; background:none; }
+  #avpanel input[type=text] { width:140px; background:#0f1216; color:var(--text); border:1px solid var(--line); border-radius:5px; padding:3px 5px; font:inherit; }
+  .sw { display:flex; gap:4px; } .sw i { width:16px; height:16px; border-radius:50%; cursor:pointer; border:1px solid #0008; }
+  .axl { position:fixed; pointer-events:none; transform:translate(-50%,-50%); font:bold 12px ui-monospace,monospace; text-shadow:0 0 3px #000; }
+</style>
+<script type="importmap">
+{ "imports": {
+    "three": "./lib/three.module.js",
+    "three/addons/": "./lib/addons/",
+    "@sparkjsdev/spark": "./lib/spark.module.js" } }
+</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="load"><div>Loading splat scene…</div><div id="bar"><i></i></div><div id="loadtxt" class="mut"></div></div>
+
+<div id="top" class="panel">
+  <h1>Field-Service Navigator</h1>
+  <select id="target" title="Target asset"></select>
+  <button id="round">Inspection round</button>
+  <button id="setstart">Set start</button>
+  <button id="play">▶ Start</button>
+  <button id="reset">↺ Reset</button>
+  <button id="follow" class="on" title="Camera mode (V)">First person</button>
+  <button id="allbox">All boxes</button>
+  <button id="coordsbtn">XYZ</button>
+  <button id="avbtn">Avatar</button>
+  <button id="vlmbtn" title="Render each box from a standing viewpoint and ask a vision-language model what it is">VLM scan</button>
+  <button id="detbtn" title="Ignore the existing boxes: walk a grid of standpoints, let the VLM find equipment in each view (lift to 3D with vlm_lift.py)">VLM detect</button>
+  <label>radius <input id="rad" type="range" min="0.5" max="3" step="0.1" value="1.5"><span id="radv">1.5 m</span></label>
+  <label>speed <input id="spd" type="range" min="0.3" max="3" step="0.1" value="1"><span id="spdv">1.0×</span></label>
+</div>
+<div id="pick-hint" class="panel">Click on the floor to place the start point (Esc to cancel)</div>
+<div id="drive" class="panel" style="position:fixed;bottom:12px;left:50%;transform:translateX(-50%);padding:6px 12px;display:none">
+  Driving: <b>W/S</b> walk · <b>A/D</b> turn · <b>Shift</b> faster · <b>R</b> route to target from here · <b>▶</b> back to route</div>
+<div id="keyhint" class="mut" style="position:fixed;bottom:52px;left:12px">Tip: press W/A/S/D or arrow keys to walk yourself</div>
+
+<div id="side" class="panel">
+  <div id="mission" class="card"></div>
+  <div id="copilot"></div>
+  <h2>Nearby assets <span id="ncount" class="mut"></span></h2>
+  <div id="near"></div>
+</div>
+<div id="status" class="panel"></div>
+<div id="coords" class="panel" style="display:none;bottom:52px;left:12px;padding:8px 12px;font:12px ui-monospace,Menlo,monospace;min-width:300px">
+  <div><span class="mut">walker </span><span id="c-me"></span></div>
+  <div><span class="mut">cursor </span><span id="c-cur">move the mouse over the floor</span></div>
+  <div class="mut" style="margin-top:2px">.ply frame · y points down · floor y = <span id="c-floor"></span></div>
+  <form id="goto" style="display:flex;gap:4px;margin-top:6px;align-items:center">
+    <span class="mut">go to</span>
+    <input id="gx" placeholder="x" style="width:64px"><input id="gz" placeholder="z" style="width:64px">
+    <button>Teleport</button><button type="button" id="copyxyz" title="Copy walker xyz">Copy</button>
+  </form>
+</div>
+<div id="avpanel" class="panel">
+  <div class="row" style="display:flex;justify-content:space-between;align-items:center"><b>Avatar</b><button id="avreset" style="padding:3px 8px">Reset</button></div>
+  <div class="grid" id="avstyles">
+    <button data-s="tech">Technician</button><button data-s="robot">Robot</button><button data-s="drone">Drone</button><button data-s="capsule">Marker</button>
+  </div>
+  <label>body <span class="sw" id="avsw"></span><input type="color" id="avbody"></label>
+  <label>accent <input type="color" id="avacc"></label>
+  <label>size <input id="avh" type="range" min="0.6" max="1.3" step="0.05"><span id="avhv" style="width:38px;text-align:right"></span></label>
+  <label>name <input type="text" id="avname-in" maxlength="24" placeholder="shown above avatar"></label>
+</div>
+<div id="avname" class="lbl" style="display:none;color:#e6e9ee;border-color:#5aa9ff"></div>
+<div id="labels"></div>
+
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { SparkRenderer, SplatMesh } from "@sparkjsdev/spark";
+
+const $ = (id) => document.getElementById(id);
+const COL = { healthy:"#3ecf8e", watch:"#f5b942", degraded:"#ff8a3d", attention_required:"#ff5d5d", none:"#7d8794" };
+const stateCol = (it) => it.tag ? (COL[it.state] || "#5aa9ff") : COL.none;
+const human = (s) => String(s).replace(/_/g, " ").toLowerCase();
+
+// ---------- data
+const scene_ = await (await fetch("data/scene.json")).json();
+const { items, copilot, frame, navgrid: NG } = scene_;
+const UP = frame.up_axis, H = [0,1,2].filter(a => a !== UP), sgn = frame.down_sign;
+const mapped = items.filter(i => i.tag);
+const byTag = Object.fromEntries(mapped.map(i => [i.tag, i]));
+
+// ---------- nav grid (same map the Python planner built)
+const b64 = (s) => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const [GH, GW] = NG.shape, walk = b64(NG.walk), clear = b64(NG.clear);
+const cellOf = (p) => [Math.floor((p.getComponent(NG.horiz[0]) - NG.origin[0]) / NG.cell),
+                       Math.floor((p.getComponent(NG.horiz[1]) - NG.origin[1]) / NG.cell)];
+const worldOf = (i, j) => { const v = new THREE.Vector3(); v.setComponent(NG.horiz[0], NG.origin[0] + (i + .5) * NG.cell);
+  v.setComponent(NG.horiz[1], NG.origin[1] + (j + .5) * NG.cell); v.setComponent(UP, frame.floor * sgn); return v; };
+const isWalk = (i, j) => i >= 0 && j >= 0 && i < GH && j < GW && walk[i * GW + j] === 1;
+function nearestWalk(i, j) {
+  let best = null, bd = 1e9;
+  for (let r = 0; r < Math.max(GH, GW) && !best; r++)
+    for (let di = -r; di <= r; di++) for (let dj = -r; dj <= r; dj++) {
+      if (Math.max(Math.abs(di), Math.abs(dj)) !== r || !isWalk(i + di, j + dj)) continue;
+      const d = di*di + dj*dj; if (d < bd) { bd = d; best = [i + di, j + dj]; }
+    }
+  return best;
+}
+function astar(s, g) {                         // 8-connected, penalised near obstacles
+  const N = GH * GW, gs = new Float64Array(N).fill(Infinity), closed = new Uint8Array(N), came = new Int32Array(N).fill(-1);
+  const heap = []; const push = (f, k) => { heap.push([f, k]); let i = heap.length - 1;
+    while (i > 0) { const p = (i - 1) >> 1; if (heap[p][0] <= heap[i][0]) break; [heap[p], heap[i]] = [heap[i], heap[p]]; i = p; } };
+  const pop = () => { const top = heap[0], last = heap.pop(); if (heap.length) { heap[0] = last; let i = 0;
+    for (;;) { const l = 2*i+1, r = l+1; let m = i; if (l < heap.length && heap[l][0] < heap[m][0]) m = l;
+      if (r < heap.length && heap[r][0] < heap[m][0]) m = r; if (m === i) break; [heap[m], heap[i]] = [heap[i], heap[m]]; i = m; } } return top; };
+  const S = s[0] * GW + s[1], T = g[0] * GW + g[1]; gs[S] = 0; push(0, S);
+  const nb = [[-1,0,1],[1,0,1],[0,-1,1],[0,1,1],[-1,-1,1.414],[-1,1,1.414],[1,-1,1.414],[1,1,1.414]];
+  while (heap.length) {
+    const [, k] = pop(); if (closed[k]) continue; closed[k] = 1; if (k === T) break;
+    const i = (k / GW) | 0, j = k % GW;
+    for (const [di, dj, c] of nb) {
+      const ni = i + di, nj = j + dj; if (!isWalk(ni, nj)) continue;
+      const nk = ni * GW + nj, ng = gs[k] + c * (1 + 0.6 / (clear[nk] * NG.cell + 0.1));
+      if (ng < gs[nk]) { gs[nk] = ng; came[nk] = k; push(ng + Math.hypot(g[0] - ni, g[1] - nj), nk); }
+    }
+  }
+  if (gs[T] === Infinity) return null;
+  const out = []; for (let k = T; k !== -1; k = came[k]) out.push([(k / GW) | 0, k % GW]);
+  return out.reverse();
+}
+function lineFree(a, b) {
+  const n = Math.max(Math.abs(b[0]-a[0]), Math.abs(b[1]-a[1])) + 1;
+  for (let t = 0; t <= n; t++) { const i = Math.round(a[0] + (b[0]-a[0]) * t / n), j = Math.round(a[1] + (b[1]-a[1]) * t / n); if (!isWalk(i, j)) return false; }
+  return true;
+}
+function simplify(p) { const out = [p[0]]; let k = 0;
+  while (k < p.length - 1) { let j = p.length - 1; while (j > k + 1 && !lineFree(p[k], p[j])) j--; out.push(p[j]); k = j; } return out; }
+const goalCache = new Map();
+function goalNear(it, standoff = 0.4) {        // walkable cell ~standoff from the item's footprint
+  if (goalCache.has(it.id)) return goalCache.get(it.id);
+  let best = null, bs = Infinity;
+  for (let i = 0; i < GH; i++) for (let j = 0; j < GW; j++) {
+    if (!isWalk(i, j)) continue;
+    const w = worldOf(i, j); let d2 = 0;
+    for (const a of H) { const e = Math.max(Math.abs(w.getComponent(a) - it.center[a]) - it.size[a]/2, 0); d2 += e*e; }
+    const d = Math.sqrt(d2), score = Math.abs(d - standoff) + (d < 0.05 ? 10 : 0);
+    if (score < bs) { bs = score; best = [i, j]; }
+  }
+  goalCache.set(it.id, best); return best;
+}
+function plan(startCell, it) {
+  const g = goalNear(it); const raw = g && astar(startCell, g);
+  return raw ? simplify(raw).map(([i, j]) => worldOf(i, j)) : null;
+}
+
+// ---------- three setup
+const renderer = new THREE.WebGLRenderer({ canvas: $("c"), antialias:false });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+renderer.setSize(innerWidth, innerHeight);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0f1216);
+const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.05, 200);
+scene.add(new SparkRenderer({ renderer }));
+const controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping = true;
+const world = new THREE.Group();
+if (UP === 1 && sgn === 1) world.rotation.x = Math.PI;      // scan is y-down; three.js is y-up
+scene.add(world); world.updateMatrixWorld();
+const toScene = (v) => v.clone().applyMatrix4(world.matrixWorld);
+
+// ---------- splat: bundled .splat chunks if present, otherwise ask for the .ply
+async function loadBundled() {
+  const parts = scene_.splat.parts, total = scene_.splat.bytes;
+  const bytes = new Uint8Array(total); let off = 0;
+  for (const p of parts) {
+    const res = await fetch(p); if (!res.ok) throw new Error("no bundled splat");
+    const reader = res.body.getReader();
+    for (;;) { const { done, value } = await reader.read(); if (done) break;
+      bytes.set(value, off); off += value.length;
+      $("bar").firstChild.style.width = (100*off/total).toFixed(1) + "%";
+      $("loadtxt").textContent = `${(off/1e6).toFixed(1)} / ${(total/1e6).toFixed(1)} MB`; }
+  }
+  return { fileBytes: bytes.buffer, fileType: "splat" };
+}
+function askForPly() {
+  return new Promise((resolve) => {
+    $("load").innerHTML = `<div style="font-size:15px">Drop <b>Equipment_Room.ply</b> here</div>
+      <div class="mut">or</div><input id="pick" type="file" accept=".ply,.splat">
+      <div class="mut">The file stays in your browser; nothing is uploaded.</div><div id="loadtxt" class="mut"></div>`;
+    const take = async (f) => { if (!f) return; $("loadtxt").textContent = `Reading ${(f.size/1e6).toFixed(0)} MB…`;
+      resolve({ fileBytes: await f.arrayBuffer(), fileType: f.name.toLowerCase().endsWith(".splat") ? "splat" : "ply" }); };
+    $("pick").onchange = (e) => take(e.target.files[0]);
+    addEventListener("dragover", (e) => e.preventDefault());
+    addEventListener("drop", (e) => { e.preventDefault(); take(e.dataTransfer.files[0]); });
+  });
+}
+let src; try { src = await loadBundled(); } catch { src = await askForPly(); }
+$("loadtxt") && ($("loadtxt").textContent = "Decoding splats…");
+const splat = new SplatMesh(src); world.add(splat); await splat.initialized;
+$("load").remove();
+
+// ---------- boxes
+const boxObjs = items.map(it => {
+  const g = new THREE.BoxGeometry(...it.size);
+  const edges = new THREE.LineSegments(new THREE.EdgesGeometry(g), new THREE.LineBasicMaterial({ color: stateCol(it), transparent:true, opacity:0.9 }));
+  const fill = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: stateCol(it), transparent:true, opacity:0.12, depthWrite:false }));
+  const grp = new THREE.Group(); grp.add(edges, fill); grp.position.set(...it.center); grp.visible = false; world.add(grp);
+  return { it, grp, edges, fill };
+});
+
+// ---------- avatar (scaled to the scan: ceiling is ~2.1 units above the floor)
+const AVATAR_H = 0.75;
+// The figure is rebuilt from `av` whenever the Avatar panel changes; +z is forward, y is up (scene frame).
+const AV_DEFAULT = { style:"tech", body:"#ffd23f", accent:"#ff7a1a", size:1, name:"" };
+const av = { ...AV_DEFAULT };
+try { Object.assign(av, JSON.parse(localStorage.getItem("avatar") || "{}")); } catch {}
+const avatar = new THREE.Group();
+let figure = new THREE.Group(), figMats = [], rotors = [], hover = 0, figTop = AVATAR_H;
+const ring = new THREE.Mesh(new THREE.RingGeometry(1.45, 1.5, 64), new THREE.MeshBasicMaterial({ color:0x5aa9ff, transparent:true, opacity:0.5, side:THREE.DoubleSide }));
+ring.rotation.x = -Math.PI/2; ring.position.y = 0.02;
+avatar.add(figure, ring); scene.add(avatar);
+
+function buildFigure() {
+  avatar.remove(figure); figure.traverse(o => { o.geometry?.dispose(); o.material?.dispose(); });
+  figure = new THREE.Group(); figMats = []; rotors = []; hover = 0;
+  figTop = { tech:0.7, robot:0.64, drone:0.52 }[av.style] ?? AVATAR_H;
+  const shade = (c, k) => "#" + new THREE.Color(c).multiplyScalar(k).getHexString();
+  const add = (geo, color, x, y, z, op = 1) => {
+    const m = new THREE.MeshBasicMaterial({ color, transparent:true, opacity:op }); m.userData.op = op; figMats.push(m);
+    const mesh = new THREE.Mesh(geo, m); mesh.position.set(x, y, z); figure.add(mesh); return mesh;
+  };
+  const cap = (r, l) => new THREE.CapsuleGeometry(r, l, 4, 12), sph = (r) => new THREE.SphereGeometry(r, 16, 10);
+  const hemi = (r) => new THREE.SphereGeometry(r, 16, 8, 0, Math.PI*2, 0, Math.PI/2);
+  const cyl = (r, h) => new THREE.CylinderGeometry(r, r, h, 20), box = (x, y, z) => new THREE.BoxGeometry(x, y, z);
+  const { body: B, accent: A } = av;
+  if (av.style === "tech") {                       // field technician: hi-vis vest + hard hat
+    for (const sx of [-1, 1]) { add(cap(0.03, 0.22), "#2b3440", sx*0.04, 0.14, 0); add(cap(0.022, 0.2), shade(B, 0.85), sx*0.095, 0.40, 0); }
+    add(cap(0.07, 0.16), B, 0, 0.42, 0);
+    add(cyl(0.073, 0.02), "#e8e8e8", 0, 0.45, 0);
+    add(sph(0.055), "#e0b48a", 0, 0.62, 0);
+    add(hemi(0.06), A, 0, 0.635, 0);
+    add(cyl(0.078, 0.008), A, 0, 0.635, 0.012);
+    for (const sx of [-1, 1]) add(sph(0.009), "#111", sx*0.02, 0.625, 0.051);
+  } else if (av.style === "robot") {                // inspection robot on a wheeled base
+    add(cyl(0.09, 0.06), "#333a44", 0, 0.03, 0);
+    add(box(0.18, 0.34, 0.13), B, 0, 0.23, 0);
+    add(box(0.12, 0.06, 0.005), shade(B, 0.6), 0, 0.28, 0.066);
+    for (const sx of [-1, 1]) add(box(0.04, 0.2, 0.04), shade(B, 0.7), sx*0.115, 0.27, 0);
+    add(cyl(0.02, 0.04), "#555", 0, 0.42, 0);
+    add(box(0.15, 0.1, 0.11), A, 0, 0.49, 0);
+    for (const sx of [-1, 1]) add(sph(0.015), "#9ff3ff", sx*0.035, 0.5, 0.056);
+    add(cyl(0.005, 0.08), "#888", 0, 0.58, 0); add(sph(0.015), A, 0, 0.625, 0);
+  } else if (av.style === "drone") {                 // quadcopter, hovers and bobs
+    hover = 0.45;
+    add(cyl(0.07, 0.04), B, 0, 0, 0); add(hemi(0.05), A, 0, 0.02, 0);
+    for (const a of [Math.PI/4, -Math.PI/4]) add(box(0.36, 0.012, 0.02), "#333a44", 0, 0, 0).rotation.y = a;
+    for (const [x, z] of [[1,1],[1,-1],[-1,1],[-1,-1]]) {
+      add(cyl(0.008, 0.03), "#333a44", x*0.127, 0.015, z*0.127);
+      rotors.push(add(box(0.12, 0.003, 0.012), "#d8dde4", x*0.127, 0.032, z*0.127, 0.7));
+    }
+    add(sph(0.02), "#111", 0, -0.02, 0.07);
+    add(cyl(0.1, 0.002), "#000", 0, -0.43, 0, 0.3);  // ground shadow
+  } else {                                           // original capsule marker
+    add(cap(0.085, AVATAR_H - 0.17), B, 0, AVATAR_H/2, 0);
+    add(sph(0.03), A, 0, AVATAR_H - 0.09, 0.08);
+  }
+  figure.scale.setScalar(av.size);
+  avatar.add(figure);
+}
+
+function applyAvatar(save = true) {
+  buildFigure();
+  document.querySelectorAll("#avstyles button").forEach(b => b.classList.toggle("on", b.dataset.s === av.style));
+  $("avbody").value = av.body; $("avacc").value = av.accent; $("avh").value = av.size;
+  $("avhv").textContent = av.size.toFixed(2) + "×"; $("avname-in").value = av.name;
+  $("avname").textContent = av.name; $("avname").style.display = av.name ? "block" : "none";
+  if (save) try { localStorage.setItem("avatar", JSON.stringify(av)); } catch {}
+}
+$("avsw").innerHTML = ["#ffd23f", "#ff7a1a", "#3ecf8e", "#5aa9ff", "#e6e9ee"].map(c => `<i data-c="${c}" style="background:${c}"></i>`).join("");
+$("avsw").onclick = (e) => { if (e.target.dataset.c) { av.body = e.target.dataset.c; applyAvatar(); } };
+$("avstyles").onclick = (e) => { if (e.target.dataset.s) { av.style = e.target.dataset.s; applyAvatar(); } };
+$("avbody").oninput = (e) => { av.body = e.target.value; applyAvatar(); };
+$("avacc").oninput = (e) => { av.accent = e.target.value; applyAvatar(); };
+$("avh").oninput = (e) => { av.size = +e.target.value; applyAvatar(); };
+$("avname-in").oninput = (e) => { av.name = e.target.value.trim(); applyAvatar(); };
+$("avreset").onclick = () => { Object.assign(av, AV_DEFAULT); applyAvatar(); };
+$("avbtn").onclick = () => {
+  const p = $("avpanel"), open = p.style.display !== "block";
+  p.style.display = open ? "block" : "none"; $("avbtn").classList.toggle("on", open);
+  p.style.top = ($("top").getBoundingClientRect().bottom + 8) + "px";
+};
+applyAvatar(false);
+const startMarker = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.02, 24), new THREE.MeshBasicMaterial({ color:0x3ecf8e }));
+scene.add(startMarker);
+
+// ---------- route state: a route is a list of legs, each ending at a stop (an asset)
+let pts = [], cum = [0], pathLen = 0, stops = [], stopIdx = 0, pathLine = null;
+let startCell = cellOf(new THREE.Vector3(...scene_.path[0]));
+let s = 0, playing = false, finished = false, camMode = "fp", showAll = false, radius = 1.5, speed = 1.0;
+let focusTag = null;                                             // asset whose copilot is shown
+
+function setRoute(legs) {                    // legs: [{ tag, pts:[Vector3...] }]
+  pts = []; stops = [];
+  for (const L of legs) { const add = pts.length ? L.pts.slice(1) : L.pts; pts.push(...add); stops.push({ tag: L.tag, idx: pts.length - 1 }); }
+  cum = [0]; for (let i = 1; i < pts.length; i++) cum.push(cum[i-1] + pts[i].distanceTo(pts[i-1]));
+  pathLen = cum.at(-1); stops.forEach(st => st.d = cum[st.idx]);
+  if (pathLine) world.remove(pathLine);
+  const lift = (v) => { const w = v.clone(); w.setComponent(UP, v.getComponent(UP) - sgn*0.03); return w; };
+  pathLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts.map(lift)), new THREE.LineDashedMaterial({ color:0x5aa9ff, dashSize:0.15, gapSize:0.08 }));
+  pathLine.computeLineDistances(); world.add(pathLine);
+  startMarker.position.copy(toScene(pts[0]));
+  s = 0; stopIdx = 0; playing = false; finished = false; focusTag = null;
+  if (typeof manual !== "undefined") { manual = false; $("drive").style.display = "none"; }
+  $("copilot").classList.remove("show"); $("play").textContent = "▶ Start";
+  renderMission(); snapCam();
+}
+function routeTo(tag) {
+  const p = plan(startCell, byTag[tag]);
+  if (!p) { $("mission").innerHTML = `<b>No walkable route to ${tag}</b><div class="mut">Try another start point.</div>`; return; }
+  setRoute([{ tag, pts: p }]);
+}
+function routeRound() {                       // visit every non-healthy asset, nearest-next order
+  const todo = mapped.filter(i => i.state !== "healthy").map(i => i.tag);
+  const legs = []; let cur = startCell;
+  while (todo.length) {
+    let best = null;
+    for (const t of todo) { const p = plan(cur, byTag[t]); if (!p) continue;
+      let L = 0; for (let k = 1; k < p.length; k++) L += p[k].distanceTo(p[k-1]);
+      if (!best || L < best.L) best = { t, p, L }; }
+    if (!best) break;
+    legs.push({ tag: best.t, pts: best.p }); todo.splice(todo.indexOf(best.t), 1); cur = cellOf(best.p.at(-1));
+  }
+  setRoute(legs);
+}
+
+// ---------- motion helpers
+function posAt(d) {
+  if (pts.length < 2) return { p: pts[0] || new THREE.Vector3(), dir: new THREE.Vector3(1,0,0) };
+  let i = cum.findIndex(c => c >= d); if (i <= 0) i = 1; if (d >= pathLen) i = pts.length - 1;
+  const a = pts[i-1], b = pts[i], t = Math.min(1, (d - cum[i-1]) / Math.max(1e-6, cum[i] - cum[i-1]));
+  return { p: a.clone().lerp(b, t), dir: b.clone().sub(a).normalize() };
+}
+function distToBox(p, it) { let d2 = 0;
+  for (const a of H) { const e = Math.max(Math.abs(p.getComponent(a) - it.center[a]) - it.size[a]/2, 0); d2 += e*e; } return Math.sqrt(d2); }
+const CAM_BACK = 1.3, CAM_H = 1.35, LOOK_H = 0.6;
+function chasePose(d) {                       // camera rides the path behind the walker, so it stays in free space
+  const me = posAt(d), meS = toScene(me.p); let camS = toScene(posAt(Math.max(0, d - CAM_BACK)).p);
+  if (camS.distanceTo(meS) < 0.5) { const dirS = toScene(me.p.clone().add(me.dir)).sub(meS).setY(0).normalize(); camS = meS.clone().addScaledVector(dirS, -CAM_BACK); }
+  camS.y = meS.y + CAM_H; return { cam: camS, look: meS.clone().add(new THREE.Vector3(0, LOOK_H, 0)) };
+}
+function snapCam() { fpYaw = null; const c = chasePose(s); camera.position.copy(c.cam); controls.target.copy(c.look); camera.lookAt(c.look); }
+
+// ---------- first person: eye at head height, looks ahead along the route (or the drive heading),
+// turns to face the asset on arrival. Drag to look around; on the route the head eases back forward.
+// eye height is a person's, not the avatar's: ceiling is ~2.1 units, so ~1.1 reads as standing eye level
+const FP_EYE = 1.1;
+let fpYaw = null, lookYaw = 0, lookPitch = -0.2, dragFP = null, fpBack = 0;
+const wrapA = (a) => Math.atan2(Math.sin(a), Math.cos(a));
+function fpCam(dt) {
+  let pS, heading;
+  if (manual) { pS = toScene(mPos); heading = yaw; }
+  else {
+    const at = posAt(s), st = !playing && focusTag && byTag[focusTag];
+    pS = toScene(at.p);
+    let d = (st ? toScene(new THREE.Vector3(...st.center)) : toScene(posAt(Math.min(pathLen, s + 0.6)).p)).sub(pS).setY(0);
+    if (d.lengthSq() < 0.01) d = toScene(at.p.clone().add(at.dir)).sub(pS).setY(0);
+    heading = Math.atan2(d.x, d.z);
+    if (!dragFP) lookYaw *= Math.exp(-dt * 1.5);
+  }
+  fpYaw = fpYaw === null ? heading : fpYaw + wrapA(heading - fpYaw) * Math.min(1, dt * (manual ? 14 : 4));
+  const a = fpYaw + lookYaw, eye = pS.clone(); eye.y += FP_EYE;
+  fpBack += ((!manual && !playing && focusTag ? 0.45 : 0) - fpBack) * Math.min(1, dt * 3);   // step back at an asset to frame it
+  eye.x -= Math.sin(fpYaw) * fpBack; eye.z -= Math.cos(fpYaw) * fpBack;
+  const dir = new THREE.Vector3(Math.sin(a) * Math.cos(lookPitch), Math.sin(lookPitch), Math.cos(a) * Math.cos(lookPitch));
+  camera.position.copy(eye); controls.target.copy(eye).add(dir); camera.lookAt(controls.target);
+}
+const CAM_MODES = { fp:"First person", follow:"Follow cam", free:"Free cam (drag to orbit)" };
+function setCamMode(m) {
+  camMode = m; controls.enabled = m === "free"; fpYaw = null;
+  $("follow").textContent = CAM_MODES[m]; $("follow").classList.toggle("on", m !== "free");
+  camera.fov = m === "fp" ? 75 : 60; camera.updateProjectionMatrix();
+}
+renderer.domElement.addEventListener("pointerdown", (e) => { if (camMode === "fp") dragFP = { x: e.clientX, y: e.clientY }; });
+addEventListener("pointermove", (e) => {
+  if (!dragFP) return;
+  const dx = e.clientX - dragFP.x, dy = e.clientY - dragFP.y; dragFP = { x: e.clientX, y: e.clientY };
+  if (manual) yaw -= dx * 0.005; else lookYaw = Math.max(-2.5, Math.min(2.5, lookYaw - dx * 0.005));
+  lookPitch = Math.max(-1.2, Math.min(0.9, lookPitch - dy * 0.004));
+});
+addEventListener("pointerup", () => dragFP = null);
+
+// ---------- UI
+const unit = (k) => ({pct:"%", bar:"bar", mm_s:"mm/s", c:"°C", a:"A", rpm:"rpm"})[(k.match(/_(pct|bar|mm_s|c|a|rpm)$/)||[])[1]] || "";
+const fmt = (k) => k.replace(/_(pct|bar|mm_s|c|a|rpm)$/, "").replace(/_/g, " ");
+const vlmLine = (it) => it.vlm ? `<div class="mut" title="${it.vlm.visual_evidence || ""}">VLM: ${it.vlm.label} · ${human(it.vlm.asset_class)} · ${it.vlm.confidence}</div>` : "";
+function card(it, d) {
+  const c = stateCol(it);
+  if (!it.tag) return `<div class="card"><div class="row"><span class="tag">${it.id}</span><span class="pill" style="color:${c};border-color:${c}">unmapped</span></div>
+    <div class="mut">${d.toFixed(1)} m · context object, no asset identity (mapping confidence 0)</div>
+    ${vlmLine(it)}
+    ${showXYZ ? `<div class="mut" style="font-family:ui-monospace,monospace">centre ${it.center.map(v => v.toFixed(2)).join(", ")}</div>` : ""}</div>`;
+  const tel = Object.entries(it.telemetry).slice(0,4).map(([k,v]) => `<span>${fmt(k)}</span><span>${v.last} ${unit(k)}</span>`).join("");
+  const isStop = stops.some(st => st.tag === it.tag);
+  return `<div class="card" ${isStop ? 'style="border-color:#ff5d5d"' : ""}>
+    <div class="row"><span class="tag">${it.tag} <span class="mut">${human(it.asset_class)}</span></span>
+    <span class="pill" style="color:${c};border-color:${c}">${human(it.state)} · ${it.health}</span></div>
+    <div class="mut">${d.toFixed(1)} m · ${it.area} · ${it.criticality}</div>
+    ${it.issue_code !== "NORMAL" ? `<div style="color:${c};font-size:12px">${it.issue} (${it.urgency})</div>` : ""}
+    <div class="kv">${tel}</div>
+    <div class="mut" style="margin-top:3px">mapping: ${it.mapping}, conf ${it.mapping_conf} · <code>${it.asset_id}</code></div>
+    ${vlmLine(it)}
+    ${showXYZ ? `<div class="mut" style="font-family:ui-monospace,monospace">centre ${it.center.map(v => v.toFixed(2)).join(", ")} · size ${it.size.map(v => v.toFixed(2)).join(" × ")}</div>` : ""}</div>`;
+}
+function renderMission() {
+  const list = stops.map((st, k) => { const it = byTag[st.tag];
+    return `<div class="stop ${k < stopIdx ? "done" : ""}"><i style="background:${stateCol(it)}"></i>${k+1}. <b>${st.tag}</b>
+      <span class="mut">${human(it.state)} · ${it.health} · ${st.d.toFixed(1)} m</span></div>`; }).join("");
+  $("mission").innerHTML = `<div class="row"><b>${stops.length > 1 ? "Inspection round" : "Mission"}</b>
+    <span class="mut">${pathLen.toFixed(1)} m</span></div>${list}
+    <div class="mut" style="margin-top:4px">${items.length} objects extracted, ${mapped.length} mapped to the builder pack.</div>`;
+}
+const opts = [...mapped].sort((a, b) => a.health - b.health);
+$("target").innerHTML = opts.map(i => `<option value="${i.tag}">${i.tag} · ${human(i.state)} · ${i.health}</option>`).join("");
+
+function sparkline(tr) {
+  const W = 360, Hh = 90, n = tr.A.length, ys = [...tr.A, ...tr.B];
+  const sameScale = tr.a.endsWith("_pct") && tr.b.endsWith("_pct") && !tr.b.includes("quality");
+  const sc = (arr) => { const lo = Math.min(...(sameScale ? ys : arr)), hi = Math.max(...(sameScale ? ys : arr));
+    return (v) => Hh - 4 - (v - lo) / (hi - lo || 1) * (Hh - 14); };
+  const x = (i) => i / (n - 1) * W, line = (a, c) => { const y = sc(a);
+    return `<polyline fill="none" stroke="${c}" stroke-width="1.4" points="${a.map((v,i) => x(i).toFixed(1)+","+y(v).toFixed(1)).join(" ")}"/>`; };
+  return `<svg width="${W}" height="${Hh}">${line(tr.A, "#5aa9ff")}${line(tr.B, "#ff8a3d")}
+    <text x="2" y="9">${fmt(tr.a)} (blue) vs ${fmt(tr.b)} (orange), last 3 days${sameScale ? "" : ", each scaled"}</text></svg>`;
+}
+function showCopilot(tag) {
+  const e = copilot[tag], st = e.state, healthy = st.issue_code === "NORMAL";
+  const big = e.shifts.filter(x => Math.abs(x.change_pct) >= 10);
+  const col = stateCol(byTag[tag] || { tag, state: st.condition_state });
+  $("copilot").innerHTML = `<h2>AI service copilot</h2><div class="card" style="border-color:${col}">
+   <div class="row"><b>${e.tag} · ${human(st.asset_class)}</b><span class="pill" style="color:${col};border-color:${col}">${st.urgency} urgency</span></div>
+   <h3>Observation</h3>
+   <ul><li>Condition <b>${human(st.condition_state)}</b>, health ${st.health_score}, issue <code>${st.issue_code}</code> (${st.issue_summary}); model confidence ${st.model_confidence}. <span class="mut">[Current_State]</span></li>
+   ${e.shifts.slice(0,4).map(x => `<li>${fmt(x.metric)}: ${x.last24h} ${unit(x.metric)} in the last 24 h vs ${x.before} before (${x.change_pct > 0 ? "+" : ""}${x.change_pct}%).</li>`).join("")}
+   ${e.events.length ? `<li>Recent events: ${e.events.slice(0,4).map(v => `<code>${v.event_id}</code> ${human(v.event_code)} (${v.status})`).join(", ")}.</li>` : ""}
+   ${e.work_orders.length ? `<li>Work orders: ${e.work_orders.map(w => `<code>${w.work_order_id}</code> ${w.action} → ${human(w.result)}`).join("; ")}.</li>` : ""}</ul>
+   ${sparkline(e.trend)}
+   <h3>${healthy ? "Assessment" : "Hypothesis (not yet verified)"}</h3>
+   <ul><li>${healthy ? "No significant deviation; routine monitoring is enough." :
+     `${big.length ? `Largest change: ${big.map(x => `${fmt(x.metric)} ${x.change_pct > 0 ? "+" : ""}${x.change_pct}%`).join(", ")}. ` : "Telemetry shifts are small, so the diagnosis rests mainly on the condition model. "}
+     ${e.cases.length ? `Pattern matches ${e.cases.map(c => `<code>${c.case_id}</code> “${c.historical_interpretation}”`).join(", ")}.` : "No matching historical case."}
+     ${e.work_orders.some(w => w.result.includes("follow_up")) ? "A previous work order ended in follow-up required, which points to a recurring cause." : ""}`}</li></ul>
+   <h3>Next safe verification steps</h3>
+   <ul><li>Confirm asset identity on site (QR/NFC); 3D mapping is ${byTag[tag] ? `${byTag[tag].mapping}, confidence ${byTag[tag].mapping_conf}` : "not placed in the scan"}. <code>DOC-3D-MAPPING</code></li>
+   <li>${st.recommended_next_check[0].toUpperCase() + st.recommended_next_check.slice(1)}${e.cases[0] ? `; per <code>${e.cases[0].case_id}</code>: ${e.cases[0].recommended_next_check}` : ""}. <code>${e.doc}</code></li>
+   <li class="mut">${e.doc_text}</li>
+   <li>Follow site permits and lockout/tagout; escalate to qualified personnel. The copilot recommends checks only. <code>DOC-FIELD-SAFETY</code></li></ul>
+   ${e.data_quality.length ? `<div class="mut">Data quality: ${e.data_quality.map(q => `<code>${q.issue_id}</code> ${human(q.issue_type)}`).join(", ")}, so confidence is reduced.</div>` : ""}
+   <div class="mut" style="margin-top:6px">Grounded in builder-pack records only; IDs cited per <code>DOC-RAG-GUIDE</code>.</div></div>`;
+  $("copilot").classList.add("show");
+  aiBlock(tag);
+}
+
+// ---------- LLM copilot via local server.py -> Featherless (key never in the browser)
+let llm = { on: false, model: "" };
+fetch("api/health").then(r => r.ok ? r.json() : null).then(j => { if (j) llm = { on: j.llm, model: j.model }; }).catch(() => {});
+let nearTags = [];
+const esc = (t) => t.replace(/[&<>]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;" })[c]);
+function md(t) {
+  const lines = esc(t).split("\n"); let html = "", list = null;
+  const inline = (x) => x.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/`([^`]+)`/g, "<code>$1</code>");
+  for (const ln of lines) {
+    const ul = ln.match(/^\s*[-*•]\s+(.*)/), ol = ln.match(/^\s*\d+[.)]\s+(.*)/);
+    const want = ul ? "ul" : ol ? "ol" : null;
+    if (list && want !== list) { html += `</${list}>`; list = null; }
+    if (want) { if (!list) { html += `<${want}>`; list = want; } html += `<li>${inline((ul || ol)[1])}</li>`; }
+    else if (ln.trim()) html += `<div style="margin-top:6px">${inline(ln.replace(/^#+\s*/, ""))}</div>`;
+  }
+  return html + (list ? `</${list}>` : "");
+}
+function aiBlock(tag) {
+  const box = document.createElement("div"); box.className = "card"; box.style.borderColor = "#5aa9ff";
+  $("copilot").appendChild(box);
+  if (!llm.on) {
+    box.innerHTML = `<b>AI analysis</b><div class="mut">LLM is off. Run <code>python3 server.py</code> locally with
+      <code>FEATHERLESS_API_KEY</code> set to get an AI diagnosis and follow-up questions here.</div>`;
+    return;
+  }
+  box.innerHTML = `<div class="row"><b>AI analysis</b><span class="mut">${esc(llm.model)}</span></div>
+    <div class="ai-out mut">Thinking…</div>
+    <form class="ai-ask" style="display:flex;gap:6px;margin-top:8px">
+      <input placeholder="Ask about ${tag}…" style="flex:1;background:#0f1216;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font:inherit">
+      <button>Ask</button></form>`;
+  const out = box.querySelector(".ai-out");
+  const ask = async (question) => {
+    out.classList.add("mut"); out.textContent = question ? `Asking: ${question}…` : "Thinking…";
+    try {
+      const r = await fetch("api/copilot/query", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tag, question, nearby: nearTags }) });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error || r.status);
+      out.classList.remove("mut");
+      out.innerHTML = (question ? `<div class="mut">Q: ${esc(question)}</div>` : "") + md(j.answer) +
+        `<div class="mut" style="margin-top:6px">${esc(j.model)} · evidence: ${j.evidence_ids.map(i => `<code>${esc(i)}</code>`).join(" ")}</div>`;
+    } catch (e) { out.innerHTML = `<span style="color:#ff5d5d">AI request failed: ${esc(String(e.message || e))}</span>`; }
+  };
+  box.querySelector(".ai-ask").onsubmit = (e) => { e.preventDefault(); const inp = e.target.querySelector("input");
+    const q = inp.value.trim(); if (q) { inp.value = ""; ask(q); } };
+  ask("");
+}
+
+// controls
+$("target").onchange = (e) => routeTo(e.target.value);
+$("round").onclick = () => routeRound();
+$("play").onclick = () => {
+  if (manual) { manual = false; $("drive").style.display = "none"; snapCam(); }   // back to the planned route where it was left
+  if (finished) return;
+  if (!playing && focusTag && stopIdx < stops.length) $("copilot").classList.remove("show");
+  playing = !playing; $("play").textContent = playing ? "❚❚ Pause" : "▶ Continue";
+};
+$("reset").onclick = () => { manual = false; $("drive").style.display = "none"; s = 0; stopIdx = 0; playing = false; finished = false; focusTag = null;
+  $("copilot").classList.remove("show"); $("play").textContent = "▶ Start"; renderMission(); snapCam(); };
+$("follow").onclick = () => setCamMode({ fp:"follow", follow:"free", free:"fp" }[camMode]);
+addEventListener("keydown", (e) => { if (e.code === "KeyV" && e.target.tagName !== "INPUT" && e.target.tagName !== "SELECT") $("follow").click(); });
+$("allbox").onclick = () => { showAll = !showAll; $("allbox").classList.toggle("on", showAll); };
+$("rad").oninput = (e) => { radius = +e.target.value; $("radv").textContent = radius.toFixed(1) + " m"; ring.scale.setScalar(radius / 1.5); };
+$("spd").oninput = (e) => { speed = +e.target.value; $("spdv").textContent = speed.toFixed(1) + "×"; };
+
+// set start by clicking the floor
+let picking = false;
+$("setstart").onclick = () => { picking = !picking; $("setstart").classList.toggle("on", picking); $("pick-hint").style.display = picking ? "block" : "none";
+  if (picking && camMode !== "free") setCamMode("free"); };
+addEventListener("keydown", (e) => { if (e.key === "Escape" && picking) $("setstart").click(); });
+const floorPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+renderer.domElement.addEventListener("click", (ev) => {
+  if (!picking) return;
+  const floorS = toScene(worldOf(0, 0)); floorPlane.constant = -floorS.y;
+  const ray = new THREE.Raycaster(); ray.setFromCamera(new THREE.Vector2(ev.clientX / innerWidth * 2 - 1, -(ev.clientY / innerHeight) * 2 + 1), camera);
+  const hit = new THREE.Vector3(); if (!ray.ray.intersectPlane(floorPlane, hit)) return;
+  const raw = world.worldToLocal(hit.clone()); const c = nearestWalk(...cellOf(raw)); if (!c) return;
+  startCell = c; $("setstart").click();
+  stops.length > 1 ? routeRound() : routeTo($("target").value);
+});
+addEventListener("resize", () => { camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+
+// ---------- keyboard driving: W/S or ↑/↓ walk, A/D or ←/→ turn, Shift faster, R = route from here
+const keys = new Set(); let manual = false, mPos = null, yaw = 0;
+const DRIVE = { KeyW:1, KeyS:1, KeyA:1, KeyD:1, ArrowUp:1, ArrowDown:1, ArrowLeft:1, ArrowRight:1 };
+addEventListener("keydown", (e) => {
+  if (e.target.tagName === "SELECT" || e.target.tagName === "INPUT") return;
+  if (DRIVE[e.code]) {
+    e.preventDefault(); keys.add(e.code);
+    if (!manual) {                               // take over from the auto route at the current spot
+      const { p, dir } = posAt(s); mPos = p.clone();
+      const dS = toScene(p.clone().add(dir)).sub(toScene(p)); yaw = Math.atan2(dS.x, dS.z);
+      manual = true; playing = false; $("play").textContent = "▶ Resume route"; $("drive").style.display = "block";
+    }
+  }
+  if (e.code === "KeyR" && manual) {             // plan from here to the selected target
+    const c = nearestWalk(...cellOf(mPos)); if (c) { startCell = c; manual = false; $("drive").style.display = "none";
+      stops.length > 1 ? routeRound() : routeTo($("target").value); }
+  }
+});
+addEventListener("keyup", (e) => keys.delete(e.code));
+addEventListener("blur", () => keys.clear());
+// Driving uses a looser body radius than route planning (planner keeps 0.25 clearance for
+// comfortable aisles; a person can squeeze closer), so narrow gaps stay passable.
+const DRIVE_CLEAR = 0.1;
+const clearAt = (v) => { const [i, j] = cellOf(v); return (i >= 0 && j >= 0 && i < GH && j < GW) ? clear[i * GW + j] * NG.cell : 0; };
+const walkableRaw = (v) => clearAt(v) >= DRIVE_CLEAR;
+function drive(dt) {
+  const fast = keys.has("ShiftLeft") || keys.has("ShiftRight") ? 2.2 : 1;
+  const turn = (keys.has("KeyA") || keys.has("ArrowLeft") ? 1 : 0) - (keys.has("KeyD") || keys.has("ArrowRight") ? 1 : 0);
+  const fwd = (keys.has("KeyW") || keys.has("ArrowUp") ? 1 : 0) - (keys.has("KeyS") || keys.has("ArrowDown") ? 1 : 0);
+  yaw += turn * 2.2 * dt;
+  if (!fwd) return;
+  const step = fwd * 1.1 * fast * speed * dt;
+  const meS = toScene(mPos), dirS = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw));
+  const here = clearAt(mPos);
+  const tryMove = (vS) => { const raw = world.worldToLocal(meS.clone().add(vS)); raw.setComponent(UP, mPos.getComponent(UP));
+    const c = clearAt(raw);
+    // allowed if the spot is free enough, or if it at least moves away from the obstacle (unsticks)
+    if (c >= DRIVE_CLEAR || (here < DRIVE_CLEAR && c > here) || (here < DRIVE_CLEAR && c > 0 && c >= here)) { mPos.copy(raw); return true; }
+    return false; };
+  // full step, else slide along the obstacle on one axis
+  if (!tryMove(dirS.clone().multiplyScalar(step)))
+    tryMove(new THREE.Vector3(dirS.x * step, 0, 0)) || tryMove(new THREE.Vector3(0, 0, dirS.z * step));
+}
+function manualCam() {                           // pull the camera in if a wall is behind the walker
+  const meS = toScene(mPos), back = new THREE.Vector3(-Math.sin(yaw), 0, -Math.cos(yaw));
+  let dist = CAM_BACK;
+  for (let d = 0.2; d <= CAM_BACK; d += 0.1) {
+    const raw = world.worldToLocal(meS.clone().addScaledVector(back, d)); raw.setComponent(UP, mPos.getComponent(UP));
+    if (!isClearish(raw)) { dist = Math.max(0.5, d - 0.15); break; }
+  }
+  // when squeezed, go higher and look down over the walker instead of into its back
+  const cam = meS.clone().addScaledVector(back, dist); cam.y = meS.y + CAM_H + 0.35 * (1 - dist / CAM_BACK);
+  return { cam, look: meS.clone().add(new THREE.Vector3(0, LOOK_H, 0)) };
+}
+const isClearish = (raw) => { const [i, j] = cellOf(raw); return i >= 0 && j >= 0 && i < GH && j < GW && clear[i * GW + j] > 0; };
+
+// ---------- XYZ overlay: live coordinates in the .ply frame, axis gizmo, teleport
+let showXYZ = false; const fmt3 = (v) => `x ${v.x.toFixed(2)}  y ${v.y.toFixed(2)}  z ${v.z.toFixed(2)}`;
+const axes = new THREE.AxesHelper(1); axes.visible = false; world.add(axes);        // drawn in raw coords
+const axOrigin = new THREE.Vector3(0, frame.floor * sgn, 0);                           // put gizmo on the floor
+axes.position.copy(axOrigin);
+const axLbl = ["x", "y", "z"].map((n, k) => { const d = document.createElement("div"); d.className = "axl";
+  d.style.color = ["#ff5d5d", "#3ecf8e", "#5aa9ff"][k]; d.textContent = `+${n}`; d.style.display = "none"; document.body.appendChild(d); return d; });
+$("c-floor").textContent = (frame.floor * sgn).toFixed(3);
+$("coordsbtn").onclick = () => { showXYZ = !showXYZ; $("coordsbtn").classList.toggle("on", showXYZ);
+  $("coords").style.display = showXYZ ? "block" : "none"; axes.visible = showXYZ; axLbl.forEach(d => d.style.display = showXYZ ? "block" : "none");
+  $("keyhint").style.display = showXYZ ? "none" : "block"; lastList = ""; };
+const hoverPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+renderer.domElement.addEventListener("mousemove", (ev) => {
+  if (!showXYZ) return;
+  hoverPlane.constant = -toScene(worldOf(0, 0)).y;
+  const ray = new THREE.Raycaster(); ray.setFromCamera(new THREE.Vector2(ev.clientX / innerWidth * 2 - 1, -(ev.clientY / innerHeight) * 2 + 1), camera);
+  const hit = new THREE.Vector3(); if (!ray.ray.intersectPlane(hoverPlane, hit)) return;
+  const raw = world.worldToLocal(hit.clone()); const [i, j] = cellOf(raw);
+  const c = (i >= 0 && j >= 0 && i < GH && j < GW) ? clear[i * GW + j] * NG.cell : 0;
+  $("c-cur").innerHTML = `${fmt3(raw)} <span class="mut">${c >= 0.1 ? "walkable" : c > 0 ? "tight" : "blocked"}</span>`;
+});
+let lastMe = new THREE.Vector3();
+$("copyxyz").onclick = async () => { try { await navigator.clipboard.writeText(`${lastMe.x.toFixed(3)}, ${lastMe.y.toFixed(3)}, ${lastMe.z.toFixed(3)}`);
+  $("copyxyz").textContent = "Copied"; setTimeout(() => $("copyxyz").textContent = "Copy", 1200); } catch { $("copyxyz").textContent = "Blocked"; } };
+$("goto").onsubmit = (e) => {
+  e.preventDefault();
+  const x = parseFloat($("gx").value), z = parseFloat($("gz").value); if (!isFinite(x) || !isFinite(z)) return;
+  const v = new THREE.Vector3(x, frame.floor * sgn, z); const c = nearestWalk(...cellOf(v)); if (!c) return;
+  const w = worldOf(...c);
+  if (!manual) { const { p, dir } = posAt(s); const dS = toScene(p.clone().add(dir)).sub(toScene(p)); yaw = Math.atan2(dS.x, dS.z);
+    manual = true; playing = false; $("play").textContent = "▶ Resume route"; $("drive").style.display = "block"; }
+  mPos = w; startCell = c;
+};
+
+// ---------- first route: the default faulty target
+$("target").value = byTag["CV-003"] ? "CV-003" : opts[0].tag;
+routeTo($("target").value);
+
+setCamMode("fp");
+
+// ---------- VLM scan: stand at a clear spot ~1 m from each box, render the splat, crop around the box
+// with a yellow outline, and ask the server's VLM what it is. Answers land in data/vlm_labels.json;
+// build_scene.py then maps Excel tags by class (DOC-3D-MAPPING: labels are evidence, not identity).
+let scanning = false;
+const nextFrames = (n) => new Promise(r => { const f = () => --n <= 0 ? r() : requestAnimationFrame(f); requestAnimationFrame(f); });
+function boxCorners(it) {
+  const out = [];
+  for (const sx of [-1, 1]) for (const sy of [-1, 1]) for (const sz of [-1, 1])
+    out.push(new THREE.Vector3(it.center[0] + sx*it.size[0]/2, it.center[1] + sy*it.size[1]/2, it.center[2] + sz*it.size[2]/2));
+  return out;
+}
+function viewFor(it) {                           // walkable cell ~1 m from the footprint, line of sight preferred
+  const c = new THREE.Vector3(...it.center), [ci, cj] = cellOf(c), R = Math.ceil(2.2 / NG.cell);
+  const half = [it.size[NG.horiz[0]] / 2, it.size[NG.horiz[1]] / 2];
+  const inFoot = (i, j) => { const w = worldOf(i, j);
+    return Math.abs(w.getComponent(NG.horiz[0]) - c.getComponent(NG.horiz[0])) <= half[0] &&
+           Math.abs(w.getComponent(NG.horiz[1]) - c.getComponent(NG.horiz[1])) <= half[1]; };
+  let best = null;
+  for (let i = ci - R; i <= ci + R; i += 2) for (let j = cj - R; j <= cj + R; j += 2) {
+    if (!isWalk(i, j)) continue;
+    const d = distToBox(worldOf(i, j), it); if (d < 0.5 || d > 2.2) continue;
+    const n = Math.ceil(Math.hypot(i - ci, j - cj)); let blocked = 0;
+    for (let k = 1; k < n; k++) {                // obstacle cells between us and the box (the box's own skirt is ignored)
+      const si = Math.round(i + (ci - i) * k / n), sj = Math.round(j + (cj - j) * k / n);
+      if (inFoot(si, sj) || distToBox(worldOf(si, sj), it) < 0.25) break;
+      if (si < 0 || sj < 0 || si >= GH || sj >= GW || clear[si * GW + sj] === 0) blocked++;
+    }
+    const score = Math.abs(d - 1.0) + 0.15 * blocked - 0.01 * clear[i * GW + j];
+    if (!best || score < best.score) best = { score, cell: [i, j] };
+  }
+  if (!best) return null;
+  const eye = toScene(worldOf(...best.cell)); eye.y += FP_EYE;
+  return { eye, look: toScene(c) };
+}
+function grabCrop(it) {
+  renderer.render(scene, camera);                // read the canvas in the same task, before it is cleared
+  const src = renderer.domElement, W = src.width, Hc = src.height;
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+  for (const p of boxCorners(it)) { const v = toScene(p).project(camera);
+    const x = (v.x + 1) / 2 * W, y = (1 - v.y) / 2 * Hc; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+  x0 = Math.max(0, x0); y0 = Math.max(0, y0); x1 = Math.min(W, x1); y1 = Math.min(Hc, y1);
+  if (x1 - x0 < 8 || y1 - y0 < 8) return null;
+  const m = Math.max(0.35 * Math.max(x1 - x0, y1 - y0), 80);
+  const cx0 = Math.max(0, x0 - m), cy0 = Math.max(0, y0 - m), cx1 = Math.min(W, x1 + m), cy1 = Math.min(Hc, y1 + m);
+  const k = Math.min(1, 640 / Math.max(cx1 - cx0, cy1 - cy0));
+  const cv = document.createElement("canvas"); cv.width = Math.round((cx1 - cx0) * k); cv.height = Math.round((cy1 - cy0) * k);
+  const g = cv.getContext("2d"); g.drawImage(src, cx0, cy0, cx1 - cx0, cy1 - cy0, 0, 0, cv.width, cv.height);
+  g.strokeStyle = "#ffd400"; g.lineWidth = 3; g.strokeRect((x0 - cx0) * k, (y0 - cy0) * k, (x1 - x0) * k, (y1 - y0) * k);
+  return cv.toDataURL("image/jpeg", 0.85);
+}
+function beginCapture(btn) {                     // camera belongs to the scan; overlays hidden so the VLM sees only the scan
+  scanning = true; $(btn).classList.add("on"); $(btn).dataset.label = $(btn).textContent; $(btn).textContent = "■ Stop";
+  const prevMode = camMode; setCamMode("free"); controls.enabled = false; camera.fov = 60; camera.updateProjectionMatrix();
+  const hidden = [avatar, startMarker, pathLine, ...boxObjs.map(b => b.grp)].filter(Boolean);
+  hidden.forEach(o => o.visible = false); labels.innerHTML = ""; $("avname").style.display = "none";
+  return () => { hidden.forEach(o => o.visible = true); scanning = false; lastList = "";
+    $(btn).classList.remove("on"); $(btn).textContent = $(btn).dataset.label; setCamMode(prevMode); };
+}
+async function vlmScan(ev) {
+  if (scanning) { scanning = false; return; }    // second click stops after the current box
+  const endCapture = beginCapture("vlmbtn");
+  let n = 0, ok = 0;
+  const redo = ev?.shiftKey;                     // shift-click rescans boxes that already have a label
+  for (const b of boxObjs) {
+    if (!scanning) break;
+    if (b.it.vlm && !redo) { n++; continue; }
+    n++; const v = viewFor(b.it);
+    if (!v) { console.log("[vlm]", b.it.id, "no clear viewpoint"); continue; }
+    camera.position.copy(v.eye); camera.lookAt(v.look); controls.target.copy(v.look);
+    $("status").textContent = `VLM scan ${n}/${boxObjs.length}: ${b.it.id}…`;
+    await nextFrames(30);                        // let Spark re-sort splats for the new view
+    const image = grabCrop(b.it); if (!image) continue;
+    try {
+      const r = await (await fetch("api/vlm/label", { method:"POST", headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ box_id: b.it.id, image }) })).json();
+      if (r.error) throw new Error(r.error);
+      b.it.vlm = r; ok++; console.log("[vlm]", b.it.id, r.asset_class, r.label, r.confidence);
+    } catch (e) { console.log("[vlm]", b.it.id, "error", e.message); $("status").textContent = `VLM error on ${b.it.id}: ${e.message}`; await nextFrames(60); }
+  }
+  endCapture();
+  $("status").textContent = `VLM scan: ${ok} boxes labelled. Rebuild with build_scene.py to map tags by class.`;
+}
+$("vlmbtn").onclick = vlmScan;
+
+// ---------- VLM detect: ignore the existing boxes. Stand at well-spread open spots, look around in
+// 60° steps, and let the VLM find equipment in each full frame. Each frame is stored with its camera
+// (pose in the .ply frame + projection) so vlm_lift.py can lift the 2D boxes to 3D with splat depth.
+function standpoints(spacing = 1.2) {
+  const cand = [];
+  for (let i = 0; i < GH; i += 2) for (let j = 0; j < GW; j += 2)
+    if (isWalk(i, j) && clear[i * GW + j] * NG.cell >= 0.2) cand.push([i, j, clear[i * GW + j]]);
+  cand.sort((a, b) => b[2] - a[2]);              // most open spots first, then keep them spread out
+  const out = [], r = spacing / NG.cell;
+  for (const c of cand) if (out.every(o => Math.hypot(o[0] - c[0], o[1] - c[1]) >= r)) out.push(c);
+  return out;
+}
+function grabFrame(maxW = 1024) {
+  renderer.render(scene, camera);
+  const src = renderer.domElement, k = Math.min(1, maxW / src.width);
+  const cv = document.createElement("canvas"); cv.width = Math.round(src.width * k); cv.height = Math.round(src.height * k);
+  cv.getContext("2d").drawImage(src, 0, 0, cv.width, cv.height);
+  camera.updateMatrixWorld();
+  const pose = world.matrixWorld.clone().invert().multiply(camera.matrixWorld);   // camera -> .ply frame
+  return { image: cv.toDataURL("image/jpeg", 0.85), width: cv.width, height: cv.height,
+           pose: pose.elements, proj: camera.projectionMatrix.elements };
+}
+async function vlmDetect() {
+  if (scanning) { scanning = false; return; }
+  const endCapture = beginCapture("detbtn");
+  const run = new Date().toISOString().slice(0, 19).replace(/[-:]/g, ""), spots = standpoints(), HEADS = 6;
+  const inflight = new Set(); let views = 0, found = 0, errors = 0;
+  for (let k = 0; k < spots.length && scanning; k++) {
+    const eye = toScene(worldOf(spots[k][0], spots[k][1])); eye.y += FP_EYE;
+    for (let h = 0; h < HEADS && scanning; h++) {
+      const a = h * 2 * Math.PI / HEADS;
+      camera.position.copy(eye); camera.lookAt(eye.clone().add(new THREE.Vector3(Math.sin(a), -0.25, Math.cos(a))));
+      $("status").textContent = `VLM detect: spot ${k + 1}/${spots.length}, view ${h + 1}/${HEADS} · ${found} detections`;
+      await nextFrames(30);
+      const body = { run, view_id: `S${String(k).padStart(2, "0")}_H${h}`, ...grabFrame() };
+      const p = fetch("api/vlm/detect", { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(body) })
+        .then(r => r.json()).then(r => { if (r.error) throw new Error(r.error); views++; found += r.detections.length;
+          console.log("[detect]", body.view_id, r.detections.map(d => `${d.asset_class}:${d.label}`).join(", ") || "-"); })
+        .catch(e => { errors++; console.log("[detect]", body.view_id, "error", e.message); })
+        .finally(() => inflight.delete(p));
+      inflight.add(p);
+      if (inflight.size >= 4) await Promise.race(inflight);   // a few requests in flight while we keep rendering
+    }
+  }
+  await Promise.all(inflight); endCapture();
+  $("status").textContent = `VLM detect run ${run}: ${views} views, ${found} detections, ${errors} errors. Next: vlm_lift.py`;
+}
+$("detbtn").onclick = vlmDetect;
+
+// ---------- loop
+const clock = new THREE.Clock(); let lastList = "";
+const labels = $("labels");
+renderer.setAnimationLoop(() => {
+  const dt = Math.min(clock.getDelta(), 0.1);
+  if (scanning) { renderer.render(scene, camera); return; }        // the scan drives the camera itself
+  if (playing) {
+    s = Math.min(pathLen, s + dt * speed);
+    const st = stops[stopIdx];
+    if (st && s >= st.d - 1e-6) {             // reached a stop: pause and diagnose
+      s = st.d; playing = false; focusTag = st.tag; stopIdx++; showCopilot(st.tag); renderMission();
+      finished = stopIdx >= stops.length;
+      $("play").textContent = finished ? "✓ Done" : `▶ Continue to ${stops[stopIdx].tag}`;
+    }
+  }
+  let p;
+  if (manual) {
+    drive(dt); p = mPos;
+    avatar.position.copy(toScene(p)); avatar.rotation.y = yaw;
+    if (camMode === "follow") { const c = manualCam(); camera.position.lerp(c.cam, 0.12); controls.target.lerp(c.look, 0.2); camera.lookAt(controls.target); }
+  } else {
+    const at = posAt(s); p = at.p;
+    const pS = toScene(p), dS = toScene(p.clone().add(at.dir)).sub(pS).setY(0).normalize();
+    avatar.position.copy(pS); avatar.rotation.y = Math.atan2(dS.x, dS.z);
+    if (camMode === "follow") { const c = chasePose(s); camera.position.lerp(c.cam, 0.08); controls.target.lerp(c.look, 0.15); camera.lookAt(controls.target); }
+  }
+  if (camMode === "fp") fpCam(dt); else if (camMode === "free") controls.update();
+  figure.visible = camMode !== "fp";                              // never see your own body in first person
+
+  const stopTags = new Set(stops.slice(stopIdx).map(x => x.tag));
+  const near = [];
+  for (const b of boxObjs) {
+    const d = distToBox(p, b.it), isT = stopTags.has(b.it.tag), inR = d <= radius;
+    b.grp.visible = showAll || inR || isT;
+    b.fill.material.opacity = camMode === "fp" ? (inR && d > 0.4 ? 0.1 : 0) : inR ? 0.22 : 0.06;   // fills turn into walls up close
+    b.edges.material.opacity = inR || isT ? 1 : 0.35;
+    if (inR) near.push({ it: b.it, d });
+  }
+  near.sort((a, b) => a.d - b.d); nearTags = near.filter(n => n.it.tag).map(n => n.it.tag);
+  labels.innerHTML = "";
+  for (const { it } of near) {
+    const top = new THREE.Vector3(...it.center); top.setComponent(UP, it.center[UP] - sgn*it.size[UP]/2);
+    const v = toScene(top).project(camera); if (v.z > 1) continue;
+    const el = document.createElement("div"); el.className = "lbl"; const c = stateCol(it);
+    el.style.color = c; el.style.borderColor = c; el.textContent = it.tag ? `${it.tag} · ${human(it.state)}` : it.id;
+    el.style.left = ((v.x+1)/2*innerWidth) + "px"; el.style.top = ((1-v.y)/2*innerHeight) + "px"; labels.appendChild(el);
+  }
+  // fade the walker when the camera is close so it never blocks the view
+  const camD = camera.position.distanceTo(avatar.position);
+  const fade = Math.min(1, Math.max(0.3, (camD - 0.6) / 0.9));
+  for (const m of figMats) m.opacity = m.userData.op * fade;
+  if (hover) { figure.position.y = hover * av.size + Math.sin(clock.elapsedTime * 2.5) * 0.02; rotors.forEach((r, i) => r.rotation.y += dt * (i % 2 ? 40 : -40)); }
+  else figure.position.y = 0;
+  if (av.name) {
+    const v = avatar.position.clone().add(new THREE.Vector3(0, figTop * av.size + 0.05, 0)).project(camera);
+    const n = $("avname"); n.style.display = v.z > 1 || camMode === "fp" ? "none" : "block";
+    n.style.left = ((v.x+1)/2*innerWidth) + "px"; n.style.top = ((1-v.y)/2*innerHeight) + "px";
+  }
+  const key = near.map(n => n.it.id + n.d.toFixed(1)).join() + stopIdx;
+  if (key !== lastList) { lastList = key; $("near").innerHTML = near.map(n => card(n.it, n.d)).join("") || `<div class="mut">Nothing within ${radius.toFixed(1)} m.</div>`; $("ncount").textContent = `(${near.length})`; }
+  if (showXYZ) {
+    lastMe.copy(p); $("c-me").textContent = fmt3(p);
+    const o = toScene(axOrigin);
+    ["x", "y", "z"].forEach((n, k) => { const tip = axOrigin.clone(); tip.setComponent(k, tip.getComponent(k) + 1.1);
+      const v = toScene(tip).project(camera); const d = axLbl[k];
+      d.style.display = v.z > 1 ? "none" : "block"; d.style.left = ((v.x + 1) / 2 * innerWidth) + "px"; d.style.top = ((1 - v.y) / 2 * innerHeight) + "px"; });
+  }
+  const nxt = stops[stopIdx];
+  $("status").textContent = `${s.toFixed(1)} / ${pathLen.toFixed(1)} m` + (nxt ? ` · next stop ${nxt.tag} in ${(nxt.d - s).toFixed(1)} m` : " · route complete");
+  renderer.render(scene, camera);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,362 @@
+{
+ "OBJ-009": {
+  "label": "centrifugal pump with electric motor",
+  "asset_class": "PROCESS_PUMP",
+  "confidence": 0.9,
+  "visual_evidence": "A black pump assembly with a visible electric motor mounted on top, connected to piping with flanged joints, and situated on a concrete base, typical of a centrifugal pump setup.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:03:23",
+  "raw": null,
+  "image": "OBJ-009_20261107T000323_centrifugal-pump-with-electric-motor.jpg"
+ },
+ "OBJ-010": {
+  "label": "vertical cylindrical tank",
+  "asset_class": "OTHER_EQUIPMENT",
+  "confidence": 0.85,
+  "visual_evidence": "A tall, white cylindrical object with a green band at the top, consistent with a storage tank or pressure vessel, is visible within the yellow rectangle.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:03:28",
+  "raw": null,
+  "image": "OBJ-010_20261107T000328_vertical-cylindrical-tank.jpg"
+ },
+ "OBJ-012": {
+  "label": "hand pallet jack",
+  "asset_class": "NOT_EQUIPMENT",
+  "confidence": 0.95,
+  "visual_evidence": "The object is a manual hand pallet jack with a handle, hydraulic mechanism, and wheels, used for moving pallets, and is not part of the industrial process equipment.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:03:38",
+  "raw": null,
+  "image": "OBJ-012_20261107T000338_hand-pallet-jack.jpg"
+ },
+ "OBJ-013": {
+  "label": "ladder",
+  "asset_class": "NOT_EQUIPMENT",
+  "confidence": 0.95,
+  "visual_evidence": "A metal ladder is visible in the center of the yellow rectangle, attached to a framework and extending vertically.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:03:43",
+  "raw": null,
+  "image": "OBJ-013_20261107T000343_ladder.jpg"
+ },
+ "OBJ-014": {
+  "label": "washing machine",
+  "asset_class": "NOT_EQUIPMENT",
+  "confidence": 0.95,
+  "visual_evidence": "A white front-loading washing machine is clearly visible on the right side of the yellow rectangle, surrounded by storage racks and buckets, indicating it is household equipment, not industrial process equipment.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:03:48",
+  "raw": null,
+  "image": "OBJ-014_20261107T000348_washing-machine.jpg"
+ },
+ "OBJ-015": {
+  "label": "manual gate valve with handwheel",
+  "asset_class": "CONTROL_VALVE",
+  "confidence": 0.9,
+  "visual_evidence": "A large vertical pipe with a manual handwheel valve attached, featuring a red handle and flanged connections, indicating a control valve used for flow regulation.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:16:05",
+  "raw": null,
+  "image": "OBJ-015_20261107T001605_manual-gate-valve-with-handwheel.jpg"
+ },
+ "OBJ-017": {
+  "label": "manual gate valve",
+  "asset_class": "CONTROL_VALVE",
+  "confidence": 0.7,
+  "visual_evidence": "A vertical red pipe with a visible valve body and handwheel, connected to other piping and instrumentation, suggesting a manual control valve in a process line.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:04:04",
+  "raw": null,
+  "image": "OBJ-017_20261107T000404_manual-gate-valve.jpg"
+ },
+ "OBJ-021": {
+  "label": "green folding chair",
+  "asset_class": "NOT_EQUIPMENT",
+  "confidence": 0.95,
+  "visual_evidence": "A bright green, padded folding chair with a white base is clearly visible in the center-right of the yellow rectangle, surrounded by industrial equipment but not part of the process system.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:04:14",
+  "raw": null,
+  "image": "OBJ-021_20261107T000414_green-folding-chair.jpg"
+ },
+ "OBJ-022": {
+  "label": "ladder",
+  "asset_class": "NOT_EQUIPMENT",
+  "confidence": 0.9,
+  "visual_evidence": "A tall, white, straight ladder is leaning against the wall within the yellow rectangle, visible on the right side of the image.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:04:19",
+  "raw": null,
+  "image": "OBJ-022_20261107T000419_ladder.jpg"
+ },
+ "OBJ-025": {
+  "label": "hand truck",
+  "asset_class": "NOT_EQUIPMENT",
+  "confidence": 0.95,
+  "visual_evidence": "The yellow rectangle contains a hand truck with large wheels and a handle, along with a white container and orange plastic sheeting, all of which are non-industrial equipment items.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:04:37",
+  "raw": null,
+  "image": "OBJ-025_20261107T000437_hand-truck.jpg"
+ },
+ "OBJ-026": {
+  "label": "office chair",
+  "asset_class": "NOT_EQUIPMENT",
+  "confidence": 1.0,
+  "visual_evidence": "The object is a black rolling office chair with a mesh back, armrests, and five caster wheels, clearly identifiable as furniture.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:04:42",
+  "raw": null,
+  "image": "OBJ-026_20261107T000442_office-chair.jpg"
+ },
+ "OBJ-028": {
+  "label": "ladder",
+  "asset_class": "NOT_EQUIPMENT",
+  "confidence": 0.95,
+  "visual_evidence": "A tall, metallic ladder is visible on the right side within the yellow rectangle, leaning against the wall and surrounded by other non-equipment items like a cart and buckets.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:05:10",
+  "raw": null,
+  "image": "OBJ-028_20261107T000510_ladder.jpg"
+ },
+ "OBJ-029": {
+  "label": "ladder",
+  "asset_class": "NOT_EQUIPMENT",
+  "confidence": 1.0,
+  "visual_evidence": "A metal A-frame ladder is clearly visible on the right side of the image, leaning against the wall.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:05:14",
+  "raw": null,
+  "image": "OBJ-029_20261107T000514_ladder.jpg"
+ },
+ "OBJ-030": {
+  "label": "hand truck",
+  "asset_class": "NOT_EQUIPMENT",
+  "confidence": 0.95,
+  "visual_evidence": "The object is a metal hand truck with yellow wheels and a green handle, commonly used for moving items, and is not industrial process equipment.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:05:19",
+  "raw": null,
+  "image": "OBJ-030_20261107T000519_hand-truck.jpg"
+ },
+ "OBJ-031": {
+  "label": "hand truck",
+  "asset_class": "NOT_EQUIPMENT",
+  "confidence": 0.95,
+  "visual_evidence": "The object is a metal hand truck with yellow wheels and a handle, used for moving items, which is considered clutter or furniture in an industrial setting.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:05:38",
+  "raw": null,
+  "image": "OBJ-031_20261107T000538_hand-truck.jpg"
+ },
+ "OBJ-032": {
+  "label": "metal cart with shelves",
+  "asset_class": "NOT_EQUIPMENT",
+  "confidence": 0.95,
+  "visual_evidence": "The yellow rectangle highlights a wheeled metal cart with multiple shelves, holding tools and supplies, which is typical workshop furniture, not industrial process equipment.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:05:50",
+  "raw": null,
+  "image": "OBJ-032_20261107T000550_metal-cart-with-shelves.jpg"
+ },
+ "OBJ-033": {
+  "label": "utility cart with clutter",
+  "asset_class": "NOT_EQUIPMENT",
+  "confidence": 0.95,
+  "visual_evidence": "The yellow rectangle contains a metal utility cart with wheels, holding various items like boxes, bags, and tools, which are not industrial equipment but rather storage or maintenance clutter.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:05:55",
+  "raw": null,
+  "image": "OBJ-033_20261107T000555_utility-cart-with-clutter.jpg"
+ },
+ "OBJ-034": {
+  "label": "ladder",
+  "asset_class": "NOT_EQUIPMENT",
+  "confidence": 0.95,
+  "visual_evidence": "The object inside the yellow rectangle is a black metal frame with steps, consistent with a ladder or step stool, surrounded by other ladders and storage items in a cluttered industrial space.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:06:00",
+  "raw": null,
+  "image": "OBJ-034_20261107T000600_ladder.jpg"
+ },
+ "OBJ-035": {
+  "label": "ladder",
+  "asset_class": "NOT_EQUIPMENT",
+  "confidence": 0.95,
+  "visual_evidence": "The object inside the yellow rectangle is a metallic step ladder with gray foot platforms, positioned next to a black trash bin, clearly identifiable as non-process equipment.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:06:05",
+  "raw": null,
+  "image": "OBJ-035_20261107T000605_ladder.jpg"
+ },
+ "OBJ-036": {
+  "label": "ladder",
+  "asset_class": "NOT_EQUIPMENT",
+  "confidence": 0.95,
+  "visual_evidence": "The object inside the yellow rectangle is a metal ladder with steps and a platform, positioned next to a black bucket, which is typical storage or utility equipment in a workshop or industrial room.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:06:10",
+  "raw": null,
+  "image": "OBJ-036_20261107T000610_ladder.jpg"
+ },
+ "OBJ-037": {
+  "label": "ladder",
+  "asset_class": "NOT_EQUIPMENT",
+  "confidence": 0.95,
+  "visual_evidence": "The object inside the yellow rectangle is a metal ladder with rungs and side rails, leaning against a wall, consistent with storage or maintenance equipment.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:06:14",
+  "raw": null,
+  "image": "OBJ-037_20261107T000614_ladder.jpg"
+ },
+ "OBJ-039": {
+  "label": "electrical cabinet",
+  "asset_class": "OTHER_EQUIPMENT",
+  "confidence": 0.8,
+  "visual_evidence": "A beige rectangular box mounted on the wall with visible wiring and a small switch, consistent with an electrical cabinet.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:06:23",
+  "raw": null,
+  "image": "OBJ-039_20261107T000623_electrical-cabinet.jpg"
+ },
+ "OBJ-001": {
+  "label": "electrical cabinet",
+  "asset_class": "OTHER_EQUIPMENT",
+  "confidence": 0.9,
+  "visual_evidence": "A white, vertically oriented cabinet with multiple compartments and a visible label, mounted on a wall with surrounding wiring and conduits, consistent with an electrical distribution or control cabinet.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:02:52",
+  "raw": null,
+  "image": "OBJ-001_20261107T000252_electrical-cabinet.jpg"
+ },
+ "OBJ-003": {
+  "label": "electrical cabinet",
+  "asset_class": "OTHER_EQUIPMENT",
+  "confidence": 0.7,
+  "visual_evidence": "Two white box-like units with visible wiring and mounting brackets, likely electrical enclosures or control panels, mounted on a wall above a blue-covered object.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:02:57",
+  "raw": null,
+  "image": "OBJ-003_20261107T000257_electrical-cabinet.jpg"
+ },
+ "OBJ-004": {
+  "label": "electrical cabinet",
+  "asset_class": "OTHER_EQUIPMENT",
+  "confidence": 0.9,
+  "visual_evidence": "A large beige electrical cabinet with multiple switches and breakers is visible, mounted on a concrete wall, with boxes and ducting nearby.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:03:02",
+  "raw": null,
+  "image": "OBJ-004_20261107T000302_electrical-cabinet.jpg"
+ },
+ "OBJ-005": {
+  "label": "OTHER_EQUIPMENT",
+  "asset_class": "OTHER_EQUIPMENT",
+  "confidence": 0.7,
+  "visual_evidence": "The yellow rectangle contains a vertical arrangement of pipes, wires, and what appears to be a small cylindrical device with a yellow cap, likely part of a utility or instrumentation setup mounted on a wall, consistent with industrial equipment but not clearly identifiable as a specific asset class.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:03:08",
+  "raw": null,
+  "image": "OBJ-005_20261107T000308_other-equipment.jpg"
+ },
+ "OBJ-006": {
+  "label": "pipe",
+  "asset_class": "OTHER_EQUIPMENT",
+  "confidence": 0.9,
+  "visual_evidence": "A vertical cylindrical object with smooth surface and consistent diameter, typical of a pipe, is visible within the yellow rectangle.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:03:13",
+  "raw": null,
+  "image": "OBJ-006_20261107T000313_pipe.jpg"
+ },
+ "OBJ-008": {
+  "label": "centrifugal pump",
+  "asset_class": "PROCESS_PUMP",
+  "confidence": 0.75,
+  "visual_evidence": "A large rotating equipment with a motor on top and connected piping, typical of a centrifugal pump, is visible in the center of the yellow rectangle.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:03:18",
+  "raw": null,
+  "image": "OBJ-008_20261107T000318_centrifugal-pump.jpg"
+ },
+ "OBJ-011": {
+  "label": "air compressor tank",
+  "asset_class": "OTHER_EQUIPMENT",
+  "confidence": 0.9,
+  "visual_evidence": "A large red cylindrical tank with a black hose and a label, supported by legs, is visible, consistent with an air compressor storage tank in an industrial setting.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:03:33",
+  "raw": null,
+  "image": "OBJ-011_20261107T000333_air-compressor-tank.jpg"
+ },
+ "OBJ-016": {
+  "label": "manual gate valve with handwheel",
+  "asset_class": "CONTROL_VALVE",
+  "confidence": 0.7,
+  "visual_evidence": "A reddish-brown valve body with a handwheel and cross-shaped handle is visible, consistent with a manual gate valve, mounted on piping within the industrial setting.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:03:58",
+  "raw": null,
+  "image": "OBJ-016_20261107T000358_manual-gate-valve-with-handwheel.jpg"
+ },
+ "OBJ-019": {
+  "label": "manual gate valve",
+  "asset_class": "CONTROL_VALVE",
+  "confidence": 0.7,
+  "visual_evidence": "A valve with a handwheel and flanged connections is visible, mounted on a pipe, consistent with a manual gate valve in an industrial setting.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:04:09",
+  "raw": null,
+  "image": "OBJ-019_20261107T000409_manual-gate-valve.jpg"
+ },
+ "OBJ-023": {
+  "label": "pipe with flanged connection",
+  "asset_class": "OTHER_EQUIPMENT",
+  "confidence": 0.9,
+  "visual_evidence": "The yellow rectangle highlights a section of metallic pipe with visible flanged joints, typical of industrial piping systems, resting above a large white equipment enclosure.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:04:25",
+  "raw": null,
+  "image": "OBJ-023_20261107T000425_pipe-with-flanged-connection.jpg"
+ },
+ "OBJ-024": {
+  "label": "red pressure vessel",
+  "asset_class": "OTHER_EQUIPMENT",
+  "confidence": 0.9,
+  "visual_evidence": "The yellow rectangle highlights a large vertical white cylinder next to red cylindrical tanks, which appear to be pressure vessels or storage tanks, common in industrial equipment rooms.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:04:30",
+  "raw": null,
+  "image": "OBJ-024_20261107T000430_red-pressure-vessel.jpg"
+ },
+ "OBJ-027": {
+  "label": "manual gate valve",
+  "asset_class": "CONTROL_VALVE",
+  "confidence": 0.7,
+  "visual_evidence": "A vertical valve with a handwheel and flanged connections is visible, consistent with a manual gate valve, though the render is blurry.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:05:04",
+  "raw": null,
+  "image": "OBJ-027_20261107T000504_manual-gate-valve.jpg"
+ },
+ "OBJ-038": {
+  "label": "control valve with actuator",
+  "asset_class": "CONTROL_VALVE",
+  "confidence": 0.85,
+  "visual_evidence": "A valve with a blue actuator and a black electronic controller is mounted on a pipe, indicating automated control functionality.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:06:19",
+  "raw": null,
+  "image": "OBJ-038_20261107T000619_control-valve-with-actuator.jpg"
+ },
+ "OBJ-040": {
+  "label": "manual gate valve with handwheel",
+  "asset_class": "CONTROL_VALVE",
+  "confidence": 0.8,
+  "visual_evidence": "A vertical pipe assembly with a handwheel valve and a blue actuator-like component, connected to white pipes, indicating a manual control valve setup.",
+  "model": "Qwen/Qwen3-VL-32B-Instruct",
+  "at": "2026-11-07T00:06:28",
+  "raw": null,
+  "image": "OBJ-040_20261107T000628_manual-gate-valve-with-handwheel.jpg"
+ }
+}
