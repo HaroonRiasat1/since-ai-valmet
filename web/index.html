@@ -45,7 +45,6 @@
   svg text { fill:var(--mut); font-size:9px; }
   select { background:#1d242d; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:5px 6px; font:inherit; max-width:230px; }
   select.on { background:#20354d; border-color:var(--acc); }
-  #pick-hint { position:fixed; top:70px; left:50%; transform:translateX(-50%); padding:6px 12px; display:none; }
   #coords input { background:#0f1216; color:var(--text); border:1px solid var(--line); border-radius:5px; padding:3px 5px; font:inherit; }
   #avpanel { left:12px; padding:10px 12px; width:260px; display:none; }
   #avpanel .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin:6px 0 8px; }
@@ -78,24 +77,19 @@
   <h1>Field-Service Navigator</h1>
   <select id="target" title="Target asset"></select>
   <button id="round">Inspection round</button>
-  <button id="setstart">Set start</button>
   <button id="play">▶ Start</button>
   <button id="reset">↺ Reset</button>
   <button id="follow" class="on" title="Camera mode (V)">First person</button>
   <button id="allbox">All boxes</button>
   <button id="healthbtn" class="on" title="Blinking centre lights on degrading assets (H)">Health lights</button>
-  <button id="bimbtn" style="display:none" title="IFC overlay (scan coordinates)">BIM</button>
   <select id="classsel" title="Show only the boxes of one class"></select>
-  <select id="sourcesel" title="Show only the boxes from one source"></select>
   <button id="gridbtn" title="Show the navigation grid on the floor (G)">Grid</button>
   <button id="mapbtn" class="on" title="2D map (M)">Map</button>
-  <button id="coordsbtn">XYZ</button>
   <button id="avbtn">Avatar</button>
   <button id="restorebtn" style="display:none" title="Reload and bring back objects removed this session">Restore removed</button>
   <label>radius <input id="rad" type="range" min="0.5" max="3" step="0.1" value="1.5"><span id="radv">1.5 m</span></label>
   <label>speed <input id="spd" type="range" min="0.3" max="3" step="0.1" value="1"><span id="spdv">1.0×</span></label>
 </div>
-<div id="pick-hint" class="panel">Click on the floor to place the start point (Esc to cancel)</div>
 <div id="drive" class="panel" style="position:fixed;bottom:12px;left:50%;transform:translateX(-50%);padding:6px 12px;display:none">
   Driving: <b>W/S</b> walk · <b>A/D</b> step sideways · <b>←/→</b> turn ·<b>Shift</b> faster · <b>R</b> route to target from here · <b>▶</b> back to route</div>
 <div id="keyhint" class="mut" style="position:fixed;bottom:52px;left:12px">Tip: press W/A/S/D or arrow keys to walk yourself</div>
@@ -312,10 +306,21 @@ let backend = false, gridName = "fine";
 const CG = scene_.cellgrid;
 const toVec = (p) => new THREE.Vector3(...p);
 async function api(path, body) {
-  const r = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const url = path.startsWith("/") ? path : `/${path.replace(/^\//, "")}`;
+  const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
   const j = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(j.error || j.detail?.[0]?.msg || j.detail || r.status);
+  if (!r.ok) throw new Error(j.error || j.detail?.[0]?.msg || j.detail || r.statusText || r.status);
   return j;
+}
+/** @returns {true|"stale"} */
+async function removeOnServer(id) {
+  const r = await fetch(`/api/objects/${encodeURIComponent(id)}/remove`, {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: "{}",
+  });
+  if (r.ok) return true;
+  if (r.status === 405) return "stale";
+  const j = await r.json().catch(() => ({}));
+  throw new Error(j.error || j.detail?.[0]?.msg || j.detail || r.statusText || r.status);
 }
 const here = () => (manual ? mPos : posAt(s).p);
 const startBody = () => { const p = pts.length || manual ? here() : worldOf(...startCell); return { grid: gridName, position: [p.x, p.y, p.z] }; };
@@ -437,8 +442,10 @@ async function removeObject(b, { skipConfirm = false, skipPersist = false } = {}
     if (!confirm(msg)) return;
   }
   if (backend) {
-    try { await api(`api/objects/${encodeURIComponent(it.id)}/remove`, {}); }
-    catch (e) { navNote(`Could not remove on server: ${e.message}`, true); return; }
+    try {
+      const ok = await removeOnServer(it.id);
+      if (ok === "stale") navNote("Removed in the viewer only — restart the backend (uv run python -m backend) so routes stay in sync.", true);
+    } catch (e) { navNote(`Could not remove on server: ${e.message}`, true); return; }
   }
   splatHideBox(it);
   freeGridCells(it);
@@ -475,45 +482,43 @@ async function applyStoredRemovals() {
 }
 async function syncRemovedToBackend() {
   if (!backend || !removedStore.length) return;
+  let stale = false;
   for (const { id } of removedStore) {
-    try { await api(`api/objects/${encodeURIComponent(id)}/remove`, {}); } catch {}
+    try { const ok = await removeOnServer(id); if (ok === "stale") stale = true; } catch {}
   }
+  if (stale) navNote("Restart the backend (uv run python -m backend) to sync removed objects with server routing.", true);
 }
 
 // ---------- BIM GLB overlay (stages 8–12)
 let bimRoot = null, bimVisible = false, bimLoaded = false, bimIndexByGid = {}, bimByMesh = new Map();
-fetch("data/bim/index.json").then(r => r.ok ? r.json() : null).then(j => {
+async function ensureBimLoaded() {
+  if (bimLoaded) return;
+  const gltf = await new GLTFLoader().loadAsync("data/bim/equipment_room.glb");
+  bimRoot = gltf.scene;
+  bimRoot.traverse(o => {
+    if (!o.isMesh) return;
+    o.material = o.material.clone();
+    const hasVtxCol = !!(o.geometry?.attributes?.color);
+    o.material.vertexColors = hasVtxCol;
+    o.material.transparent = true;
+    o.material.opacity = hasVtxCol ? 0.9 : 0.4;
+    o.material.depthWrite = !hasVtxCol;
+    o.material.toneMapped = false;
+    const meta = bimIndexByGid[o.name];
+    if (meta) bimByMesh.set(o, meta);
+  });
+  world.add(bimRoot);
+  bimLoaded = true;
+}
+fetch("data/bim/index.json").then(r => r.ok ? r.json() : null).then(async j => {
   if (!j?.elements) return;
   for (const e of j.elements) bimIndexByGid[e.global_id] = e;
-  $("bimbtn").style.display = "";
-  if (new URLSearchParams(location.search).has("bim")) $("bimbtn").click();
-}).catch(() => {});
-$("bimbtn").onclick = async () => {
-  if (!bimLoaded) {
-    $("bimbtn").disabled = true;
-    try {
-      const gltf = await new GLTFLoader().loadAsync("data/bim/equipment_room.glb");
-      bimRoot = gltf.scene;
-      bimRoot.traverse(o => {
-        if (!o.isMesh) return;
-        o.material = o.material.clone();
-        const hasVtxCol = !!(o.geometry?.attributes?.color);
-        o.material.vertexColors = hasVtxCol;
-        o.material.transparent = true;
-        o.material.opacity = hasVtxCol ? 0.9 : 0.4;
-        o.material.depthWrite = !hasVtxCol;
-        o.material.toneMapped = false;
-        const meta = bimIndexByGid[o.name];
-        if (meta) bimByMesh.set(o, meta);
-      });
-      world.add(bimRoot);
-      bimLoaded = true;
-    } finally { $("bimbtn").disabled = false; }
+  if (new URLSearchParams(location.search).has("bim")) {
+    await ensureBimLoaded();
+    bimVisible = true;
+    if (bimRoot) bimRoot.visible = true;
   }
-  bimVisible = !bimVisible;
-  if (bimRoot) bimRoot.visible = bimVisible;
-  $("bimbtn").classList.toggle("on", bimVisible);
-};
+}).catch(() => {});
 
 // ---------- avatar (scaled to the scan: ceiling is ~2.1 units above the floor)
 const AVATAR_H = 0.75;
@@ -908,28 +913,11 @@ function fillFilter(key, id, all) {                // counts follow the other fi
   for (const v of [...new Set(boxObjs.map(b => b[key]))].sort()) sel.add(new Option(`${v} (${counts.get(v) || 0})`, v));
   sel.value = filters[key]; sel.classList.toggle("on", !!filters[key]);
 }
-const fillFilters = () => { fillFilter("cls", "classsel", "All classes"); fillFilter("src", "sourcesel", "All sources"); };
+const fillFilters = () => { fillFilter("cls", "classsel", "All classes"); };
 fillFilters();
 $("classsel").onchange = (e) => { filters.cls = e.target.value; fillFilters(); };
-$("sourcesel").onchange = (e) => { filters.src = e.target.value; fillFilters(); };
 $("rad").oninput = (e) => { radius = +e.target.value; $("radv").textContent = radius.toFixed(1) + " m"; ring.scale.setScalar(radius / 1.5); };
 $("spd").oninput = (e) => { speed = +e.target.value; $("spdv").textContent = speed.toFixed(1) + "×"; };
-
-// set start by clicking the floor
-let picking = false;
-$("setstart").onclick = () => { picking = !picking; $("setstart").classList.toggle("on", picking); $("pick-hint").style.display = picking ? "block" : "none";
-  if (picking && camMode !== "free") setCamMode("free"); };
-addEventListener("keydown", (e) => { if (e.key === "Escape" && picking) $("setstart").click(); });
-const floorPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-renderer.domElement.addEventListener("click", (ev) => {
-  if (!picking) return;
-  const floorS = toScene(worldOf(0, 0)); floorPlane.constant = -floorS.y;
-  const ray = new THREE.Raycaster(); ray.setFromCamera(new THREE.Vector2(ev.clientX / innerWidth * 2 - 1, -(ev.clientY / innerHeight) * 2 + 1), camera);
-  const hit = new THREE.Vector3(); if (!ray.ray.intersectPlane(floorPlane, hit)) return;
-  const raw = world.worldToLocal(hit.clone()); const c = nearestWalk(...cellOf(raw)); if (!c) return;
-  startCell = c; $("setstart").click();
-  stops.length > 1 ? routeRound() : routeTo($("target").value, worldOf(...c).toArray());
-});
 
 // ---------- click an object (or a nearby card) for AI analysis. A drag is a look/orbit, not a click.
 // Mapped boxes open the grounded copilot; unmapped ones show their VLM evidence and can be identified
@@ -975,18 +963,14 @@ function analyze(b) {
     return;
   }
   const it = b.it, v = it.vlm, d = distToBox(manual ? mPos : posAt(s).p, it);
+  const vlmBlock = v ? `<h3>Observation</h3><ul>
+    <li>VLM sees <b>${esc(v.label)}</b> (${human(v.asset_class)}), confidence ${v.confidence}.</li>
+    ${v.visual_evidence ? `<li class="mut">${esc(v.visual_evidence)}</li>` : ""}</ul>` : "";
+  const idvBlock = llm.on ? `<button class="idv">Identify with VLM</button> <span class="mut idv-out"></span>` : "";
   $("copilot").innerHTML = `<h2>AI object analysis</h2><div class="card" style="border-color:${stateCol(it)}">
     <div class="row"><b>${it.id}</b><span><span class="pill" style="color:${stateCol(it)};border-color:${stateCol(it)}">unmapped</span> <button class="del" title="Remove from scene (Delete)">Delete object</button> <button class="x">✕</button></span></div>
     <div class="mut">${d.toFixed(1)} m away · size ${it.size.map(x => x.toFixed(2)).join(" × ")}${it.label ? ` · detector: ${esc(it.label)}` : ""}</div>
-    <h3>Observation</h3><ul>
-    ${v ? `<li>VLM sees <b>${esc(v.label)}</b> (${human(v.asset_class)}), confidence ${v.confidence}.</li>
-      ${v.visual_evidence ? `<li class="mut">${esc(v.visual_evidence)}</li>` : ""}` : "<li>No VLM label for this box yet.</li>"}
-    <li>No builder-pack record is linked to this box, so there is no telemetry, alarm or work-order evidence to diagnose. <code>DOC-3D-MAPPING</code></li></ul>
-    <h3>Next safe verification steps</h3><ul>
-    <li>Confirm what the object is on site (nameplate, QR/NFC) before linking it to an asset tag.</li>
-    <li>If it is equipment, add <code>${it.id},&lt;tag&gt;</code> to <code>data/mapping.csv</code> and rebuild the scene.</li></ul>
-    ${llm.on ? `<button class="idv">Identify with VLM</button> <span class="mut idv-out"></span>` :
-      `<div class="mut">Choose a ready AI provider to identify it with the vision model.</div>`}</div>`;
+    ${vlmBlock}${idvBlock}</div>`;
   $("copilot").classList.add("show");
   $("copilot").querySelector(".x").onclick = clearAnalysis;
   wireDelete($("copilot"));
@@ -1013,7 +997,7 @@ function wireDelete(root) {
 }
 renderer.domElement.addEventListener("pointerdown", (e) => downAt = { x: e.clientX, y: e.clientY });
 renderer.domElement.addEventListener("click", (ev) => {
-  if (picking || !downAt || Math.hypot(ev.clientX - downAt.x, ev.clientY - downAt.y) > 5) return;
+  if (!downAt || Math.hypot(ev.clientX - downAt.x, ev.clientY - downAt.y) > 5) return;
   const b = boxAt(ev);
   if (b) analyze(b);
   else {
@@ -1026,7 +1010,7 @@ renderer.domElement.addEventListener("click", (ev) => {
   }
 });
 renderer.domElement.addEventListener("pointermove", (ev) => {
-  if (ev.buttons || picking) return;
+  if (ev.buttons) return;
   renderer.domElement.style.cursor = (boxAt(ev) || bimAt(ev)) ? "pointer" : "";
 });
 $("near").onclick = (e) => { const c = e.target.closest("[data-box]"); if (c) analyze(boxObjs.find(b => b.it.id === c.dataset.box)); };
@@ -1102,9 +1086,6 @@ axes.position.copy(axOrigin);
 const axLbl = ["x", "y", "z"].map((n, k) => { const d = document.createElement("div"); d.className = "axl";
   d.style.color = ["#ff5d5d", "#3ecf8e", "#5aa9ff"][k]; d.textContent = `+${n}`; d.style.display = "none"; document.body.appendChild(d); return d; });
 $("c-floor").textContent = (frame.floor * sgn).toFixed(3);
-$("coordsbtn").onclick = () => { showXYZ = !showXYZ; $("coordsbtn").classList.toggle("on", showXYZ);
-  $("coords").style.display = showXYZ ? "block" : "none"; axes.visible = showXYZ; axLbl.forEach(d => d.style.display = showXYZ ? "block" : "none");
-  $("keyhint").style.display = showXYZ ? "none" : "block"; lastList = ""; };
 const hoverPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
 renderer.domElement.addEventListener("mousemove", (ev) => {
   if (!showXYZ) return;
@@ -1246,7 +1227,7 @@ $("mapbtn").onclick = () => { showMap = !showMap; $("mapbtn").classList.toggle("
 mapCanvas.style.display = "block";
 addEventListener("keydown", (e) => { if (["INPUT", "SELECT"].includes(e.target.tagName)) return;
   if (e.code === "KeyG") $("gridbtn").click(); if (e.code === "KeyM") $("mapbtn").click(); if (e.code === "KeyH") $("healthbtn").click();
-  if ((e.code === "Delete" || e.code === "Backspace") && selBox && !picking) { e.preventDefault(); removeObject(selBox); } });
+  if ((e.code === "Delete" || e.code === "Backspace") && selBox) { e.preventDefault(); removeObject(selBox); } });
 
 // ---------- loop
 const clock = new THREE.Clock(); let lastList = "";
