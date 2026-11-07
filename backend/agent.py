@@ -44,6 +44,7 @@ TOOLS = [
         "type": "object", "properties": {
             "asset_class": {"type": "string", "enum": sorted(CLASS_WORDS.values())},
             "unhealthy_only": {"type": "boolean"},
+            "area": {"type": "string", "description": "Plant area, exactly as shown in the area field of a row"},
             "order": {"type": "string", "enum": ["walk", "health"]}}}}},
     {"type": "function", "function": {"name": "route_to", "description": "Compute a collision-free path from the technician to an asset and start it.", "parameters": {
         "type": "object", "properties": {"tag": {"type": "string"}}, "required": ["tag"]}}},
@@ -67,12 +68,12 @@ class Turn:
         except RouteError:
             return None
 
-    def search_assets(self, asset_class=None, unhealthy_only=False, order="walk"):
+    def search_assets(self, asset_class=None, unhealthy_only=False, order="walk", area=None):
         found = [a for a in self.scene.assets() if (not asset_class or a["asset_class"] == asset_class)
-                 and (not unhealthy_only or a["state"] != "healthy")]
+                 and (not unhealthy_only or a["state"] != "healthy") and (not area or a.get("area") == area)]
         # ponytail: walking distance only for the closest by straight line, since each route costs up to 150 ms on the fine grid
         found.sort(key=(lambda a: a["health"]) if order == "health" else (lambda a: math.dist(a["center"], self.position)))
-        rows = [{"tag": a["tag"], "asset_class": a["asset_class"], "state": a["state"], "health": a["health"], "issue": a.get("issue"),
+        rows = [{"tag": a["tag"], "asset_class": a["asset_class"], "area": a.get("area"), "state": a["state"], "health": a["health"], "issue": a.get("issue"),
                  "matched": a.get("matched", False), "walk": self.walk(a)} for a in found[:WALK_CHECKS]]
         rows = [r for r in rows if r["walk"] is not None]
         return rows if order == "health" else sorted(rows, key=lambda r: r["walk"])
@@ -123,9 +124,10 @@ def rule_based(turn: Turn, message: str) -> str | None:
     lowered = message.lower()
     asset_class = next((cls for word, cls in CLASS_WORDS.items() if word in lowered), None)
     worst = bool(WORST_WORDS.search(message))
-    if not asset_class and not worst:
+    area = next((a for a in {i.get("area") for i in turn.scene.assets()} if a and a.lower() in lowered), None)
+    if not asset_class and not worst and not area:
         return None
-    rows = turn.search_assets(asset_class, unhealthy_only=worst, order="health" if worst else "walk")
+    rows = turn.search_assets(asset_class, unhealthy_only=worst, order="health" if worst else "walk", area=area)
     choices = [r for r in rows if r["matched"]] or rows
     if not choices:
         return "No reachable asset fits that request."

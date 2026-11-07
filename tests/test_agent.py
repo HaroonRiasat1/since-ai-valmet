@@ -112,3 +112,7 @@ def test_question_about_one_asset_uses_the_grounded_diagnosis(scene, monkeypatch
     monkeypatch.setattr(agent.copilot, "chat", lambda *_, **__: text("Drift, see `ASSET-001`."))
     out = ask(scene, "what is wrong with CV-001?")
     assert out["tools"] == ["diagnose"] and out["evidence_ids"] == ["ASSET-001"] and not out["unverified_citations"]
+
+
+def test_area_narrows_a_clear_request(scene):
+    assert ask(scene, "take me to the one in the Utility Island")["action"]["target"] == "P-001"

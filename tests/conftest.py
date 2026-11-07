@@ -24,7 +24,7 @@ def make_scene(tmp_path):
         {"id": "obj_a", "tag": "CV-001", "center": [0.3, 0, 0.3], "size": [0.1, 0.1, 0.1], "state": "degraded", "health": 50,
          "asset_class": "CONTROL_VALVE", "issue": "drift", "urgency": "high", "matched": True},
         {"id": "obj_b", "tag": "P-001", "center": [1.7, 0, 0.3], "size": [0.1, 0.1, 0.1], "state": "healthy", "health": 96,
-         "asset_class": "PROCESS_PUMP", "issue": "none", "urgency": "routine", "matched": True},
+         "asset_class": "PROCESS_PUMP", "area": "Utility Island", "issue": "none", "urgency": "routine", "matched": True},
     ]
     data = {
         "frame": {"up_axis": 1, "down_sign": 1, "floor": 1.0}, "items": items, "copilot": {}, "target_id": "obj_a",
