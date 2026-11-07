@@ -8,8 +8,9 @@ All plant data is the synthetic builder pack supplied for the challenge.
 
 ## What it does
 
-- **Extraction:** 168 objects found in the scan, with 30 assets mapped to them. 23 of the 30 sit on an object that
-  matches their class. The other 7 are shown as unconfirmed, never as fact.
+- **Extraction:** 166 objects in the scene (scan extraction, vision model, and grounded-sam-2). **40** carry full plant
+  metadata (30 builder-pack assets plus 10 grounded equipment linked via `data/synthetic/equipment_supplement.json`).
+  The rest are detection boxes only (class, box, notes).
 - **BIM export (optional):** stages 8–12 of the extraction pipeline write **IFC4** and a **GLB overlay** under
   `web/data/bim/` (toggle **BIM** in the viewer). See `Objects-Extraction/GroundingDino-SAM2/docs/bim-export.md`.
 - **Navigation:** two selectable grids (5 cm occupancy and a numbered 60×60 grid), From and To by tag or cell number,
@@ -17,20 +18,42 @@ All plant data is the synthetic builder pack supplied for the challenge.
 - **Assistant:** "go to the valve" routes from the current position. "What should we fix first?" queries the plant
   data and shows the table and the query behind it.
 - **Diagnosis:** on arrival, a grounded diagnosis that cites record IDs and separates observation from hypothesis.
-  Citations outside the evidence are flagged.
+  Citations outside the evidence are flagged. Optional **AI analysis** on an asset runs only after you enter a question and press **Ask**.
 - **Pluggable AI:** choose Featherless or LM Studio and the model in the page. Any OpenAI-compatible server can be added.
 
 ## Quick start
 
+From the repo root (`Since-AI/`):
+
 ```bash
-uv sync --extra dev          # or: pip install -e ".[dev]"
-cp .env.example .env         # add FEATHERLESS_API_KEY, or run LM Studio with a chat model loaded
+uv sync --all-extras          # backend, tests, pipeline (pandas/openpyxl for rebuilds)
+cp .env.example .env          # add FEATHERLESS_API_KEY, or use LM Studio (see below)
 uv run python -m backend --gpu
 ```
 
-`--gpu` opens the app in its own window on the NVIDIA GPU (about 124 fps, against 12 on the integrated GPU). Use it on any laptop with two GPUs. Without it, the server starts alone: open http://127.0.0.1:8000. For a local model, start the LM Studio server and load a chat model that supports tools.
+`--gpu` opens the app in its own window on the NVIDIA GPU (about 124 fps, against 12 on the integrated GPU). Use it on any laptop with two GPUs. **Without `--gpu`**, the server starts alone: open **http://127.0.0.1:8000** in a browser (hard-refresh after pulling UI changes: `Cmd+Shift+R` / `Ctrl+Shift+R`).
+
+For a **local model**, start the LM Studio server, load a chat model that supports tools, and pick it under **AI provider** in the page (or set `LMSTUDIO_URL` / `LMSTUDIO_MODEL` in `.env`).
 
 With Docker: `docker build -t navigator . && docker run --env-file .env -p 8000:8000 navigator`.
+
+### What you need in the repo
+
+The committed `web/data/scene.json`, splat chunks, `data/semantic_layer.json`, and `data/semantic/` are enough to run the demo. To **rebuild** from the scan you also need (not in git):
+
+- `Equipment Room.ply` (or a symlink at the repo root)
+- `builder_pack.xlsx` (symlink at the repo root)
+
+### Using the 3D viewer
+
+1. Start the backend (above) and open the app URL.
+2. **Walk / route:** set **From**, choose a target tag or use the assistant chat.
+3. **Boxes:** turn on **All boxes** or filter by **class** / **source** (grounded-sam-2, extraction, vision model).
+4. **Click a box** (or a Nearby card) for the rule-based diagnosis card (from `scene.json`, no model call).
+5. **AI analysis** (below diagnosis): type a question and press **Ask**. The copilot does **not** run until you submit a non-empty question.
+6. Optional **BIM** toggle overlays `web/data/bim/equipment_room.glb` when present.
+
+Assistant chat (`api/agent/chat`) and per-asset AI (`api/copilot/query`) need a configured provider in `.env`.
 
 ## Architecture
 
@@ -109,12 +132,25 @@ Needs the scan and the builder pack, which are not in the repo.
 
 ```bash
 uv sync --extra pipeline
-python pipeline/build_scene.py "Equipment Room.ply" builder_pack.xlsx data/semantic_layer.json web
-python pipeline/build_layer.py builder_pack.xlsx
+python pipeline/added_objects.py                          # validate data/objects/*.json
+SKIP_SPLAT=1 python pipeline/build_scene.py "Equipment Room.ply" builder_pack.xlsx data/semantic_layer.json web
+python pipeline/build_layer.py builder_pack.xlsx web/data/scene.json
 ```
 
+Restart `python -m backend` after a rebuild (scene is cached at startup).
+
+**Synthetic grounded equipment** (10 tagged cabinets / handwheel valves / actuator) lives in
+`data/synthetic/equipment_supplement.json`. Regenerate and re-tag the export file:
+
+```bash
+python pipeline/make_supplement.py
+# then rebuild scene + layer as above
+```
+
+Details: [data_format/README.md](data_format/README.md).
+
 `SKIP_SPLAT=1` skips rewriting the splat chunks. `build_layer.py` stops with an error if a join or a dashboard figure
-does not hold. Extraction itself (`extract.py`, `semantic.py`, `refine_assets.py`) needs the `extraction` extra and a GPU.
+does not hold (pack dashboard figures only; supplement classes are excluded). Extraction itself (`extract.py`, `semantic.py`, `refine_assets.py`) needs the `extraction` extra and a GPU.
 
 ### Scene vocabulary from rendered previews
 

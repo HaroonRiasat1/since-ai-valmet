@@ -5,25 +5,29 @@
       "global_id": "3dA6$TSXfOyxN1nBswuRgp",
       "category": "wall",
       "ifc_class": "IfcWall",
-      "name": "Wall 1"
+      "name": "Wall 1",
+      "movable": false
     },
     {
       "global_id": "1zHev8QSjLVvkvCL$8Cy_J",
       "category": "wall",
       "ifc_class": "IfcWall",
-      "name": "Wall 2"
+      "name": "Wall 2",
+      "movable": false
     },
     {
       "global_id": "0QKkpFLEvNIv6d4ijw_Hdz",
       "category": "wall",
       "ifc_class": "IfcWall",
-      "name": "Wall 3"
+      "name": "Wall 3",
+      "movable": false
     },
     {
       "global_id": "0T5Yo9q5TPQg6EG3B0sK2C",
       "category": "wall",
       "ifc_class": "IfcWall",
-      "name": "Wall 4"
+      "name": "Wall 4",
+      "movable": false
     },
     {
       "global_id": "3CkZAxyITMwOewBC5V3eVT",
@@ -32,6 +36,12 @@
       "tag": null,
       "page_item_id": "box_00",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        1.893265461384749,
+        1.0050178620573904,
+        -3.031943209748424
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -42,6 +52,12 @@
       "tag": null,
       "page_item_id": "box_01",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.5771359921732913,
+        1.0094098092594606,
+        -1.9597796122962587
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -52,6 +68,12 @@
       "tag": null,
       "page_item_id": "box_02",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -1.2157311291677682,
+        0.8376592448643885,
+        -0.6931803961521038
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -62,6 +84,12 @@
       "tag": null,
       "page_item_id": "box_03",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -0.6501600889417597,
+        0.8016277728470248,
+        2.1298337020602394
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -72,6 +100,12 @@
       "tag": null,
       "page_item_id": "box_04",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.5222885429197985,
+        0.8165332315452803,
+        -3.3959928829252872
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -82,6 +116,12 @@
       "tag": null,
       "page_item_id": "box_05",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        1.3207146967385703,
+        1.0315354717176544,
+        3.2505385327798244
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -92,7 +132,13 @@
       "tag": null,
       "page_item_id": "box_06",
       "category": "equipment",
-      "fit_within_frac": 0.5265700483091788,
+      "movable": true,
+      "pivot_scan": [
+        4.167565964214614,
+        0.5926126216442797,
+        -0.6116225833704134
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -102,6 +148,12 @@
       "tag": null,
       "page_item_id": "box_07",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -3.5679491353236905,
+        0.9485647792340467,
+        2.7756840007330688
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -112,7 +164,13 @@
       "tag": null,
       "page_item_id": "box_08",
       "category": "equipment",
-      "fit_within_frac": 0.9862542955326461,
+      "movable": true,
+      "pivot_scan": [
+        2.8079051982560523,
+        1.045789397905244,
+        2.7848402150804548
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -122,7 +180,13 @@
       "tag": null,
       "page_item_id": "box_09",
       "category": "equipment",
-      "fit_within_frac": 1.0,
+      "movable": true,
+      "pivot_scan": [
+        2.4684569297635797,
+        0.6986638119302472,
+        3.067902794679451
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -132,6 +196,12 @@
       "tag": null,
       "page_item_id": "box_10",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -4.559828873009717,
+        0.9972210514500323,
+        1.0085218334129011
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -142,7 +212,13 @@
       "tag": null,
       "page_item_id": "box_11",
       "category": "equipment",
-      "fit_within_frac": 0.8072289156626506,
+      "movable": true,
+      "pivot_scan": [
+        -4.707177781445621,
+        0.2798169673503693,
+        0.9824946098762162
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -152,7 +228,13 @@
       "tag": null,
       "page_item_id": "box_12",
       "category": "equipment",
-      "fit_within_frac": 1.0,
+      "movable": true,
+      "pivot_scan": [
+        2.177716716382136,
+        0.4516400583694295,
+        -3.2585384543392184
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -162,6 +244,12 @@
       "tag": null,
       "page_item_id": "box_13",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        2.84038770512848,
+        0.8567686531728584,
+        3.045592901664221
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -172,6 +260,12 @@
       "tag": null,
       "page_item_id": "box_14",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -1.7210624734906168,
+        0.3979467145981016,
+        -0.5719541982234797
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -182,6 +276,12 @@
       "tag": null,
       "page_item_id": "box_15",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -1.5090972909822793,
+        -0.4289584299544905,
+        -0.4151410573406258
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -192,6 +292,12 @@
       "tag": null,
       "page_item_id": "box_16",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -4.2951077397899535,
+        0.7794741586379881,
+        2.8675959904291974
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -202,7 +308,13 @@
       "tag": null,
       "page_item_id": "box_17",
       "category": "equipment",
-      "fit_within_frac": 1.0,
+      "movable": true,
+      "pivot_scan": [
+        -4.731904742409025,
+        0.6475703932407031,
+        0.9072499517543031
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -212,7 +324,13 @@
       "tag": null,
       "page_item_id": "box_18",
       "category": "equipment",
-      "fit_within_frac": 1.0,
+      "movable": true,
+      "pivot_scan": [
+        -1.5700480429238481,
+        -0.4259446655610295,
+        -0.4885144375616253
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -222,6 +340,12 @@
       "tag": null,
       "page_item_id": "ladder_00",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.657715682931051,
+        0.29843115533125075,
+        1.4113193651394285
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -232,6 +356,12 @@
       "tag": null,
       "page_item_id": "ladder_01",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.532445984679163,
+        0.17587165732657128,
+        0.37708326033926187
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -242,7 +372,13 @@
       "tag": null,
       "page_item_id": "ladder_02",
       "category": "equipment",
-      "fit_within_frac": 0.8366606170598911,
+      "movable": true,
+      "pivot_scan": [
+        -1.124993766892541,
+        0.19760379995707622,
+        1.2867357900616623
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -252,6 +388,12 @@
       "tag": null,
       "page_item_id": "ladder_03",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.4984769225482486,
+        0.6683894586986198,
+        0.8910447398672028
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -262,6 +404,12 @@
       "tag": null,
       "page_item_id": "ladder_04",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.656111865736812,
+        0.4907477743455902,
+        -0.1421030397756444
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -272,7 +420,13 @@
       "tag": null,
       "page_item_id": "ladder_05",
       "category": "equipment",
-      "fit_within_frac": 0.993993993993994,
+      "movable": true,
+      "pivot_scan": [
+        1.6323891146761977,
+        0.30461591192874937,
+        -2.168447597600843
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -282,7 +436,13 @@
       "tag": null,
       "page_item_id": "appliance_00",
       "category": "equipment",
-      "fit_within_frac": 1.0,
+      "movable": true,
+      "pivot_scan": [
+        -3.260240650219359,
+        0.37118709662631366,
+        -1.2022404600534777
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -292,7 +452,13 @@
       "tag": null,
       "page_item_id": "appliance_01",
       "category": "equipment",
-      "fit_within_frac": 0.9556451612903226,
+      "movable": true,
+      "pivot_scan": [
+        -3.7765929145115202,
+        0.37292600744987625,
+        -1.2171886899503042
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -302,6 +468,12 @@
       "tag": null,
       "page_item_id": "appliance_02",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -4.687664130405228,
+        0.6014829216828792,
+        -0.6275554571467058
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -312,6 +484,12 @@
       "tag": null,
       "page_item_id": "appliance_03",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        1.5446332795501378,
+        -0.17182101429315044,
+        3.452797936181831
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -322,6 +500,12 @@
       "tag": null,
       "page_item_id": "appliance_04",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        2.480685212746372,
+        0.8363381242255512,
+        3.09088370119687
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -332,6 +516,12 @@
       "tag": null,
       "page_item_id": "cart_00",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        2.8670071290981243,
+        0.6507775091595089,
+        -2.167603422551683
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -342,6 +532,12 @@
       "tag": null,
       "page_item_id": "handwheel_valve_00",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -1.5720047585175598,
+        0.5511111677659911,
+        -3.315124937515875
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -352,6 +548,12 @@
       "tag": null,
       "page_item_id": "handwheel_valve_01",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.1067996561726563,
+        0.37095204121542513,
+        3.164677866524139
+      ],
       "fit_within_frac": 0.0625,
       "position_confirmed": false
     },
@@ -362,6 +564,12 @@
       "tag": null,
       "page_item_id": "handwheel_valve_02",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        1.2155657042832078,
+        -0.052801917891548186,
+        -3.366553334744598
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -372,7 +580,13 @@
       "tag": null,
       "page_item_id": "handwheel_valve_03",
       "category": "equipment",
-      "fit_within_frac": 0.663013698630137,
+      "movable": true,
+      "pivot_scan": [
+        -3.251589012037652,
+        0.7021572319596276,
+        -1.6338521740899106
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -382,6 +596,12 @@
       "tag": null,
       "page_item_id": "handwheel_valve_04",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        2.1921548269529976,
+        -0.0716635095778098,
+        -3.3524014096793584
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -392,6 +612,12 @@
       "tag": null,
       "page_item_id": "handwheel_valve_05",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        2.731371012246945,
+        -0.06682188380248193,
+        -3.3779877769011466
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -402,7 +628,13 @@
       "tag": null,
       "page_item_id": "handwheel_valve_06",
       "category": "equipment",
-      "fit_within_frac": 0.7631578947368421,
+      "movable": true,
+      "pivot_scan": [
+        3.9926029397982203,
+        0.18842955193403138,
+        -2.2775416710208827
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -412,6 +644,12 @@
       "tag": null,
       "page_item_id": "black_flexible_hose_00",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -1.6972654198337351,
+        1.14496158705048,
+        2.9198239881563692
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -422,6 +660,12 @@
       "tag": null,
       "page_item_id": "black_flexible_hose_01",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        1.168187451948227,
+        0.42909616334834594,
+        -3.1655263700223215
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -432,6 +676,12 @@
       "tag": null,
       "page_item_id": "black_flexible_hose_02",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.1670747459915165,
+        0.11801085837895009,
+        -0.17395706460025798
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -442,6 +692,12 @@
       "tag": null,
       "page_item_id": "black_flexible_hose_03",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -2.700744050128746,
+        0.023644682208672996,
+        2.889365964021271
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -452,6 +708,12 @@
       "tag": null,
       "page_item_id": "black_flexible_hose_04",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -2.6112278299632203,
+        0.606399611319578,
+        -2.267418322305931
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -462,6 +724,12 @@
       "tag": null,
       "page_item_id": "black_flexible_hose_05",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -0.286822582578228,
+        0.9907810274325686,
+        1.1797549771462248
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -472,7 +740,13 @@
       "tag": null,
       "page_item_id": "black_flexible_hose_06",
       "category": "equipment",
-      "fit_within_frac": 1.0,
+      "movable": true,
+      "pivot_scan": [
+        2.042440167370471,
+        1.0453137843733311,
+        1.7289677145581743
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -482,6 +756,12 @@
       "tag": null,
       "page_item_id": "black_flexible_hose_07",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        1.3936101630819187,
+        0.25498735371598114,
+        -3.0380749045394593
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -492,6 +772,12 @@
       "tag": null,
       "page_item_id": "black_flexible_hose_08",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        1.2900359140412103,
+        1.0444035578921305,
+        -2.238127539477535
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -502,6 +788,12 @@
       "tag": null,
       "page_item_id": "black_flexible_hose_09",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -0.7209665530289046,
+        0.4692397616686411,
+        1.6147159692808435
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -512,6 +804,12 @@
       "tag": null,
       "page_item_id": "black_plastic_bag_00",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.2180510937975346,
+        0.910112687924066,
+        0.5619560723026407
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -522,6 +820,12 @@
       "tag": null,
       "page_item_id": "black_plastic_bag_01",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        1.3057401560484034,
+        1.0268852644488535,
+        0.7357321287550205
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -532,7 +836,13 @@
       "tag": null,
       "page_item_id": "black_plastic_bag_02",
       "category": "equipment",
-      "fit_within_frac": 0.9619047619047619,
+      "movable": true,
+      "pivot_scan": [
+        -3.8251638499431033,
+        0.44751967092755107,
+        3.1505685630557805
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -542,6 +852,12 @@
       "tag": null,
       "page_item_id": "black_plastic_bag_03",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -4.543150319035481,
+        1.0949415733209575,
+        2.231847607658537
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -552,6 +868,12 @@
       "tag": null,
       "page_item_id": "black_plastic_bag_04",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        2.759958017929635,
+        0.9536783865850536,
+        -3.076609539546388
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -562,6 +884,12 @@
       "tag": null,
       "page_item_id": "black_plastic_bag_05",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -1.2803111522041999,
+        0.05722545668184301,
+        -0.5536765273197856
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -572,6 +900,12 @@
       "tag": null,
       "page_item_id": "black_plastic_bag_06",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.0606790474476933,
+        0.8677324120939195,
+        -2.334909209870321
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -582,6 +916,12 @@
       "tag": null,
       "page_item_id": "black_plastic_bag_07",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -1.4968404904162962,
+        1.010664997277511,
+        -3.559343043608698
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -592,6 +932,12 @@
       "tag": null,
       "page_item_id": "black_plastic_bag_08",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -3.575287568092492,
+        0.7720960563315888,
+        2.7589821988791385
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -602,6 +948,12 @@
       "tag": null,
       "page_item_id": "black_plastic_bag_09",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -2.5372102403802375,
+        -0.26483278799219573,
+        0.9935616419803224
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -612,6 +964,12 @@
       "tag": null,
       "page_item_id": "black_plastic_bag_10",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.7278029335850036,
+        1.0926217262914566,
+        -2.691237341742381
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -622,6 +980,12 @@
       "tag": null,
       "page_item_id": "black_plastic_bag_11",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.6759219346528615,
+        0.8179255043799488,
+        -3.129394935469028
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -632,6 +996,12 @@
       "tag": null,
       "page_item_id": "chair_00",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        1.2246658084964133,
+        0.6930845418395198,
+        -1.8082220475893638
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -642,6 +1012,12 @@
       "tag": null,
       "page_item_id": "chair_01",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        0.8761012328847739,
+        0.6742305330305358,
+        1.058160005959437
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -652,7 +1028,13 @@
       "tag": null,
       "page_item_id": "electrical_cabinet_00",
       "category": "equipment",
-      "fit_within_frac": 0.9953762084909626,
+      "movable": true,
+      "pivot_scan": [
+        -4.682458441342785,
+        0.20396727114246377,
+        0.26808489074050124
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -662,7 +1044,13 @@
       "tag": null,
       "page_item_id": "electrical_cabinet_01",
       "category": "equipment",
-      "fit_within_frac": 0.5276967930029155,
+      "movable": true,
+      "pivot_scan": [
+        -4.755803176465449,
+        0.4151001221927863,
+        -0.7082957964401653
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -672,7 +1060,13 @@
       "tag": null,
       "page_item_id": "fan_00",
       "category": "equipment",
-      "fit_within_frac": 0.9422492401215805,
+      "movable": true,
+      "pivot_scan": [
+        3.84334452501019,
+        0.947440395031196,
+        -1.2759096149324947
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -682,6 +1076,12 @@
       "tag": null,
       "page_item_id": "fan_01",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -0.5250887494963091,
+        -0.6587120183319479,
+        -3.5162774510428263
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -692,6 +1092,12 @@
       "tag": null,
       "page_item_id": "insulated_panel_00",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        1.8134380564082662,
+        0.7326216236107299,
+        2.0579707237390497
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -702,6 +1108,12 @@
       "tag": null,
       "page_item_id": "insulated_panel_01",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -2.5137128717371353,
+        0.4466636753138368,
+        0.9949131031722205
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -712,6 +1124,12 @@
       "tag": null,
       "page_item_id": "insulated_panel_02",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        4.012089778640066,
+        -0.07275254005272702,
+        -1.373941909412201
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -722,6 +1140,12 @@
       "tag": null,
       "page_item_id": "insulated_panel_03",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.208541104994923,
+        0.8657599413159008,
+        1.4874118723992282
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -732,6 +1156,12 @@
       "tag": null,
       "page_item_id": "insulated_panel_04",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.4772087090671264,
+        -0.14547247847686162,
+        -3.549165503691592
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -742,6 +1172,12 @@
       "tag": null,
       "page_item_id": "pipe_fitting_00",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -4.689966968881854,
+        -0.2804227557909486,
+        2.7264529127521326
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -752,7 +1188,13 @@
       "tag": null,
       "page_item_id": "pipe_fitting_01",
       "category": "equipment",
-      "fit_within_frac": 1.0,
+      "movable": true,
+      "pivot_scan": [
+        -4.7470687266458835,
+        0.3908136911393404,
+        0.715830561218422
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -762,6 +1204,12 @@
       "tag": null,
       "page_item_id": "pipe_fitting_02",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        0.9827327157209573,
+        0.2161940498655906,
+        -3.4326252042244496
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -772,6 +1220,12 @@
       "tag": null,
       "page_item_id": "red_bucket_00",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -1.3889005630481073,
+        1.0809518526240867,
+        -3.325663186511279
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -782,6 +1236,12 @@
       "tag": null,
       "page_item_id": "red_bucket_01",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -1.464534208450951,
+        0.028781837622261983,
+        2.8939858937765344
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -792,6 +1252,12 @@
       "tag": null,
       "page_item_id": "red_bucket_02",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        0.2534907978715606,
+        0.3595895961799759,
+        1.9564397131529183
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -802,6 +1268,12 @@
       "tag": null,
       "page_item_id": "red_bucket_03",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        1.0344832995185245,
+        0.3305667136489807,
+        1.9527356056268084
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -812,6 +1284,12 @@
       "tag": null,
       "page_item_id": "red_bucket_04",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.2064820412345263,
+        1.075652046074151,
+        -3.084066197557295
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -822,6 +1300,12 @@
       "tag": null,
       "page_item_id": "red_bucket_05",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -2.7245342946550175,
+        0.44117697026211417,
+        2.862345314696424
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -832,6 +1316,12 @@
       "tag": null,
       "page_item_id": "red_bucket_06",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -0.4673641384915116,
+        1.0662320270589745,
+        -0.43690382517510773
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -842,6 +1332,12 @@
       "tag": null,
       "page_item_id": "red_bucket_07",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -1.3755065975787517,
+        1.0487165490992991,
+        -0.9864269372995309
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -852,7 +1348,13 @@
       "tag": null,
       "page_item_id": "red_bucket_08",
       "category": "equipment",
-      "fit_within_frac": 0.8793103448275862,
+      "movable": true,
+      "pivot_scan": [
+        -1.5565319698530347,
+        1.0775462712466737,
+        0.2127284563732239
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -862,6 +1364,12 @@
       "tag": null,
       "page_item_id": "red_bucket_09",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.3467021252909843,
+        0.8337560030000604,
+        2.6131525489038636
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -872,6 +1380,12 @@
       "tag": null,
       "page_item_id": "red_bucket_10",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -4.678750110284694,
+        0.6751194752986482,
+        -0.9892477791075653
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -882,7 +1396,13 @@
       "tag": null,
       "page_item_id": "red_bucket_11",
       "category": "equipment",
-      "fit_within_frac": 0.9967105263157895,
+      "movable": true,
+      "pivot_scan": [
+        3.4303307645110674,
+        1.0059494413706283,
+        1.9316711827522706
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -892,6 +1412,12 @@
       "tag": null,
       "page_item_id": "red_bucket_12",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -4.327457568052104,
+        0.4584055527528722,
+        2.961743528964184
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -902,6 +1428,12 @@
       "tag": null,
       "page_item_id": "red_bucket_13",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        1.260458668049841,
+        1.081984416302974,
+        -2.7797212217586518
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -912,7 +1444,13 @@
       "tag": null,
       "page_item_id": "valve_actuator_00",
       "category": "equipment",
-      "fit_within_frac": 0.7922077922077922,
+      "movable": true,
+      "pivot_scan": [
+        -4.610641050906127,
+        0.32512021621839493,
+        0.07074756891388238
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -922,6 +1460,12 @@
       "tag": null,
       "page_item_id": "pipe_00",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -0.2493993484265415,
+        1.142947472135273,
+        3.000665951680718
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -932,6 +1476,12 @@
       "tag": null,
       "page_item_id": "pipe_01",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        1.3668305639273295,
+        0.05649752237977462,
+        0.7812017727986154
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -942,6 +1492,12 @@
       "tag": null,
       "page_item_id": "pipe_02",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        1.271035450544302,
+        0.5212005117810802,
+        2.6495724581469537
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -952,6 +1508,12 @@
       "tag": null,
       "page_item_id": "pipe_03",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -3.539435039055707,
+        0.05583937645029036,
+        -0.488165238468629
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -962,7 +1524,13 @@
       "tag": null,
       "page_item_id": "pipe_04",
       "category": "equipment",
-      "fit_within_frac": 0.109375,
+      "movable": true,
+      "pivot_scan": [
+        -3.2765724599537576,
+        0.1293147051618354,
+        3.1971622334883563
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -972,7 +1540,13 @@
       "tag": null,
       "page_item_id": "pipe_05",
       "category": "equipment",
-      "fit_within_frac": 0.9945054945054945,
+      "movable": true,
+      "pivot_scan": [
+        -3.18139741583853,
+        0.1484446216592641,
+        -2.8579686463800065
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -982,6 +1556,12 @@
       "tag": null,
       "page_item_id": "pipe_06",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        1.8325154764231546,
+        -0.3833034649668481,
+        -3.3917014511223096
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -992,7 +1572,13 @@
       "tag": null,
       "page_item_id": "pipe_07",
       "category": "equipment",
-      "fit_within_frac": 1.0,
+      "movable": true,
+      "pivot_scan": [
+        -3.114462985906541,
+        -0.4127778991497595,
+        3.229360998163684
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -1002,7 +1588,13 @@
       "tag": null,
       "page_item_id": "pipe_08",
       "category": "equipment",
-      "fit_within_frac": 0.1517094017094017,
+      "movable": true,
+      "pivot_scan": [
+        1.6925580823648447,
+        -0.4306240522110481,
+        -3.4333059453828687
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -1012,6 +1604,12 @@
       "tag": null,
       "page_item_id": "pipe_09",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -1.583993365128522,
+        -0.092550496887507,
+        -3.4751676761249755
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -1022,7 +1620,13 @@
       "tag": null,
       "page_item_id": "pipe_10",
       "category": "equipment",
-      "fit_within_frac": 0.11612903225806452,
+      "movable": true,
+      "pivot_scan": [
+        3.8881295258648794,
+        0.7301281291051427,
+        -1.730997095776278
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -1032,6 +1636,12 @@
       "tag": null,
       "page_item_id": "pipe_11",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.980778121124139,
+        0.05692778949359534,
+        -0.6952800497331106
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -1042,6 +1652,12 @@
       "tag": null,
       "page_item_id": "pipe_12",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.8717083085822646,
+        -0.4265251085679421,
+        -2.5991800737360204
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -1052,7 +1668,13 @@
       "tag": null,
       "page_item_id": "pipe_13",
       "category": "equipment",
-      "fit_within_frac": 0.9896157840083074,
+      "movable": true,
+      "pivot_scan": [
+        -0.849410883935908,
+        0.023679223890183898,
+        0.15606539927372393
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -1062,7 +1684,13 @@
       "tag": null,
       "page_item_id": "pipe_14",
       "category": "equipment",
-      "fit_within_frac": 0.16230366492146597,
+      "movable": true,
+      "pivot_scan": [
+        2.46017884315859,
+        -0.3780269068420897,
+        -3.420394513296191
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -1072,6 +1700,12 @@
       "tag": null,
       "page_item_id": "pipe_15",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        0.631850829285559,
+        -0.38417431307116406,
+        -3.3303772631434447
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -1082,7 +1716,13 @@
       "tag": null,
       "page_item_id": "pipe_16",
       "category": "equipment",
-      "fit_within_frac": 1.0,
+      "movable": true,
+      "pivot_scan": [
+        -1.0826255843981698,
+        -0.3894753786883465,
+        0.12493481212292926
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -1092,6 +1732,12 @@
       "tag": null,
       "page_item_id": "pipe_17",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        0.5329568772936168,
+        0.5378894078610669,
+        -3.465311656138704
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -1102,7 +1748,13 @@
       "tag": null,
       "page_item_id": "pipe_18",
       "category": "equipment",
-      "fit_within_frac": 1.0,
+      "movable": true,
+      "pivot_scan": [
+        -1.2504100751905634,
+        -0.3818981151653814,
+        0.13485937348835758
+      ],
+      "fit_within_frac": 0.0,
       "position_confirmed": false
     },
     {
@@ -1112,6 +1764,12 @@
       "tag": null,
       "page_item_id": "washing_machine_00",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -0.8468854159960069,
+        0.6391818810555332,
+        -0.5699600649233001
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -1122,6 +1780,12 @@
       "tag": "CV-002",
       "page_item_id": "cls_007",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        2.206249999995588,
+        0.03704999999999828,
+        1.601899999996796
+      ],
       "fit_within_frac": 0.2158273381294964,
       "position_confirmed": true
     },
@@ -1132,6 +1796,12 @@
       "tag": "CV-004",
       "page_item_id": "cls_015",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -0.33879999999932203,
+        0.0694499999999807,
+        1.5510999999968973
+      ],
       "fit_within_frac": 0.21567739012233803,
       "position_confirmed": true
     },
@@ -1142,6 +1812,12 @@
       "tag": "P-003",
       "page_item_id": "cls_020",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -1.7687499999964595,
+        0.3898499999999711,
+        1.5121499999969719
+      ],
       "fit_within_frac": 1.0,
       "position_confirmed": true
     },
@@ -1152,6 +1828,12 @@
       "tag": null,
       "page_item_id": "cls_031",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        1.026649999997947,
+        0.043949999999986195,
+        1.9427499999961142
+      ],
       "fit_within_frac": 1.0,
       "position_confirmed": false
     },
@@ -1162,6 +1844,12 @@
       "tag": null,
       "page_item_id": "cls_032",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        0.257299999999486,
+        0.08944999999998121,
+        1.8892499999962211
+      ],
       "fit_within_frac": 1.0,
       "position_confirmed": false
     },
@@ -1172,6 +1860,12 @@
       "tag": "P-005",
       "page_item_id": "cls_044",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        1.1601999999976789,
+        -0.12604999999995412,
+        -3.4476499999931036
+      ],
       "fit_within_frac": 1.0,
       "position_confirmed": true
     },
@@ -1182,6 +1876,12 @@
       "tag": "CV-003",
       "page_item_id": "cls_055",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -1.6397499999967136,
+        1.0098999999999738,
+        1.3843499999972204
+      ],
       "fit_within_frac": 0.3893129770992366,
       "position_confirmed": true
     },
@@ -1192,6 +1892,12 @@
       "tag": "CV-005",
       "page_item_id": "cls_081",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -3.7688999999924606,
+        0.24704999999998714,
+        -1.2650999999974726
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": true
     },
@@ -1202,6 +1908,12 @@
       "tag": "P-006",
       "page_item_id": "cls_083",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -3.8044999999923874,
+        0.5071999999999867,
+        -1.226849999997552
+      ],
       "fit_within_frac": 1.0,
       "position_confirmed": true
     },
@@ -1212,6 +1924,12 @@
       "tag": "CV-009",
       "page_item_id": "cls_113",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -0.38514999999923116,
+        -0.19750000000002033,
+        1.5964499999968091
+      ],
       "fit_within_frac": 0.29493087557603687,
       "position_confirmed": true
     },
@@ -1222,6 +1940,12 @@
       "tag": "CV-006",
       "page_item_id": "cls_123",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        0.7692999999984622,
+        0.08135000000004368,
+        -3.5079499999929853
+      ],
       "fit_within_frac": 0.4115566037735849,
       "position_confirmed": true
     },
@@ -1232,6 +1956,12 @@
       "tag": "CV-008",
       "page_item_id": "cls_133",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -1.917799999996157,
+        1.0095999999999696,
+        1.5705999999968485
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": true
     },
@@ -1242,6 +1972,12 @@
       "tag": "CV-010",
       "page_item_id": "cls_185",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        2.214999999995568,
+        -0.3854499999999478,
+        -3.37814999999324
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": true
     },
@@ -1252,6 +1988,12 @@
       "tag": "PT-001",
       "page_item_id": "cls_210",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.8109999999923794,
+        0.19254999999999994,
+        2.4920499999950145
+      ],
       "fit_within_frac": 1.0,
       "position_confirmed": true
     },
@@ -1262,6 +2004,12 @@
       "tag": null,
       "page_item_id": "obj_001",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -2.517199999994963,
+        0.3937499999999715,
+        1.0021499999979917
+      ],
       "fit_within_frac": 1.0,
       "position_confirmed": false
     },
@@ -1272,6 +2020,12 @@
       "tag": null,
       "page_item_id": "obj_017",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -4.603699999990793,
+        0.012849999999965056,
+        0.21804999999956395
+      ],
       "fit_within_frac": 1.0,
       "position_confirmed": false
     },
@@ -1282,6 +2036,12 @@
       "tag": "P-004",
       "page_item_id": "obj_034",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        2.1627499999956754,
+        0.08450000000005295,
+        -3.44064999999312
+      ],
       "fit_within_frac": 1.0,
       "position_confirmed": true
     },
@@ -1292,6 +2052,12 @@
       "tag": "PT-002",
       "page_item_id": "obj_079",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        3.7460499999925094,
+        0.24934999999999796,
+        2.642249999994713
+      ],
       "fit_within_frac": 1.0,
       "position_confirmed": true
     },
@@ -1302,6 +2068,12 @@
       "tag": "PT-003",
       "page_item_id": "obj_098",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        1.1464999999977046,
+        -0.4124999999999551,
+        -3.392449999993211
+      ],
       "fit_within_frac": 1.0,
       "position_confirmed": true
     },
@@ -1312,6 +2084,12 @@
       "tag": "P-002",
       "page_item_id": "vlm_010",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -3.284349999993428,
+        0.5330499999999876,
+        -0.9751999999980554
+      ],
       "fit_within_frac": 1.0,
       "position_confirmed": true
     },
@@ -1322,6 +2100,12 @@
       "tag": "CV-012",
       "page_item_id": "vlm_011",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -3.257149999993481,
+        0.6816499999999966,
+        -1.7763999999964548
+      ],
       "fit_within_frac": 0.6842105263157895,
       "position_confirmed": true
     },
@@ -1332,6 +2116,12 @@
       "tag": "P-001",
       "page_item_id": "vlm_012",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -3.287449999993421,
+        0.6044499999999925,
+        -1.4171999999971723
+      ],
       "fit_within_frac": 1.0,
       "position_confirmed": true
     },
@@ -1342,6 +2132,12 @@
       "tag": "M-006",
       "page_item_id": "vlm_013",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -3.2512999999934946,
+        0.3636999999999901,
+        -1.199049999997606
+      ],
       "fit_within_frac": 1.0,
       "position_confirmed": true
     },
@@ -1352,6 +2148,12 @@
       "tag": "CV-007",
       "page_item_id": "vlm_018",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -2.6501499999946985,
+        0.2169499999999826,
+        -0.1193999999997635
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": true
     },
@@ -1362,6 +2164,12 @@
       "tag": null,
       "page_item_id": "vlm_019",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -2.5296499999949393,
+        0.2898999999999817,
+        0.05279999999989134
+      ],
       "fit_within_frac": 1.0,
       "position_confirmed": false
     },
@@ -1372,6 +2180,12 @@
       "tag": "M-004",
       "page_item_id": "vlm_021",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -1.8989499999961992,
+        0.4203999999999709,
+        1.4559499999970842
+      ],
       "fit_within_frac": 1.0,
       "position_confirmed": true
     },
@@ -1382,6 +2196,12 @@
       "tag": null,
       "page_item_id": "vlm_022",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -1.8335999999963286,
+        0.6256499999999905,
+        -0.29359999999941966
+      ],
       "fit_within_frac": 1.0,
       "position_confirmed": false
     },
@@ -1392,6 +2212,12 @@
       "tag": null,
       "page_item_id": "vlm_033",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        -0.6775999999986408,
+        0.577349999999961,
+        3.1621499999936695
+      ],
       "fit_within_frac": 0.0,
       "position_confirmed": false
     },
@@ -1402,6 +2228,12 @@
       "tag": "CV-001",
       "page_item_id": "vlm_051",
       "category": "equipment",
+      "movable": true,
+      "pivot_scan": [
+        2.201349999995597,
+        -0.0854999999999478,
+        -3.3530999999932933
+      ],
       "fit_within_frac": 0.6875,
       "position_confirmed": true
     }

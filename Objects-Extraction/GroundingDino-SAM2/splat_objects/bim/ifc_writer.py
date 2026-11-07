@@ -25,10 +25,11 @@ def write_ifc(
     structure: dict[str, Any],
     out_path: Path,
     guid_path: Path,
+    bim_dir: Path | None = None,
 ) -> dict[str, Any]:
     scale = units_to_m(cfg)
     bim = cfg["bim"]
-    bim_dir = repo / "outputs" / scene_id / "bim"
+    bim_dir = bim_dir or repo / "outputs" / scene_id / "bim"
     model = ifcopenshell.api.run("project.create_file", version="IFC4")
     project = ifcopenshell.api.run("root.create_entity", model, ifc_class="IfcProject", name=scene_id)
     ifcopenshell.api.run("unit.assign_unit", model, length={"is_metric": True, "raw": "METERS"})
@@ -78,7 +79,7 @@ def write_ifc(
     for el in elements:
         spec = el.get("ifc_spec") or class_spec(cfg, el["class"])
         ifc_cls = spec.get("ifc", "IfcBuildingElementProxy")
-        key = el.get("tag") or el.get("unconfirmed_tag") or f"{el['class']}:{_centroid_key(el)}"
+        key = el.get("tag") or el.get("unconfirmed_tag") or f"{el['class']}:{el['id']}"
         gid = stable_guid(key)
         guid_map[key] = gid
         name = el.get("tag") or el.get("name") or el["id"]

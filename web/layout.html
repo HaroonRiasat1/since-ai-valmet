@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Equipment Room Layout Editor</title>
+<style>
+  :root { --bg:#0f1216; --panel:rgba(18,22,28,.92); --line:#2a313b; --text:#e6e9ee; --mut:#8b95a3; --acc:#5aa9ff; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--text);
+              font:13px/1.45 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; overflow:hidden; }
+  #c { position:fixed; inset:0; width:100%; height:100%; }
+  .panel { position:fixed; background:var(--panel); border:1px solid var(--line); border-radius:10px; backdrop-filter:blur(6px); padding:10px 12px; }
+  #top { top:12px; left:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  #top h1 { font-size:14px; margin:0 8px 0 0; font-weight:600; }
+  button { background:#1d242d; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:6px 10px; font:inherit; cursor:pointer; }
+  button:hover { border-color:var(--acc); }
+  button.on { background:#20354d; border-color:var(--acc); }
+  #side { top:12px; right:12px; width:290px; max-height:calc(100% - 24px); overflow:auto; }
+  #side h2 { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--mut); margin:4px 0 8px; }
+  .mut { color:var(--mut); font-size:12px; }
+  .kv { display:grid; grid-template-columns:auto auto; gap:0 10px; font-size:12px; margin:4px 0 8px; }
+  #list { max-height:300px; overflow:auto; border:1px solid var(--line); border-radius:6px; margin-top:6px; }
+  #list div { padding:3px 8px; cursor:pointer; display:flex; justify-content:space-between; gap:6px; }
+  #list div:hover { background:#1d242d; }
+  #list div.sel { background:#20354d; }
+  #list div.moved span:last-child { color:#3ecf8e; }
+  #status { bottom:12px; left:12px; color:var(--mut); }
+  #load { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:9; background:var(--bg); }
+  input[type=range] { width:140px; }
+</style>
+<script type="importmap">
+{ "imports": { "three": "./lib/three.module.js", "three/addons/": "./lib/addons/" } }
+</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="load">Loading BIM layout…</div>
+<div id="top" class="panel">
+  <h1>Layout Editor</h1>
+  <button id="rotl" title="Rotate left (Q)">⟲ Q</button>
+  <button id="rotr" title="Rotate right (E)">E ⟳</button>
+  <button id="reset1" title="Reset selected object">Reset object</button>
+  <button id="resetall">Reset all</button>
+  <button id="export" class="on">Export layout.json</button>
+  <label class="mut"><input id="load-file" type="file" accept=".json" style="display:none"><button id="loadbtn" type="button">Load layout…</button></label>
+  <button id="wallsbtn" class="on">Walls</button>
+  <a class="mut" href="./">Navigator</a>
+</div>
+<div id="side" class="panel">
+  <h2>Selected</h2>
+  <div id="sel" class="mut">Click an object, then drag it on the floor. Q / E rotate. Esc deselects.</div>
+  <h2>Objects <span id="count" class="mut"></span></h2>
+  <input id="filter" placeholder="filter by name or tag" style="width:100%;background:#0f1216;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:4px 6px">
+  <div id="list"></div>
+</div>
+<div id="status" class="panel">Drag objects to change the layout. Right-drag pans, wheel zooms, left-drag on empty space orbits.</div>
+
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+const $ = (id) => document.getElementById(id);
+const STORE = "layout-editor-v1";
+const sceneJson = await fetch("data/scene.json").then(r => r.json());
+const index = await fetch("data/bim/index.json").then(r => r.json());
+const meta = Object.fromEntries(index.elements.map(e => [e.global_id, e]));
+const frame = sceneJson.frame;
+const UP = frame.up_axis, sgn = frame.down_sign;
+
+const renderer = new THREE.WebGLRenderer({ canvas: $("c"), antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0f1216);
+const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.05, 200);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x445566, 1.1));
+const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(3, 8, 4); scene.add(sun);
+const controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping = true;
+
+const world = new THREE.Group();
+if (UP === 1 && sgn === 1) world.rotation.x = Math.PI;   // scan is y-down; three.js is y-up
+scene.add(world); world.updateMatrixWorld();
+
+const gltf = await new GLTFLoader().loadAsync("data/bim/equipment_room.glb");
+const walls = [], items = new Map();   // gid -> { group, mesh, home, meta, yaw }
+const flat = []; gltf.scene.traverse(o => { if (o.isMesh) flat.push(o); });
+for (const mesh of flat) {
+  const m = meta[mesh.name];
+  mesh.geometry.computeBoundingBox();
+  const c = mesh.geometry.boundingBox.getCenter(new THREE.Vector3());
+  const hasCol = !!mesh.geometry.attributes.color;
+  if (!m || !m.movable) {
+    mesh.material = new THREE.MeshStandardMaterial({ color: 0xb8bcc4, transparent: true, opacity: 0.28, side: THREE.DoubleSide, depthWrite: false });
+    world.add(mesh.parent === gltf.scene ? mesh : mesh); walls.push(mesh);
+    continue;
+  }
+  const group = new THREE.Group();
+  group.position.copy(c);
+  mesh.geometry.translate(-c.x, -c.y, -c.z);
+  mesh.position.set(0, 0, 0); mesh.rotation.set(0, 0, 0); mesh.scale.set(1, 1, 1);
+  mesh.material = new THREE.MeshStandardMaterial({ vertexColors: hasCol, color: hasCol ? 0xffffff : 0x66aadd, roughness: 0.85, metalness: 0.05, side: THREE.DoubleSide, flatShading: false });
+  mesh.geometry.computeVertexNormals();
+  group.add(mesh);
+  world.add(group);
+  items.set(mesh.name, { group, mesh, home: c.clone(), meta: m, gid: mesh.name });
+}
+
+// frame the room
+const box = new THREE.Box3().setFromObject(world);
+const ctr = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3());
+camera.position.copy(ctr).add(new THREE.Vector3(size.x * 0.4, size.length() * 0.7, size.z * 0.9));
+controls.target.copy(ctr); controls.update();
+const grid = new THREE.GridHelper(Math.max(size.x, size.z) * 1.4, Math.round(Math.max(size.x, size.z) * 1.4 / 0.5), 0x2a313b, 0x1d242d);
+grid.position.set(ctr.x, box.min.y, ctr.z); scene.add(grid);
+$("load").remove();
+
+// ---------- selection and dragging on a horizontal plane
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+let selected = null, dragging = null, offset = new THREE.Vector3();
+const setNdc = (ev) => ndc.set(ev.clientX / innerWidth * 2 - 1, -(ev.clientY / innerHeight) * 2 + 1);
+const pickables = () => [...items.values()].map(i => i.mesh);
+const itemOf = (obj) => [...items.values()].find(i => i.mesh === obj);
+
+function select(it) {
+  if (selected) selected.mesh.material.emissive?.setHex(0x000000);
+  selected = it;
+  if (it) it.mesh.material.emissive?.setHex(0x1a3d66);
+  renderPanel(); renderList();
+}
+function planeHit(ev, y) {
+  setNdc(ev); ray.setFromCamera(ndc, camera);
+  plane.constant = -y;
+  const p = new THREE.Vector3();
+  return ray.ray.intersectPlane(plane, p) ? p : null;
+}
+renderer.domElement.addEventListener("pointerdown", (ev) => {
+  if (ev.button !== 0) return;
+  setNdc(ev); ray.setFromCamera(ndc, camera);
+  const hit = ray.intersectObjects(pickables(), false)[0];
+  if (!hit) { select(null); return; }
+  const it = itemOf(hit.object); select(it);
+  const wp = it.group.getWorldPosition(new THREE.Vector3());
+  const p = planeHit(ev, wp.y);
+  if (!p) return;
+  offset.copy(wp).sub(p);
+  dragging = it; controls.enabled = false;
+  renderer.domElement.setPointerCapture(ev.pointerId);
+});
+renderer.domElement.addEventListener("pointermove", (ev) => {
+  if (!dragging) {
+    setNdc(ev); ray.setFromCamera(ndc, camera);
+    renderer.domElement.style.cursor = ray.intersectObjects(pickables(), false).length ? "grab" : "";
+    return;
+  }
+  const wp = dragging.group.getWorldPosition(new THREE.Vector3());
+  const p = planeHit(ev, wp.y);
+  if (!p) return;
+  const target = world.worldToLocal(p.add(offset));
+  dragging.group.position.x = target.x;           // floor plane = scan x/z; scan y is the vertical axis
+  dragging.group.position.z = target.z;
+  renderPanel(); save();
+});
+const endDrag = (ev) => { if (dragging) { dragging = null; controls.enabled = true; renderList(); } };
+renderer.domElement.addEventListener("pointerup", endDrag);
+renderer.domElement.addEventListener("pointercancel", endDrag);
+
+function rotate(step) { if (!selected) return; selected.group.rotation.y += step; renderPanel(); renderList(); save(); }
+addEventListener("keydown", (e) => {
+  if (e.target.tagName === "INPUT") return;
+  if (e.code === "KeyQ") rotate(Math.PI / 12);
+  if (e.code === "KeyE") rotate(-Math.PI / 12);
+  if (e.code === "Escape") select(null);
+});
+$("rotl").onclick = () => rotate(Math.PI / 12);
+$("rotr").onclick = () => rotate(-Math.PI / 12);
+
+// ---------- layout state
+const isMoved = (it) => it.group.position.distanceTo(it.home) > 1e-4 || Math.abs(it.group.rotation.y) > 1e-4;
+function layoutObject() {
+  const objects = {};
+  for (const it of items.values()) if (isMoved(it)) {
+    objects[it.gid] = {
+      name: it.meta.name, tag: it.meta.tag || null,
+      pivot: it.home.toArray(),
+      delta: it.group.position.clone().sub(it.home).toArray(),
+      yaw_rad: it.group.rotation.y,
+    };
+  }
+  return { version: 1, scene: index.scene, frame: { up_axis: UP, down_sign: sgn }, objects };
+}
+function save() { try { localStorage.setItem(STORE, JSON.stringify(layoutObject())); } catch {} }
+function applyLayout(layout) {
+  for (const it of items.values()) { it.group.position.copy(it.home); it.group.rotation.y = 0; }
+  for (const [gid, e] of Object.entries(layout.objects || {})) {
+    const it = items.get(gid); if (!it) continue;
+    it.group.position.copy(it.home).add(new THREE.Vector3(...e.delta));
+    it.group.rotation.y = e.yaw_rad || 0;
+  }
+  renderPanel(); renderList(); save();
+}
+$("reset1").onclick = () => { if (selected) { selected.group.position.copy(selected.home); selected.group.rotation.y = 0; renderPanel(); renderList(); save(); } };
+$("resetall").onclick = () => applyLayout({ objects: {} });
+$("export").onclick = () => {
+  const blob = new Blob([JSON.stringify(layoutObject(), null, 2)], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "layout.json"; a.click();
+  $("status").textContent = `Exported ${Object.keys(layoutObject().objects).length} moved objects. Rebuild IFC/GLB: python scripts/13_apply_layout.py --config config_all_objects.yaml --layout layout.json`;
+};
+$("loadbtn").onclick = () => $("load-file").click();
+$("load-file").onchange = async (e) => { const f = e.target.files[0]; if (f) applyLayout(JSON.parse(await f.text())); };
+$("wallsbtn").onclick = () => { const on = !walls[0]?.visible; walls.forEach(w => w.visible = on); $("wallsbtn").classList.toggle("on", on); };
+
+// ---------- panels
+function renderPanel() {
+  if (!selected) { $("sel").innerHTML = `<span class="mut">Click an object, then drag it on the floor. Q / E rotate. Esc deselects.</span>`; return; }
+  const m = selected.meta, d = selected.group.position.clone().sub(selected.home);
+  $("sel").innerHTML = `<b>${m.name}</b><div class="mut">${m.ifc_class || ""}${m.tag ? " · " + m.tag : ""}</div>
+    <div class="kv"><span>moved</span><span>${d.x.toFixed(2)}, ${d.z.toFixed(2)} m</span>
+    <span>rotation</span><span>${(selected.group.rotation.y * 180 / Math.PI).toFixed(0)}°</span></div>`;
+}
+function renderList() {
+  const q = $("filter").value.trim().toLowerCase();
+  const all = [...items.values()].sort((a, b) => (a.meta.name || "").localeCompare(b.meta.name || ""));
+  const shown = all.filter(i => !q || (i.meta.name || "").toLowerCase().includes(q) || (i.meta.tag || "").toLowerCase().includes(q));
+  $("count").textContent = `(${all.filter(isMoved).length} moved / ${all.length})`;
+  $("list").innerHTML = shown.map(i => `<div data-g="${i.gid}" class="${i === selected ? "sel" : ""} ${isMoved(i) ? "moved" : ""}"><span>${i.meta.name}${i.meta.tag ? " · " + i.meta.tag : ""}</span><span>${isMoved(i) ? "moved" : ""}</span></div>`).join("");
+}
+$("filter").oninput = renderList;
+$("list").onclick = (e) => {
+  const row = e.target.closest("[data-g]"); if (!row) return;
+  const it = items.get(row.dataset.g); select(it);
+  controls.target.copy(it.group.getWorldPosition(new THREE.Vector3()));
+};
+addEventListener("resize", () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+
+try { const s = JSON.parse(localStorage.getItem(STORE) || "null"); if (s?.objects) applyLayout(s); } catch {}
+renderList();
+(function loop() { requestAnimationFrame(loop); controls.update(); renderer.render(scene, camera); })();
+</script>
+</body>
+</html>

@@ -36,7 +36,7 @@ def export_glb(
         mesh = _wall_mesh(wall, structure.get("ceiling_height_m", 2.5))
         gid = stable_guid(f"wall:{i}")
         _add_mesh(scene, mesh, gid, frame, scale, cats["wall"])
-        index.append({"global_id": gid, "category": "wall", "ifc_class": "IfcWall", "name": f"Wall {i + 1}"})
+        index.append({"global_id": gid, "category": "wall", "ifc_class": "IfcWall", "name": f"Wall {i + 1}", "movable": False})
 
     for el in elements:
         spec = class_spec(cfg, el["class"])
@@ -47,6 +47,7 @@ def export_glb(
         mesh = _element_mesh(el, bim_dir)
         col = cats["equipment"]
         _add_mesh(scene, mesh, gid, frame, scale, col, tint=mesh.metadata.get("has_vertex_colour"))
+        pivot = (0.5 * (mesh.bounds[0] + mesh.bounds[1])).tolist()
         index.append(
             {
                 "global_id": gid,
@@ -55,6 +56,8 @@ def export_glb(
                 "tag": el.get("tag"),
                 "page_item_id": el["id"],
                 "category": "equipment",
+                "movable": True,
+                "pivot_scan": pivot,
                 "fit_within_frac": (el.get("fit") or {}).get("within_frac"),
                 "position_confirmed": el.get("position_confirmed"),
             }

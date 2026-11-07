@@ -5,7 +5,7 @@ from typing import Any
 
 import numpy as np
 import trimesh
-from scipy.ndimage import gaussian_filter
+from scipy.ndimage import binary_closing, binary_fill_holes, gaussian_filter, generate_binary_structure
 from scipy.spatial import cKDTree
 from skimage import measure
 
@@ -23,7 +23,17 @@ def mesh_cfg(cfg: dict[str, Any]) -> dict[str, Any]:
         "max_voxels_per_axis": 96,
         "opacity_min": 0.3,
         "iso_percentile": 35.0,
-        "blur_sigma_voxels": 0.9,
+        "iso_level": 0.35,
+        "solid_families": ["cabinet", "appliance", "tank", "pump", "motor", "loose", "sensor"],
+        "solid_close_voxels": 5,
+        "close_voxels": 1,
+        "occupancy_factor": 0.6,
+        "surface_sigma_voxels": 1.0,
+        "blur_sigma_voxels": 0.6,
+        "scale_cap_m": 0.06,
+        "max_footprint_voxels": 6,
+        "component_keep_frac": 0.15,
+        "smooth_iters": 6,
         "max_faces": 2000,
         "min_faces": 20,
         "colour": True,
@@ -57,7 +67,8 @@ def mesh_fitted_elements(
         if not ply_path.is_file():
             counts["skipped"] += 1
             continue
-        result = _mesh_from_ply(ply_path, frame, scale, mc)
+        family = (el.get("ifc_spec") or {}).get("family", "")
+        result = _mesh_from_ply(ply_path, frame, scale, mc, solid=family in set(mc.get("solid_families") or []))
         rel = f"meshes/{el['id']}.npz"
         out = bim_dir / rel
         if result is None:
@@ -95,6 +106,7 @@ def _mesh_from_ply(
     frame: SceneFrame,
     scale: float,
     mc: dict[str, Any],
+    solid: bool = False,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, str, float] | None:
     ply = read_binary_gaussian_ply(ply_path)
     op = ply.opacity_sigmoid()
@@ -104,8 +116,9 @@ def _mesh_from_ply(
     xyz = ply.xyz()[mask]
     op_m = op[mask]
     scales = ply.scales_exp()[mask]
-    lo = xyz.min(axis=0) - float(mc["voxel_m"]) * 2
-    hi = xyz.max(axis=0) + float(mc["voxel_m"]) * 2
+    pad = max(float(mc["voxel_m"]) * 2, 2.0 * float(np.clip(scales.max(), 0, float(mc.get("scale_cap_m", 0.06)))))
+    lo = xyz.min(axis=0) - pad
+    hi = xyz.max(axis=0) + pad
     voxel = float(mc["voxel_m"])
     dims_f = np.ceil((hi - lo) / voxel).astype(int)
     max_ax = int(mc["max_voxels_per_axis"])
@@ -115,49 +128,115 @@ def _mesh_from_ply(
         voxel = float(np.max((hi - lo) / max_ax))
         dims_f = np.ceil((hi - lo) / voxel).astype(int)
     dims = tuple(int(x) for x in dims_f)
-    grid = np.zeros(dims, dtype=np.float32)
-    idx = np.floor((xyz - lo) / voxel).astype(int)
-    ok = np.all((idx >= 0) & (idx < dims), axis=1)
-    idx, op_m, scales = idx[ok], op_m[ok], scales[ok]
-    xyz_ok = xyz[ok]
-    for i, j, k, w, sc in zip(idx[:, 0], idx[:, 1], idx[:, 2], op_m, scales, strict=False):
-        r = int(max(1, min(3, np.ceil(np.max(sc) / voxel))))
-        i0, i1 = max(0, i - r), min(dims[0], i + r + 1)
-        j0, j1 = max(0, j - r), min(dims[1], j + r + 1)
-        k0, k1 = max(0, k - r), min(dims[2], k + r + 1)
-        grid[i0:i1, j0:j1, k0:k1] += w
+    keep_idx = np.nonzero(mask)[0]
+    rot = _quats(ply)[keep_idx]
+    xyz_ok = xyz
+    grid = _gaussian_density(xyz, op_m, scales, rot, lo, voxel, dims, mc)
     if not grid.max():
         return None
     grid = gaussian_filter(grid, sigma=float(mc["blur_sigma_voxels"]))
-    iso = float(np.percentile(grid[grid > 0], float(mc["iso_percentile"])))
+    iso = float(mc.get("iso_level") or 0.0)
+    if iso <= 0 or iso >= float(grid.max()):
+        iso = float(np.percentile(grid[grid > 0], float(mc["iso_percentile"])))
+    close_it = int(mc.get("solid_close_voxels", 5)) if solid else int(mc.get("close_voxels", 1))
+    pad_n = close_it + 2
+    occ = np.pad(grid > iso * float(mc.get("occupancy_factor", 0.6)), pad_n, mode="constant")
+    if close_it > 0:
+        occ = binary_closing(occ, structure=generate_binary_structure(3, 1), iterations=close_it)
+    if solid:
+        occ = binary_fill_holes(occ)
+    field = gaussian_filter(occ.astype(np.float32), sigma=float(mc.get("surface_sigma_voxels", 1.0)))
     try:
-        verts, faces, _normals, _vals = measure.marching_cubes(grid, level=iso)
+        verts, faces, _normals, _vals = measure.marching_cubes(field, level=0.5)
     except (ValueError, RuntimeError):
         return None
-    verts_scan = lo + verts * voxel
+    verts_scan = lo + (verts - pad_n + 0.5) * voxel
     verts_local = scan_to_local(frame, verts_scan, scale)
     mesh = trimesh.Trimesh(vertices=verts_local, faces=faces, process=False)
-    mesh = _largest_component(mesh)
+    mesh = _keep_components(mesh, float(mc.get("component_keep_frac", 0.15)))
     if mesh is None or len(mesh.faces) < int(mc["min_faces"]):
         return None
+    if int(mc.get("smooth_iters", 0)) > 0:
+        try:
+            trimesh.smoothing.filter_taubin(mesh, iterations=int(mc["smooth_iters"]))
+        except Exception:
+            pass
     mesh = _decimate(mesh, int(mc["max_faces"]))
     colours = _vertex_colours(ply, xyz_ok, verts_scan, mc)
     haus = _hausdorff_p95(mesh, scan_to_local(frame, xyz_ok, scale))
     return np.asarray(mesh.vertices), np.asarray(mesh.faces), colours, "splat_surface", haus
 
 
-def _largest_component(mesh: trimesh.Trimesh) -> trimesh.Trimesh | None:
+def _quats(ply) -> np.ndarray:
+    d = ply.raw_rows
+    q = np.stack([d["rot_0"], d["rot_1"], d["rot_2"], d["rot_3"]], axis=1).astype(np.float64)
+    return q / (np.linalg.norm(q, axis=1, keepdims=True) + 1e-12)
+
+
+def _rotmats(q: np.ndarray) -> np.ndarray:
+    w, x, y, z = q[:, 0], q[:, 1], q[:, 2], q[:, 3]
+    return np.stack(
+        [
+            np.stack([1 - 2 * (y * y + z * z), 2 * (x * y - w * z), 2 * (x * z + w * y)], axis=1),
+            np.stack([2 * (x * y + w * z), 1 - 2 * (x * x + z * z), 2 * (y * z - w * x)], axis=1),
+            np.stack([2 * (x * z - w * y), 2 * (y * z + w * x), 1 - 2 * (x * x + y * y)], axis=1),
+        ],
+        axis=1,
+    )
+
+
+def _gaussian_density(
+    xyz: np.ndarray,
+    opacity: np.ndarray,
+    scales: np.ndarray,
+    quats: np.ndarray,
+    lo: np.ndarray,
+    voxel: float,
+    dims: tuple[int, int, int],
+    mc: dict[str, Any],
+) -> np.ndarray:
+    """Sum of the true anisotropic Gaussians (Mahalanobis falloff) on the voxel grid."""
+    grid = np.zeros(dims, dtype=np.float32)
+    smax_cap = float(mc.get("scale_cap_m", 0.06))
+    sc = np.clip(scales, voxel * 0.35, smax_cap)
+    R = _rotmats(quats)
+    inv_var = 1.0 / (sc * sc)
+    max_r = int(mc.get("max_footprint_voxels", 6))
+    for p, w, iv, r_m, s in zip(xyz, opacity, inv_var, R, sc, strict=False):
+        rad = int(np.clip(np.ceil(2.5 * float(s.max()) / voxel), 1, max_r))
+        c = np.floor((p - lo) / voxel).astype(int)
+        lo_i = np.maximum(c - rad, 0)
+        hi_i = np.minimum(c + rad + 1, dims)
+        if np.any(hi_i <= lo_i):
+            continue
+        gx, gy, gz = np.meshgrid(
+            np.arange(lo_i[0], hi_i[0]),
+            np.arange(lo_i[1], hi_i[1]),
+            np.arange(lo_i[2], hi_i[2]),
+            indexing="ij",
+        )
+        centres = lo + (np.stack([gx, gy, gz], axis=-1) + 0.5) * voxel
+        d = centres - p
+        local = d @ r_m  # world offset into the Gaussian's axes
+        m2 = np.sum(local * local * iv, axis=-1)
+        grid[lo_i[0] : hi_i[0], lo_i[1] : hi_i[1], lo_i[2] : hi_i[2]] += (w * np.exp(-0.5 * m2) * (m2 < 6.25)).astype(np.float32)
+    return grid
+
+
+def _keep_components(mesh: trimesh.Trimesh, keep_frac: float) -> trimesh.Trimesh | None:
     parts = mesh.split(only_watertight=False)
     if not parts:
         return None
-    return max(parts, key=lambda m: len(m.faces))
+    biggest = max(len(m.faces) for m in parts)
+    kept = [m for m in parts if len(m.faces) >= max(8, keep_frac * biggest)]
+    return trimesh.util.concatenate(kept) if len(kept) > 1 else kept[0]
 
 
 def _decimate(mesh: trimesh.Trimesh, max_faces: int) -> trimesh.Trimesh:
     if len(mesh.faces) <= max_faces:
         return mesh
     try:
-        return mesh.simplify_quadric_decimation(max_faces)
+        return mesh.simplify_quadric_decimation(face_count=max_faces)
     except Exception:
         return mesh
 
@@ -209,10 +288,15 @@ def _fit_mesh(mesh: trimesh.Trimesh, pts: np.ndarray, tol: float) -> dict[str, f
     if len(pts) == 0:
         return {"within_frac": 0.0, "mean_m": 0.0}
     try:
-        _prox, dist, _ = trimesh.proximity.closest_point(mesh, pts)
-        return {"within_frac": float(np.mean(dist <= tol)), "mean_m": float(np.mean(dist))}
+        # Splat centres sit inside the object, so count them as covered when inside or within tol of the surface.
+        sd = trimesh.proximity.signed_distance(mesh, pts)
+        return {"within_frac": float(np.mean(sd > -tol)), "mean_m": float(np.mean(np.abs(sd)))}
     except Exception:
-        return {"within_frac": 0.0, "mean_m": 0.0}
+        try:
+            _prox, dist, _ = trimesh.proximity.closest_point(mesh, pts)
+            return {"within_frac": float(np.mean(dist <= tol)), "mean_m": float(np.mean(dist))}
+        except Exception:
+            return {"within_frac": 0.0, "mean_m": 0.0}
 
 
 def _element_points_for_fit(el: dict[str, Any], frame: SceneFrame, repo: Path, scene_id: str, scale: float) -> np.ndarray:

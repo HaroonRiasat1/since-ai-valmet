@@ -23,3 +23,4 @@ ifctester>=0.8.0
 networkx>=3.0
 trimesh>=4.0
 scikit-image>=0.22.0
+fast-simplification>=0.1.7

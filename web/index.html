@@ -13,7 +13,8 @@
   #c { position:fixed; inset:0; }
   .panel { position:fixed; background:var(--panel); border:1px solid var(--line); border-radius:10px;
            backdrop-filter:blur(6px); }
-  #top { top:12px; left:12px; padding:10px 12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; max-width:calc(100% - 420px); }
+  #top { top:12px; left:12px; padding:10px 12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; max-width:calc(100% - 420px); transition:max-width .25s; }
+  body.side-collapsed #top { max-width:calc(100% - 56px); }
   #top h1 { font-size:14px; margin:0 8px 0 0; font-weight:600; }
   button { background:#1d242d; color:var(--text); border:1px solid var(--line); border-radius:6px;
            padding:6px 10px; font:inherit; cursor:pointer; }
@@ -21,7 +22,15 @@
   button.on { background:#20354d; border-color:var(--acc); }
   label { color:var(--mut); display:flex; align-items:center; gap:6px; }
   input[type=range] { width:90px; }
-  #side { top:12px; right:12px; bottom:12px; width:390px; padding:12px; overflow:auto; }
+  #side-shell { position:fixed; top:12px; right:12px; bottom:12px; width:390px; z-index:6; pointer-events:none; }
+  #side { position:absolute; inset:0; padding:12px; overflow:auto; pointer-events:auto;
+           transition:transform .28s cubic-bezier(.4,0,.2,1), opacity .2s; transform:translateX(0); opacity:1; }
+  #side-shell.collapsed #side { transform:translateX(calc(100% + 20px)); opacity:0; pointer-events:none; }
+  .side-bar { display:flex; justify-content:flex-end; align-items:center; margin:-2px 0 6px; gap:6px; }
+  #sidecollapse { padding:4px 10px; font-size:11px; }
+  #sideopen { position:fixed; right:0; top:50%; transform:translateY(-50%); z-index:6; padding:12px 8px;
+              border-radius:8px 0 0 8px; border-right:none; font-size:11px; letter-spacing:.03em; cursor:pointer;
+              writing-mode:vertical-rl; text-orientation:mixed; }
   #side h2 { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--mut); margin:4px 0 8px; }
   .card { border:1px solid var(--line); border-radius:8px; padding:8px 10px; margin-bottom:8px; background:#141920; }
   .card .row { display:flex; justify-content:space-between; gap:8px; }
@@ -41,6 +50,16 @@
   #copilot h3 { margin:10px 0 4px; font-size:12px; color:#ffb4b4; }
   #copilot ul { margin:4px 0; padding-left:18px; }
   #copilot li { margin:2px 0; }
+  #copilot-ai-mount { margin-bottom:8px; }
+  #copilot-ai-mount .card { border-color:#3d5f8a; background:#141920; }
+  #copilot .cop-sec { margin-top:6px; border-top:1px solid var(--line); padding-top:2px; }
+  #copilot .cop-sec:first-of-type { margin-top:4px; border-top:none; padding-top:0; }
+  #copilot .cop-sec summary { cursor:pointer; list-style:none; font-size:12px; color:#ffb4b4; font-weight:600;
+                              padding:6px 0 4px; user-select:none; }
+  #copilot .cop-sec summary::-webkit-details-marker { display:none; }
+  #copilot .cop-sec summary::before { content:"▾"; color:var(--mut); margin-right:6px; display:inline-block; transition:transform .15s; }
+  #copilot .cop-sec:not([open]) summary::before { transform:rotate(-90deg); }
+  #copilot .cop-body { padding-bottom:2px; }
   code { font-size:11px; color:#9fc6ff; }
   svg text { fill:var(--mut); font-size:9px; }
   select { background:#1d242d; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:5px 6px; font:inherit; max-width:230px; }
@@ -81,6 +100,7 @@
   <button id="reset">↺ Reset</button>
   <button id="follow" class="on" title="Camera mode (V)">First person</button>
   <button id="allbox">All boxes</button>
+  <button id="layoutbtn" title="Open the drag-and-drop layout editor" onclick="location.href='layout.html'">Layout editor</button>
   <button id="healthbtn" class="on" title="Blinking centre lights on degrading assets (H)">Health lights</button>
   <select id="classsel" title="Show only the boxes of one class"></select>
   <button id="gridbtn" title="Show the navigation grid on the floor (G)">Grid</button>
@@ -94,11 +114,15 @@
   Driving: <b>W/S</b> walk · <b>A/D</b> step sideways · <b>←/→</b> turn ·<b>Shift</b> faster · <b>R</b> route to target from here · <b>▶</b> back to route</div>
 <div id="keyhint" class="mut" style="position:fixed;bottom:52px;left:12px">Tip: press W/A/S/D or arrow keys to walk yourself</div>
 
-<div id="side" class="panel">
-  <div id="copilot"></div>
-  <h2>Nearby assets <span id="ncount" class="mut"></span></h2>
-  <div id="near"></div>
+<div id="side-shell">
+  <div id="side" class="panel">
+    <div class="side-bar"><button type="button" id="sidecollapse" title="Collapse analysis panel (])" aria-expanded="true">Hide panel ▸</button></div>
+    <div id="copilot"></div>
+    <h2>Nearby assets <span id="ncount" class="mut"></span></h2>
+    <div id="near"></div>
+  </div>
 </div>
+<button type="button" id="sideopen" class="panel" title="Show analysis panel ([)" hidden>◂ Analysis</button>
 <div id="status" class="panel"></div>
 <div id="nav" class="panel">
   <h2>Navigation</h2>
@@ -141,6 +165,17 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { SparkRenderer, SplatMesh, SplatEdit, SplatEditSdf, SplatEditSdfType, SplatEditRgbaBlendMode } from "@sparkjsdev/spark";
 
 const $ = (id) => document.getElementById(id);
+let sideOpen = true;
+function setSideOpen(open) {
+  sideOpen = open;
+  $("side-shell").classList.toggle("collapsed", !open);
+  $("sideopen").hidden = open;
+  $("sidecollapse").setAttribute("aria-expanded", String(open));
+  document.body.classList.toggle("side-collapsed", !open);
+}
+function ensureSideOpen() { if (!sideOpen) setSideOpen(true); }
+$("sidecollapse").onclick = () => setSideOpen(false);
+$("sideopen").onclick = () => setSideOpen(true);
 const COL = { healthy:"#3ecf8e", watch:"#f5b942", degraded:"#ff8a3d", attention_required:"#ff5d5d", none:"#7d8794" };
 const stateCol = (it) => it.tag ? (COL[it.state] || "#5aa9ff") : COL.none;
 const human = (s) => String(s).replace(/_/g, " ").toLowerCase();
@@ -802,31 +837,38 @@ function sparkline(tr) {
   return `<svg width="${W}" height="${Hh}">${line(tr.A, "#5aa9ff")}${line(tr.B, "#ff8a3d")}
     <text x="2" y="9">${fmt(tr.a)} (blue) vs ${fmt(tr.b)} (orange), last 3 days${sameScale ? "" : ", each scaled"}</text></svg>`;
 }
+const copFold = (title, body, open = false) =>
+  `<details class="cop-sec"${open ? " open" : ""}><summary>${title}</summary><div class="cop-body">${body}</div></details>`;
 function showCopilot(tag) {
   const e = copilot[tag], st = e.state, healthy = st.issue_code === "NORMAL";
   const big = e.shifts.filter(x => Math.abs(x.change_pct) >= 10);
   const col = stateCol(byTag[tag] || { tag, state: st.condition_state });
-  $("copilot").innerHTML = `<h2>AI service copilot</h2><div class="card" style="border-color:${col}">
-   <div class="row"><b>${e.tag} · ${human(st.asset_class)}</b><span class="pill" style="color:${col};border-color:${col}">${st.urgency} urgency</span></div>
-   <h3>Observation</h3>
-   <ul><li>Condition <b>${human(st.condition_state)}</b>, health ${st.health_score}, issue <code>${st.issue_code}</code> (${st.issue_summary}); model confidence ${st.model_confidence}. <span class="mut">[Current_State]</span></li>
+  const obs = `<ul><li>Condition <b>${human(st.condition_state)}</b>, health ${st.health_score}, issue <code>${st.issue_code}</code> (${st.issue_summary}); model confidence ${st.model_confidence}. <span class="mut">[Current_State]</span></li>
    ${e.shifts.slice(0,4).map(x => `<li>${fmt(x.metric)}: ${x.last24h} ${unit(x.metric)} in the last 24 h vs ${x.before} before (${x.change_pct > 0 ? "+" : ""}${x.change_pct}%).</li>`).join("")}
    ${e.events.length ? `<li>Recent events: ${e.events.slice(0,4).map(v => `<code>${v.event_id}</code> ${human(v.event_code)} (${v.status})`).join(", ")}.</li>` : ""}
    ${e.work_orders.length ? `<li>Work orders: ${e.work_orders.map(w => `<code>${w.work_order_id}</code> ${w.action} → ${human(w.result)}`).join("; ")}.</li>` : ""}</ul>
-   ${sparkline(e.trend)}
-   <h3>${healthy ? "Assessment" : "Hypothesis (not yet verified)"}</h3>
-   <ul><li>${healthy ? "No significant deviation; routine monitoring is enough." :
+   ${sparkline(e.trend)}`;
+  const hypTitle = healthy ? "Assessment" : "Hypothesis (not yet verified)";
+  const hyp = `<ul><li>${healthy ? "No significant deviation; routine monitoring is enough." :
      `${big.length ? `Largest change: ${big.map(x => `${fmt(x.metric)} ${x.change_pct > 0 ? "+" : ""}${x.change_pct}%`).join(", ")}. ` : "Telemetry shifts are small, so the diagnosis rests mainly on the condition model. "}
      ${e.cases.length ? `Pattern matches ${e.cases.map(c => `<code>${c.case_id}</code> “${c.historical_interpretation}”`).join(", ")}.` : "No matching historical case."}
-     ${e.work_orders.some(w => w.result.includes("follow_up")) ? "A previous work order ended in follow-up required, which points to a recurring cause." : ""}`}</li></ul>
-   <h3>Next safe verification steps</h3>
-   <ul><li>Confirm asset identity on site (QR/NFC); 3D mapping is ${byTag[tag] ? `${byTag[tag].mapping}, confidence ${byTag[tag].mapping_conf}` : "not placed in the scan"}. <code>DOC-3D-MAPPING</code></li>
+     ${e.work_orders.some(w => w.result.includes("follow_up")) ? "A previous work order ended in follow-up required, which points to a recurring cause." : ""}`}</li></ul>`;
+  const steps = `<ul><li>Confirm asset identity on site (QR/NFC); 3D mapping is ${byTag[tag] ? `${byTag[tag].mapping}, confidence ${byTag[tag].mapping_conf}` : "not placed in the scan"}. <code>DOC-3D-MAPPING</code></li>
    <li>${st.recommended_next_check[0].toUpperCase() + st.recommended_next_check.slice(1)}${e.cases[0] ? `; per <code>${e.cases[0].case_id}</code>: ${e.cases[0].recommended_next_check}` : ""}. <code>${e.doc}</code></li>
    <li class="mut">${e.doc_text}</li>
-   <li>Follow site permits and lockout/tagout; escalate to qualified personnel. The copilot recommends checks only. <code>DOC-FIELD-SAFETY</code></li></ul>
-   ${e.data_quality.length ? `<div class="mut">Data quality: ${e.data_quality.map(q => `<code>${q.issue_id}</code> ${human(q.issue_type)}`).join(", ")}, so confidence is reduced.</div>` : ""}
-   <div class="mut" style="margin-top:6px">Grounded in builder-pack records only; IDs cited per <code>DOC-RAG-GUIDE</code>.</div></div>`;
+   <li>Follow site permits and lockout/tagout; escalate to qualified personnel. The copilot recommends checks only. <code>DOC-FIELD-SAFETY</code></li></ul>`;
+  $("copilot").innerHTML = `<h2>AI service copilot</h2>
+   <div class="card" style="border-color:${col}">
+     <div class="row"><b>${e.tag} · ${human(st.asset_class)}</b><span class="pill" style="color:${col};border-color:${col}">${st.urgency} urgency</span></div>
+   </div>
+   <div id="copilot-ai-mount"></div>
+   <div class="card" style="border-color:${col}">
+     ${copFold("Observation", obs)}
+     ${copFold(hypTitle, hyp)}
+     ${copFold("Next safe verification steps", steps)}
+   </div>`;
   $("copilot").classList.add("show");
+  ensureSideOpen();
   aiBlock(tag);
 }
 
@@ -859,20 +901,22 @@ function md(t) {
   return html + (list ? `</${list}>` : "");
 }
 function aiBlock(tag) {
-  const box = document.createElement("div"); box.className = "card"; box.style.borderColor = "#5aa9ff";
-  $("copilot").appendChild(box);
+  const mount = $("copilot-ai-mount");
+  if (!mount) return;
+  const box = document.createElement("div"); box.className = "card";
+  mount.appendChild(box);
   if (!llm.on) {
     box.innerHTML = `<b>AI analysis</b><div class="mut">No AI provider is ready on the server. Set the API key in the backend environment and reload.</div>`;
     return;
   }
   box.innerHTML = `<div class="row"><b>AI analysis</b><span class="mut">${esc(llm.model)}</span></div>
-    <div class="ai-out mut">Thinking…</div>
+    <div class="ai-out mut">Ask a question about ${esc(tag)} below.</div>
     <form class="ai-ask" style="display:flex;gap:6px;margin-top:8px">
       <input placeholder="Ask about ${tag}…" style="flex:1;background:#0f1216;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font:inherit">
       <button>Ask</button></form>`;
   const out = box.querySelector(".ai-out");
   const ask = async (question) => {
-    out.classList.add("mut"); out.textContent = question ? `Asking: ${question}…` : "Thinking…";
+    out.classList.add("mut"); out.textContent = `Asking: ${question}…`;
     try {
       const r = await fetch("api/copilot/query", { method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tag, question, nearby: nearTags, provider: llm.provider, model: llm.model }) });
@@ -886,7 +930,6 @@ function aiBlock(tag) {
   };
   box.querySelector(".ai-ask").onsubmit = (e) => { e.preventDefault(); const inp = e.target.querySelector("input");
     const q = inp.value.trim(); if (q) { inp.value = ""; ask(q); } };
-  ask("");
 }
 
 // controls
@@ -948,6 +991,7 @@ function showBimInfo(meta) {
     ${meta.fit_within_frac != null ? `<span>Fit ≤5cm</span><span>${(100 * meta.fit_within_frac).toFixed(0)}%</span>` : ""}
     </div></div>`;
   $("copilot").classList.add("show");
+  ensureSideOpen();
   $("copilot").querySelector(".x").onclick = clearAnalysis;
 }
 function analyze(b) {
@@ -972,6 +1016,7 @@ function analyze(b) {
     <div class="mut">${d.toFixed(1)} m away · size ${it.size.map(x => x.toFixed(2)).join(" × ")}${it.label ? ` · detector: ${esc(it.label)}` : ""}</div>
     ${vlmBlock}${idvBlock}</div>`;
   $("copilot").classList.add("show");
+  ensureSideOpen();
   $("copilot").querySelector(".x").onclick = clearAnalysis;
   wireDelete($("copilot"));
   const btn = $("copilot").querySelector(".idv");
@@ -1227,6 +1272,7 @@ $("mapbtn").onclick = () => { showMap = !showMap; $("mapbtn").classList.toggle("
 mapCanvas.style.display = "block";
 addEventListener("keydown", (e) => { if (["INPUT", "SELECT"].includes(e.target.tagName)) return;
   if (e.code === "KeyG") $("gridbtn").click(); if (e.code === "KeyM") $("mapbtn").click(); if (e.code === "KeyH") $("healthbtn").click();
+  if (e.code === "BracketRight") setSideOpen(false); if (e.code === "BracketLeft") setSideOpen(true);
   if ((e.code === "Delete" || e.code === "Backspace") && selBox) { e.preventDefault(); removeObject(selBox); } });
 
 // ---------- loop
