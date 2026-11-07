@@ -11,9 +11,12 @@ from dataclasses import asdict
 from backend import copilot
 from backend.llm import Provider, ProviderError, chat
 from backend.routing import RouteError, nearest_next
+from backend.semantic import SpecError, fit, get_layer
 
 MAX_TURNS = 6
 WALK_CHECKS = 8
+MODEL_ROWS = 15
+DIAGNOSE_WORDS = re.compile(r"\b(why|wrong|diagnos\w*|problem|fail\w*|fault\w*|issue|status|condition|happening)\b", re.I)
 TAG = re.compile(r"\b(CV|PT|VS|P|M)-?(\d{3})\b", re.I)
 NAV_WORDS = re.compile(r"\b(go|goes|take|walk|route|navigate|bring|lead|head|show me the way|get me)\b", re.I)
 ROUND_WORDS = re.compile(r"\b(round|inspect (all|every)|all (the )?(faulty|faults|unhealthy|problems))\b", re.I)
@@ -22,7 +25,13 @@ CLASS_WORDS = {"valve": "CONTROL_VALVE", "pump": "PROCESS_PUMP", "motor": "ELECT
                "transmitter": "PRESSURE_TRANSMITTER", "sensor": "VIBRATION_SENSOR"}
 
 SYSTEM = """You are the field-service assistant inside an industrial digital twin. The technician is walking in a scanned equipment room.
-Use tools for every fact about assets. Never invent tags, distances or readings.
+Use tools for every fact about assets. Never invent tags, distances, numbers or readings.
+
+Answering data questions:
+- Questions about counts, lists, trends, history or comparisons use run_report if a report fits, otherwise run_query.
+- Use the entity and column names given in the layer hints. If unsure, call describe.
+- The app shows the result table itself. Do not retype it: state the finding in one or two sentences, using numbers from the rows.
+- If a tool returns an error, read it, fix the spec and try again.
 
 Choosing a destination:
 - An exact tag means that asset.
@@ -39,6 +48,10 @@ Diagnosing:
 
 Reply in at most 120 words."""
 
+NAV_TOOLS = {"search_assets", "route_to", "inspection_round"}
+DATA_TOOLS = {"search_layer", "describe", "run_query", "run_report"}
+NOT_FOUND = "I could not answer that from the plant data, so I am not guessing. Try naming an asset, a signal or a period."
+
 TOOLS = [
     {"type": "function", "function": {"name": "search_assets", "description": "List assets with health and state, nearest walk first or lowest health first.", "parameters": {
         "type": "object", "properties": {
@@ -49,6 +62,23 @@ TOOLS = [
     {"type": "function", "function": {"name": "route_to", "description": "Compute a collision-free path from the technician to an asset and start it.", "parameters": {
         "type": "object", "properties": {"tag": {"type": "string"}}, "required": ["tag"]}}},
     {"type": "function", "function": {"name": "inspection_round", "description": "Route through every non-healthy asset, nearest next.", "parameters": {"type": "object", "properties": {}}}},
+    {"type": "function", "function": {"name": "search_layer", "description": "Find entities, columns, reports and glossary terms for a business phrase.", "parameters": {
+        "type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]}}},
+    {"type": "function", "function": {"name": "describe", "description": "Describe an entity, entity.column, report or glossary term.", "parameters": {
+        "type": "object", "properties": {"name": {"type": "string"}}, "required": ["name"]}}},
+    {"type": "function", "function": {"name": "run_query", "description": "Run a query spec on the plant data. There is no SQL: name an entity and its columns.", "parameters": {
+        "type": "object", "required": ["entity"], "properties": {
+            "entity": {"type": "string"},
+            "measures": {"type": "array", "description": "Measure names, or 'count'. Use {column, agg} to change the aggregate.", "items": {}},
+            "dimensions": {"type": "array", "items": {"type": "string"}, "description": "Columns to group by or list, including '<join>.<column>'."},
+            "filters": {"type": "array", "items": {"type": "object", "required": ["field", "op", "value"], "properties": {
+                "field": {"type": "string"},
+                "op": {"type": "string", "enum": ["=", "!=", ">", "<", ">=", "<=", "like", "in", "between"]},
+                "value": {"description": "Text, number, or a list for in and between."}}}},
+            "order_by": {"type": "array", "items": {"type": "object", "properties": {"field": {"type": "string"}, "dir": {"type": "string", "enum": ["asc", "desc"]}}}},
+            "limit": {"type": "integer"}}}}},
+    {"type": "function", "function": {"name": "run_report", "description": "Run a verified report by name.", "parameters": {
+        "type": "object", "properties": {"name": {"type": "string"}, "params": {"type": "object"}}, "required": ["name"]}}},
     {"type": "function", "function": {"name": "get_evidence", "description": "Telemetry, events, work orders, cases and data-quality records for one asset.", "parameters": {
         "type": "object", "properties": {"tag": {"type": "string"}}, "required": ["tag"]}}},
 ]
@@ -57,10 +87,12 @@ TOOLS = [
 class Turn:
     """The tools for one request. Everything the model asks for is checked here."""
 
-    def __init__(self, scene, grid, position):
-        self.scene, self.grid, self.position = scene, grid, position
+    def __init__(self, scene, grid, position, allowed=NAV_TOOLS | DATA_TOOLS):
+        self.scene, self.grid, self.position, self.allowed = scene, grid, position, allowed
         self.action = None
         self.records = []
+        self.table = None
+        self.layer = get_layer()
 
     def walk(self, item):
         try:
@@ -96,13 +128,37 @@ class Turn:
         self.records.append(record)
         return {**record, "allowed_citations": copilot.evidence_ids(record)}
 
+    def search_layer(self, query):
+        return self.layer.search(query)
+
+    def describe(self, name):
+        return self.layer.describe(name)
+
+    def _table(self, out):
+        """The page shows every row. The model gets enough of them to state the finding."""
+        self.table = out
+        return fit({"columns": out["columns"], "rows": out["rows"][:MODEL_ROWS], "row_count": out["row_count"]})
+
+    def run_query(self, **spec):
+        return self._table(self.layer.run(spec))
+
+    def run_report(self, name, params=None):
+        return self._table(self.layer.report(name, params))
+
+    def hints(self, message):
+        """What the layer knows about this question, found in code so a small model starts in the right place."""
+        hits = self.layer.search(message)
+        entity = next((h["name"] for h in hits if h["kind"] == "entity"), None)
+        names = [f"{h['kind']} {h['name']}" for h in hits]
+        return json.dumps({"layer_hits": names, "best_entity": self.layer.describe(entity) if entity else None})
+
     def call(self, name, arguments):
         """Run one tool call. Failures go back to the model so it can correct itself."""
-        if name not in {t["function"]["name"] for t in TOOLS}:
+        if name not in self.allowed:   # a question can never move the technician
             return {"error": f"unknown tool {name}"}
         try:
             return getattr(self, name)(**json.loads(arguments or "{}"))
-        except (RouteError, TypeError, ValueError) as error:
+        except (RouteError, SpecError, TypeError, ValueError) as error:
             return {"error": str(error)}
 
 
@@ -138,6 +194,38 @@ def rule_based(turn: Turn, message: str) -> str | None:
     return f"Routing to {pick['tag']}, {length:.1f} m. Chosen by {rule}.{note}"
 
 
+def text_tool_call(content: str) -> dict | None:
+    """Small models sometimes write a tool call as JSON text instead of making one."""
+    found = re.search(r"\{.*\}", content or "", re.S)
+    try:
+        call = json.loads(found.group(0)) if found else None
+    except ValueError:
+        return None
+    if not isinstance(call, dict) or not isinstance(call.get("name"), str):
+        return None
+    return {"id": "text", "type": "function", "function": {"name": call["name"], "arguments": json.dumps(call.get("arguments", call.get("parameters", {})))}}
+
+
+def table_summary(table: dict) -> str:
+    if not table["rows"]:
+        return "No records match that."
+    first = ", ".join(f"{c} {v}" for c, v in zip(table["columns"], table["rows"][0]))
+    return f"{table['row_count']} rows. First: {first}."
+
+
+def grounded(reply: str, turn: Turn, used: list[str]) -> str:
+    """A data answer must come from the rows. Anything else is replaced, because models can invent figures."""
+    if turn.table is None:
+        return reply if reply and "describe" in used else NOT_FOUND
+    cells = {str(v) for row in turn.table["rows"] for v in row} | {str(turn.table["row_count"])}
+    numbers = {float(n) for n in re.findall(r"(?<![\w-])\d+(?:\.\d+)?", reply)}
+    known = {float(c) for c in cells if re.fullmatch(r"-?\d+(?:\.\d+)?", c)}
+    tags = {m.group(0).upper() for m in TAG.finditer(reply)}
+    if not turn.table["rows"] or not reply or numbers - known or tags - cells:
+        return table_summary(turn.table)
+    return reply
+
+
 def named_asset(scene, message: str) -> str | None:
     tag = TAG.search(message)
     wanted = f"{tag.group(1).upper()}-{tag.group(2)}" if tag else None
@@ -146,7 +234,7 @@ def named_asset(scene, message: str) -> str | None:
 
 def result(turn: Turn, reply: str, mode: str, model: str | None, used: list[str]) -> dict:
     ids = [i for record in turn.records for i in copilot.evidence_ids(record)]
-    return {"reply": reply, "mode": mode, "model": model, "tools": used, "action": turn.action,
+    return {"reply": reply, "mode": mode, "model": model, "tools": used, "action": turn.action, "table": turn.table,
             "evidence_ids": ids, "unverified_citations": copilot.unknown_citations(reply, ids)}
 
 
@@ -155,34 +243,48 @@ def respond(scene, grid, position, message: str, provider: Provider | None = Non
     planned = rule_based(turn, message)
     if planned:
         return result(turn, planned, "rules", None, [])
+    term = turn.layer.term(message)
+    if term:
+        return result(turn, f"**{term['term']}**: {term['meaning']}", "rules", None, [])
     if provider is None or not provider.configured:
         return offline(turn, "No AI provider is ready.")
     tag = named_asset(scene, message)
-    if tag:   # a question about one asset gets the grounded diagnosis, which cites its records
+    if tag and DIAGNOSE_WORDS.search(message):   # this path cites the asset's records
         try:
             found = copilot.diagnose(scene, provider, tag, message, model=model)
         except ProviderError as error:
             return offline(turn, str(error))
         turn.records.append(copilot.evidence(scene, tag, []))
         return result(turn, found["answer"], "agent", found["model"], ["diagnose"])
-    messages = [{"role": "system", "content": SYSTEM}, *(history or []),
+    navigating = bool(NAV_WORDS.search(message))
+    turn.allowed = NAV_TOOLS if navigating else DATA_TOOLS
+    tools = [t for t in TOOLS if t["function"]["name"] in turn.allowed]
+    messages = [{"role": "system", "content": f"{SYSTEM}\n\nLayer hints for this question: {turn.hints(message)}"}, *(history or []),
                 {"role": "user", "content": f"{message}\n\n(Technician position: {[round(v, 2) for v in position]})"}]
-    used = []
+    used, seen = [], set()
     try:
         for _ in range(MAX_TURNS):
-            answer = chat(provider, messages, model=model, tools=TOOLS)
+            answer = chat(provider, messages, model=model, tools=tools)
             reply, model = answer["message"], answer["model"]
-            calls = reply.get("tool_calls") or []
-            if not calls:
+            written = text_tool_call(reply["content"]) if not reply.get("tool_calls") else None
+            calls = reply.get("tool_calls") or ([written] if written else [])
+            fresh = [c for c in calls if (c["function"]["name"], c["function"].get("arguments")) not in seen]
+            if not fresh:   # no new call: the model is done, or going round in circles
+                reply = {**reply, "content": "" if calls else reply["content"]}
                 break
+            calls = fresh
+            reply["tool_calls"] = calls
             messages.append(reply)
             for call in calls:
                 used.append(call["function"]["name"])
+                seen.add((call["function"]["name"], call["function"].get("arguments")))
                 output = turn.call(call["function"]["name"], call["function"].get("arguments"))
                 messages.append({"role": "tool", "tool_call_id": call.get("id", ""), "content": json.dumps(output, default=str)})
     except ProviderError as error:
         return offline(turn, str(error))
-    return result(turn, reply["content"] or "I could not finish that request.", "agent", model, used)
+    if navigating:
+        return result(turn, reply["content"] or "I could not finish that request.", "agent", model, used)
+    return result(turn, grounded(reply["content"], turn, used), "agent", model, used)
 
 
 def offline(turn: Turn, why: str) -> dict:

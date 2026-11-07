@@ -62,6 +62,9 @@
   #nav input, #nav select { width:100%; max-width:none; background:#0f1216; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:5px 7px; font:inherit; }
   #chatlog { max-height:210px; overflow-y:auto; margin-bottom:6px; }
   #chatlog .q { color:var(--mut); margin-top:6px; }
+  #chatlog .tw { overflow-x:auto; margin-top:6px; }
+  #chatlog table { border-collapse:collapse; font-size:11px; white-space:nowrap; }
+  #chatlog th, #chatlog td { border:1px solid var(--line); padding:2px 5px; text-align:left; }
   #chatform { display:flex; gap:6px; }
   #nav .b { display:flex; gap:6px; margin-top:7px; flex-wrap:wrap; }
   #navmsg { min-height:16px; margin-top:6px; }
@@ -605,6 +608,13 @@ function md(t) {
 }
 // ---------- assistant: the backend picks and routes, the page only follows what comes back
 const chatHistory = [];
+function resultTable(t) {
+  if (!t) return "";
+  const head = t.columns.map(c => `<th scope="col">${esc(c)}</th>`).join("");
+  const body = t.rows.map(r => `<tr>${r.map(v => `<td>${esc(String(v ?? ""))}</td>`).join("")}</tr>`).join("");
+  return `<div class="tw"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>
+    <details class="mut"><summary>Show query</summary><code>${esc(t.sql)}</code><div>${esc(JSON.stringify(t.params))}</div></details>`;
+}
 function followAction(action) {
   if (!action) return;
   setRoute(action.type === "round" ? action.legs.map(L => ({ tag: L.target, pts: L.points.map(toVec) }))
@@ -624,7 +634,7 @@ $("chatform").onsubmit = async (e) => {
     followAction(j.action);
     const flag = j.unverified_citations.length ? `<div style="color:#f5b942">Not in the evidence: ${j.unverified_citations.map(esc).join(", ")}</div>` : "";
     const ids = j.evidence_ids.length ? ` · evidence: ${j.evidence_ids.map(i => `<code>${esc(i)}</code>`).join(" ")}` : "";
-    line.innerHTML = `<div class="q">${esc(message)}</div>${md(j.reply)}${flag}<div class="mut">${j.mode === "rules" ? "rule-based" : esc(j.model || "")}${ids}</div>`;
+    line.innerHTML = `<div class="q">${esc(message)}</div>${md(j.reply)}${resultTable(j.table)}${flag}<div class="mut">${j.mode === "rules" ? "rule-based" : esc(j.model || "")}${ids}</div>`;
     chatHistory.push({ role: "user", content: message }, { role: "assistant", content: j.reply.slice(0, 2000) });
   } catch (err) {
     line.innerHTML = `<div class="q">${esc(message)}</div><div style="color:#ff5d5d">${esc(String(err.message || err))}</div>`;

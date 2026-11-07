@@ -9,9 +9,9 @@ START = [0.1, 1.0, 0.1]
 PROVIDER = Provider("stub", "Stub", "http://stub/v1", default_model="m")
 
 
-def tool_call(name, **arguments):
+def tool_call(tool, **arguments):
     return {"message": {"role": "assistant", "content": "", "tool_calls": [
-        {"id": "1", "type": "function", "function": {"name": name, "arguments": json.dumps(arguments)}}]}, "model": "m"}
+        {"id": "1", "type": "function", "function": {"name": tool, "arguments": json.dumps(arguments)}}]}, "model": "m"}
 
 
 def text(content):
@@ -51,7 +51,7 @@ def test_bad_tag_goes_back_to_the_model_and_moves_nobody(scene, monkeypatch):
 
 def test_unknown_tool_is_refused(scene, monkeypatch):
     seen = script(monkeypatch, tool_call("delete_everything"), text("Sorry."))
-    assert ask(scene, "hello")["action"] is None
+    assert ask(scene, "hello")["reply"] == agent.NOT_FOUND
     assert "unknown tool" in seen[1][-1]["content"]
 
 
@@ -103,8 +103,9 @@ def test_rules_ignore_questions(scene):
 
 
 def test_invented_citation_is_flagged(scene, monkeypatch):
-    script(monkeypatch, text("See `EVT-99999`."))
-    assert ask(scene, "what happened?")["unverified_citations"] == ["EVT-99999"]
+    scene.copilot["CV-001"] = {"asset_id": "ASSET-001"}
+    monkeypatch.setattr(agent.copilot, "chat", lambda *_, **__: text("See `EVT-99999`."))
+    assert ask(scene, "why did CV-001 fail?")["unverified_citations"] == ["EVT-99999"]
 
 
 def test_question_about_one_asset_uses_the_grounded_diagnosis(scene, monkeypatch):
@@ -116,3 +117,56 @@ def test_question_about_one_asset_uses_the_grounded_diagnosis(scene, monkeypatch
 
 def test_area_narrows_a_clear_request(scene):
     assert ask(scene, "take me to the one in the Utility Island")["action"]["target"] == "P-001"
+
+
+def test_data_question_runs_a_spec_and_returns_the_table(scene, monkeypatch):
+    seen = script(monkeypatch, tool_call("run_query", entity="event", measures=["count"], filters=[{"field": "status", "op": "=", "value": "open"}]), text("There are open events."))
+    out = ask(scene, "how many open alerts are there?")
+    assert out["tools"] == ["run_query"] and out["table"]["rows"][0][0] > 0
+    assert "layer_hits" in seen[0][0]["content"]
+
+
+def test_bad_spec_goes_back_to_the_model(scene, monkeypatch):
+    seen = script(monkeypatch, tool_call("run_query", entity="event", dimensions=["nope"]), text("Could not do that."))
+    assert ask(scene, "list the alerts")["reply"] == agent.NOT_FOUND
+    assert "has no column" in seen[1][-1]["content"]
+
+
+def test_tool_call_written_as_text_still_runs(scene, monkeypatch):
+    written = json.dumps({"name": "run_report", "arguments": {"name": "priority_list"}})
+    script(monkeypatch, text(written), text("Here is the list."))
+    out = ask(scene, "what should we fix first?")
+    assert out["tools"] == ["run_report"] and out["table"]["rows"]
+
+
+def test_a_question_cannot_move_the_technician(scene, monkeypatch):
+    seen = script(monkeypatch, tool_call("route_to", tag="P-001"), text("Done."))
+    out = ask(scene, "what should we fix first?")
+    assert out["action"] is None and "unknown tool" in seen[1][-1]["content"]
+
+
+def test_invented_figure_is_replaced_by_the_rows(scene, monkeypatch):
+    script(monkeypatch, tool_call("run_report", name="health_by_class"), text("PROCESS_PUMP_007 had 45 hours of downtime on P-999."))
+    out = ask(scene, "which class is healthiest?")
+    assert "45" not in out["reply"] and "P-999" not in out["reply"] and out["reply"].startswith("5 rows")
+
+
+def test_answer_using_the_rows_is_kept(scene, monkeypatch):
+    script(monkeypatch, tool_call("run_report", name="health_by_class"), text("Transmitters lead at 96 on 3 assets."))
+    assert ask(scene, "which class is healthiest?")["reply"] == "Transmitters lead at 96 on 3 assets."
+
+
+def test_answer_with_no_rows_says_so(scene, monkeypatch):
+    spec = dict(entity="event", dimensions=["tag"], filters=[{"field": "event_id", "op": "=", "value": "none"}])
+    script(monkeypatch, tool_call("run_query", **spec), text("Lots of events."))
+    assert ask(scene, "list those events")["reply"] == "No records match that."
+
+
+def test_repeated_calls_stop_the_loop(scene, monkeypatch):
+    seen = script(monkeypatch, *[tool_call("describe", name="event")] * 6)
+    ask(scene, "tell me about events")
+    assert len(seen) == 2
+
+
+def test_glossary_question_needs_no_model(scene):
+    assert "friction" in ask(scene, "what does stiction mean?", None)["reply"]
