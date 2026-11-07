@@ -63,7 +63,7 @@ Click any box in the scene (or a Nearby card) for AI analysis: mapped assets ope
   and recommend verification only (DOC-RAG-GUIDE, DOC-FIELD-SAFETY).
 - Keep the viewer a single HTML file with no build step; test JS with `node --check`.
 - After changing `build_scene.py`, rerun it so `web/data/scene.json` stays in sync. After changing the knowledge file, rerun `build_layer.py`.
-- The model never writes SQL and never computes a path. Clear requests are resolved in code, and data answers must match their rows.
+- The model never writes SQL and never computes a path. It reads every request first; replies may only quote what tools returned. Rules are the fallback when there is no model.
 
 ## Next tasks (highest value first)
 1. Test LM Studio with a real chat model that supports tools.

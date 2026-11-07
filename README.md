@@ -59,19 +59,25 @@ FastAPI (backend/)
 
 The model never writes SQL and cannot set a path.
 
-1. Clear requests such as a tag, a class, nearest or worst are resolved in code. So are glossary questions.
-2. Other requests get tools chosen by intent, so a question cannot move the technician.
+1. The model reads every request first and chooses its tools. It can combine them, for example a telemetry query
+   to find the pump with the highest vibration, then a route to it.
+2. Route tools are offered only when the request asks to go somewhere, so a question cannot move the technician.
 3. The model fills a query spec. Every name is checked against the layer and values are bound parameters. Unknown
    columns and values come back as errors it can correct.
-4. If an answer has figures or tags that are not in the rows, code replaces it with the rows. If nothing was found, it
-   says so.
-5. Requests the model cannot handle still navigate, because navigation does not depend on it.
+4. If an answer has figures or tags that no tool returned, code replaces it with what the tools found. If nothing
+   was found, it says so.
+5. With no model, a failed provider, or a trip request the model did not route, rules handle navigation and the
+   glossary, so the demo never depends on the model being up.
+
+On the real scene with DeepSeek-V3.2, 12 of 12 test requests were right, including combined ones. The cost is speed: a
+median of 29 s and up to 66 s, against near-instant answers from the rules.
 
 | Tool | Purpose |
 |---|---|
 | `search_layer`, `describe` | Find and explain entities, columns, reports and terms |
 | `run_query`, `run_report` | Run a checked spec or a verified report |
 | `search_assets`, `route_to`, `inspection_round` | Choose a destination and compute the path |
+| `diagnose` | Grounded diagnosis with citations, shown as written |
 
 ### Choosing a model
 
