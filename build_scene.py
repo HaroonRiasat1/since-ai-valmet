@@ -4,10 +4,15 @@ Builds everything the three.js viewer needs from the .ply + Excel builder pack:
   web/data/scene.json         item boxes + mapped Excel metadata, nav path, copilot diagnosis
 
 python build_scene.py Equipment_Room.ply builder_pack.xlsx items.json web/
+python build_scene.py Equipment_Room.ply builder_pack.xlsx data/semantic_layer.json web/
+
+The second form uses the semantic layer's objects and asset mapping as they are, and adds the 60 x 60
+cell grid. TARGET_TAG picks the faulty asset (default CV-003).
 """
-import json, os, sys
+import base64, json, os, sys
 import numpy as np, pandas as pd
-sys.path.insert(0, os.path.dirname(__file__))
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path[:0] = [HERE, os.path.join(HERE, "pipeline")]
 import navigator as nv
 
 ply, xlsx, items_path, web = sys.argv[1:5]
@@ -49,6 +54,28 @@ xyz, op = nv.load_splats(ply)
 hgt, floor = nv.height_above_floor(xyz, op)
 G = nv.build_grid(xyz, op, hgt, radius=0.25)
 items = json.load(open(items_path))
+SEMANTIC = isinstance(items, dict)               # a semantic layer rather than a plain item list
+TARGET_TAG = os.environ.get("TARGET_TAG", "CV-003")
+LAYER_CONF = {"high": 0.7, "medium": 0.55, "low": 0.4}
+
+
+def semantic_items(layer):
+    """Turn semantic layer objects into this builder's item format."""
+    out = []
+    for o in layer["objects"]:
+        low, high = np.array(o["box"]["min"]), np.array(o["box"]["max"])
+        vision = o["source"] == "vision model"
+        out.append(dict(id=o["id"], label=o["class"], center=((low + high) / 2).round(3).tolist(),
+                        size=(high - low).round(3).tolist(), tag=o["asset"]["master"]["tag"] if o["asset"] else None,
+                        _how="semantic", _method=o["mapping_method"], _class=o["class"], _source=o["source"],
+                        _class_conf=o["class_confidence"], _vlm=dict(label=o["class"], asset_class=o["class"].upper().replace(" ", "_"),
+                        confidence=LAYER_CONF.get(o["class_confidence"], 0.4), visual_evidence=o.get("note", ""), model="vlm_lift") if vision else None))
+    return out
+
+
+if SEMANTIC:
+    layer = items
+    items = semantic_items(layer)
 
 # ---------------------------------------------------------------- Excel
 xl = {s: pd.read_excel(xlsx, s) for s in
@@ -97,7 +124,7 @@ for it in items:
 # VLM labels from the viewer's "VLM scan" (web/data/vlm_labels.json): class evidence per box
 VLM_PATH = f"{web}/data/vlm_labels.json"
 vlm = json.load(open(VLM_PATH)) if os.path.exists(VLM_PATH) else {}
-for it in items:                              # items found by vlm_lift.py carry their own VLM class
+for it in items if not SEMANTIC else []:      # items found by vlm_lift.py carry their own VLM class
     it["_vlm"] = vlm.get(it["id"]) or (dict(label=it["label"], asset_class=it["asset_class"], confidence=it["confidence"],
         visual_evidence=f"VLM detection fused from {it['views']} rendered views", model="vlm_lift")
         if it.get("source") == "vlm" else None)
@@ -123,7 +150,7 @@ UNPLACED = 0.6       # cost of leaving a box empty / a tag unplaced: pairs costi
 
 
 manual = {}
-if os.path.exists(MAP_CSV):
+if os.path.exists(MAP_CSV) and not SEMANTIC:
     for r in pd.read_csv(MAP_CSV, dtype=str).fillna("").to_dict("records"):
         bid, t = r.get("box_id", "").strip(), r.get("tag", "").strip()
         if not t:
@@ -145,7 +172,7 @@ walls = set() if any(i.get("source") == "vlm" for i in items) else \
     {i["id"] for i in sorted(items, key=lambda i: -i["_vol"])[:4]}         # blob detector: wall / shelving runs
 not_equip = {i["id"] for i in items if i["_vlm"] and i["_vlm"]["asset_class"] == "NOT_EQUIPMENT"
              and i["_vlm"]["confidence"] >= 0.6}            # ladders, carts, chairs: never carry a tag
-cand = [i for i in items if i["id"] not in walls | not_equip and i["id"] not in manual]
+cand = [] if SEMANTIC else [i for i in items if i["id"] not in walls | not_equip and i["id"] not in manual]
 todo = [t for t in cur.index if t not in manual.values()]
 if cand and todo:
     xy = np.array([np.asarray(i["center"])[G["horiz"]] for i in cand])
@@ -180,7 +207,7 @@ if cand and todo:
     if len(placed) < len(todo):                 # better unplaced than pinned to a ladder (DOC-3D-MAPPING)
         print(f"{len(todo) - len(placed)} tags not located in the scan: {', '.join(t for t in todo if t not in placed)}")
 
-if not os.path.exists(MAP_CSV):               # template for hand corrections; tag column left blank
+if not SEMANTIC and not os.path.exists(MAP_CSV):   # template for hand corrections; tag column left blank
     pd.DataFrame([dict(box_id=i["id"], tag="", suggested_tag=i.get("tag") or "",
                        vlm_label=i["_vlm"]["label"] if i["_vlm"] else "",
                        asset_class=cur.loc[i["tag"], "asset_class"] if i.get("tag") else "",
@@ -189,8 +216,8 @@ if not os.path.exists(MAP_CSV):               # template for hand corrections; t
                        size=" ".join(f"{v:.2f}" for v in i["size"])) for i in items]).to_csv(MAP_CSV, index=False)
     print(f"wrote {MAP_CSV}: fill the tag column to override the auto mapping")
 
-# route target: CV-003 (degraded, high urgency, A-critical), else the first mapped valve
-target_box = next((i for i in items if i.get("tag") == "CV-003"), None) or \
+# route target: TARGET_TAG (CV-003 is degraded, high urgency, A-critical), else the first mapped valve
+target_box = next((i for i in items if i.get("tag") == TARGET_TAG), None) or \
              next(i for i in items if (i.get("tag") or "").startswith("CV"))
 ii, jj = np.nonzero(G["walk"])
 goal = nv.goal_near_item(G, target_box)[0]
@@ -200,6 +227,11 @@ raw_path = max((p for p in paths if p), key=len, default=None)
 assert raw_path, f"no walkable path to {target_box['id']}"
 
 def mapping_of(it, cls):
+    if it["_how"] == "semantic":
+        matched = it["_method"] == "class_match"
+        how = f"{it['_source']}: {it['_class']} matches {cls.lower().replace('_', ' ')}" if matched else \
+            f"procedural, on a {it['_class']}"
+        return dict(mapping=how, mapping_conf=LAYER_CONF.get(it["_class_conf"], 0.4) if matched else 0.2, matched=matched)
     if it["_how"] == "manual":
         return dict(mapping="manual (mapping.csv)", mapping_conf=0.9)
     v = it["_vlm"]
@@ -212,7 +244,7 @@ def mapping_of(it, cls):
 
 out_items = []
 for it in items:
-    rec = dict(id=it["id"], center=it["center"], size=it["size"])
+    rec = dict(id=it["id"], center=it["center"], size=it["size"], source=it.get("_source", "detector"))
     tag = it.get("tag")
     if tag:
         c, m = cur.loc[tag], master.loc[tag]
@@ -276,12 +308,21 @@ def evidence_for(tg):
 evidence = {tg: evidence_for(tg) for tg in cur.index}
 
 # ---------------------------------------------------------------- nav grid for in-browser A*
-import base64
 walk_u8 = G["walk"].astype(np.uint8)
 clear_u8 = np.clip(G["clearance"] / G["cell"], 0, 255).astype(np.uint8)
 navgrid = dict(origin=G["origin"].tolist(), cell=G["cell"], horiz=G["horiz"], shape=list(walk_u8.shape),
                walk=base64.b64encode(walk_u8.tobytes()).decode(),
                clear=base64.b64encode(clear_u8.tobytes()).decode())
+
+
+def cell_grid():
+    """The numbered 60 x 60 grid from the extraction pipeline: free width per cell, 0 when blocked."""
+    import extract
+    v, _, band, up_sign, heights = extract.load_scan(ply)
+    sizes, grid_x, grid_z, span, _ = extract.free_grid(v, heights, band)
+    return dict(cells=len(sizes), step=span / len(sizes), center_x=grid_x, center_z=grid_z, z_up=bool(up_sign > 0),
+                sizes=base64.b64encode(sizes.astype(np.uint8).tobytes()).decode())
+
 
 scene = dict(
     frame=dict(up_axis=nv.UP, down_sign=nv.DOWN_SIGN, floor=float(floor)),
@@ -290,6 +331,8 @@ scene = dict(
     path=[nv.to_world(G, p, floor) for p in raw_path[::2]] + [nv.to_world(G, raw_path[-1], floor)],
     copilot=evidence, navgrid=navgrid,
 )
+if SEMANTIC:
+    scene["cellgrid"] = cell_grid()
 json.dump(scene, open(f"{web}/data/scene.json", "w"), default=str)
 print(f"items {len(out_items)} (mapped {sum(1 for i in out_items if i['tag'])}), "
-      f"target {target_box['id']} -> CV-003, path {len(raw_path) * G['cell']:.1f} m")
+      f"target {target_box['id']} -> {target_box.get('tag')}, path {len(raw_path) * G['cell']:.1f} m")

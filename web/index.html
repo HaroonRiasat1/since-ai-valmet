@@ -464,7 +464,7 @@ function renderMission() {
       <span class="mut">${human(it.state)} · ${it.health} · ${st.d.toFixed(1)} m</span></div>`; }).join("");
   $("mission").innerHTML = `<div class="row"><b>${stops.length > 1 ? "Inspection round" : "Mission"}</b>
     <span class="mut">${pathLen.toFixed(1)} m</span></div>${list}
-    <div class="mut" style="margin-top:4px">${items.length} objects extracted, ${mapped.length} mapped to the builder pack.</div>`;
+    <div class="mut" style="margin-top:4px">${items.length} objects extracted, ${mapped.filter(i => i.matched !== false).length} of ${mapped.length} assets on a matching object.</div>`;
 }
 const opts = [...mapped].sort((a, b) => a.health - b.health);
 $("target").innerHTML = opts.map(i => `<option value="${i.tag}">${i.tag} · ${human(i.state)} · ${i.health}</option>`).join("");
