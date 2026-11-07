@@ -60,6 +60,9 @@
   #nav h2 { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--mut); margin:0 0 6px; }
   #nav .f { display:grid; grid-template-columns:44px 1fr; gap:5px 8px; align-items:center; }
   #nav input, #nav select { width:100%; max-width:none; background:#0f1216; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:5px 7px; font:inherit; }
+  #chatlog { max-height:210px; overflow-y:auto; margin-bottom:6px; }
+  #chatlog .q { color:var(--mut); margin-top:6px; }
+  #chatform { display:flex; gap:6px; }
   #nav .b { display:flex; gap:6px; margin-top:7px; flex-wrap:wrap; }
   #navmsg { min-height:16px; margin-top:6px; }
   #minimap { position:fixed; left:12px; top:118px; border:1px solid var(--line); border-radius:8px; background:#0f1216; display:none; }
@@ -115,6 +118,9 @@
     <span></span><div class="b" style="margin-top:0"><button>Go</button><button type="button" id="stopbtn">Stop</button></div>
   </form>
   <div id="navmsg" class="mut"></div>
+  <h2 style="margin-top:10px">Assistant</h2>
+  <div id="chatlog" aria-live="polite"></div>
+  <form id="chatform"><input id="chatin" aria-label="Message" placeholder="go to the nearest valve" maxlength="500" autocomplete="off"><button>Send</button></form>
   <h2 style="margin-top:10px">AI provider</h2>
   <div class="f">
     <label for="prov">Use</label><select id="prov"></select>
@@ -597,6 +603,33 @@ function md(t) {
   }
   return html + (list ? `</${list}>` : "");
 }
+// ---------- assistant: the backend picks and routes, the page only follows what comes back
+const chatHistory = [];
+function followAction(action) {
+  if (!action) return;
+  setRoute(action.type === "round" ? action.legs.map(L => ({ tag: L.target, pts: L.points.map(toVec) }))
+                                   : [{ tag: action.target, pts: action.points.map(toVec) }]);
+  $("play").click();
+}
+$("chatform").onsubmit = async (e) => {
+  e.preventDefault();
+  const message = $("chatin").value.trim(); if (!message) return;
+  const log = $("chatlog"), line = document.createElement("div");
+  line.innerHTML = `<div class="q">${esc(message)}</div><div class="mut">Thinking…</div>`;
+  log.append(line); log.scrollTop = log.scrollHeight;
+  $("chatin").value = "";
+  try {
+    if (!backend) throw new Error("The assistant needs the backend.");
+    const j = await api("api/agent/chat", { ...startBody(), message, provider: llm.provider, model: llm.model, history: chatHistory.slice(-12) });
+    followAction(j.action);
+    const flag = j.unverified_citations.length ? `<div style="color:#f5b942">Not in the evidence: ${j.unverified_citations.map(esc).join(", ")}</div>` : "";
+    line.innerHTML = `<div class="q">${esc(message)}</div>${md(j.reply)}${flag}<div class="mut">${j.mode === "rules" ? "rule-based" : esc(j.model || "")}</div>`;
+    chatHistory.push({ role: "user", content: message }, { role: "assistant", content: j.reply.slice(0, 2000) });
+  } catch (err) {
+    line.innerHTML = `<div class="q">${esc(message)}</div><div style="color:#ff5d5d">${esc(String(err.message || err))}</div>`;
+  }
+  log.scrollTop = log.scrollHeight;
+};
 function aiBlock(tag) {
   const box = document.createElement("div"); box.className = "card"; box.style.borderColor = "#5aa9ff";
   $("copilot").appendChild(box);

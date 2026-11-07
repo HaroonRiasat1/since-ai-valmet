@@ -1,13 +1,14 @@
 """HTTP API and static web app. Run: uvicorn backend.app:app"""
 from dataclasses import asdict
 from functools import lru_cache
+from typing import Literal
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from backend import copilot, llm, vision
+from backend import agent, copilot, llm, vision
 from backend.config import get_settings
 from backend.routing import RouteError, nearest_next
 from backend.scene import Scene
@@ -34,6 +35,20 @@ class CopilotRequest(BaseModel):
     nearby: list[str] = []
     provider: str = "lmstudio"
     model: str | None = None
+
+
+class ChatLine(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str = Field(max_length=2000)
+
+
+class AgentRequest(BaseModel):
+    message: str = Field(min_length=1, max_length=500)
+    grid: str = "fine"
+    position: Position | None = Field(default=None, min_length=3, max_length=3)
+    provider: str = "lmstudio"
+    model: str | None = None
+    history: list[ChatLine] = Field(default=[], max_length=12)
 
 
 class LabelRequest(BaseModel):
@@ -123,6 +138,14 @@ def copilot_query(request: CopilotRequest):
     if request.tag not in scene.copilot:
         raise HTTPException(status_code=400, detail=f"unknown asset {request.tag}")
     return copilot.diagnose(scene, llm.get_provider(request.provider), request.tag, request.question.strip(), request.nearby, request.model)
+
+
+@app.post("/api/agent/chat")
+def agent_chat(request: AgentRequest):
+    scene = get_scene()
+    history = [line.model_dump() for line in request.history]
+    return agent.respond(scene, scene.grid(request.grid), request.position or scene.default_start(), request.message.strip(),
+                         llm.get_provider(request.provider), request.model, history)
 
 
 @app.post("/api/vlm/label")
