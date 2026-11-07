@@ -115,6 +115,12 @@
     <span></span><div class="b" style="margin-top:0"><button>Go</button><button type="button" id="stopbtn">Stop</button></div>
   </form>
   <div id="navmsg" class="mut"></div>
+  <h2 style="margin-top:10px">AI provider</h2>
+  <div class="f">
+    <label for="prov">Use</label><select id="prov"></select>
+    <label for="modelsel">Model</label><select id="modelsel"></select>
+  </div>
+  <div id="provmsg" class="mut" style="margin-top:6px"></div>
 </div>
 <canvas id="minimap" width="240" height="240" title="Yellow free, red blocked, purple route, white you"></canvas>
 <div id="coords" class="panel" style="display:none;bottom:52px;left:12px;padding:8px 12px;font:12px ui-monospace,Menlo,monospace;min-width:300px">
@@ -559,9 +565,24 @@ function showCopilot(tag) {
   aiBlock(tag);
 }
 
-// ---------- LLM copilot via local server.py -> Featherless (key never in the browser)
-let llm = { on: false, model: "" };
-fetch("api/health").then(r => r.ok ? r.json() : null).then(j => { if (j) llm = { on: j.llm, model: j.model }; }).catch(() => {});
+// ---------- AI through the backend, which holds any API key. The provider and model are picked in the page.
+const llm = { on: false, model: "", provider: "", list: [] };
+function showProvider() {
+  const p = llm.list.find(x => x.name === llm.provider); if (!p) return;
+  $("modelsel").innerHTML = p.models.map(m => `<option>${m}</option>`).join("") || `<option value="">none available</option>`;
+  llm.on = p.available; llm.model = p.models[0] || "";
+  $("provmsg").textContent = p.detail; $("provmsg").style.color = p.available ? "" : "#f5b942";
+}
+async function loadProviders() {
+  try {
+    llm.list = await (await fetch("api/providers")).json();
+    $("prov").innerHTML = llm.list.map(p => `<option value="${p.name}">${p.label}${p.available ? "" : " (not ready)"}</option>`).join("");
+    llm.provider = (llm.list.find(p => p.available) || llm.list[0]).name; $("prov").value = llm.provider; showProvider();
+  } catch { $("provmsg").textContent = "AI needs the backend."; }
+}
+$("prov").onchange = (e) => { llm.provider = e.target.value; showProvider(); };
+$("modelsel").onchange = (e) => { llm.model = e.target.value; };
+loadProviders();
 let nearTags = [];
 const esc = (t) => t.replace(/[&<>]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;" })[c]);
 function md(t) {
@@ -580,8 +601,7 @@ function aiBlock(tag) {
   const box = document.createElement("div"); box.className = "card"; box.style.borderColor = "#5aa9ff";
   $("copilot").appendChild(box);
   if (!llm.on) {
-    box.innerHTML = `<b>AI analysis</b><div class="mut">LLM is off. Run <code>python3 server.py</code> locally with
-      <code>FEATHERLESS_API_KEY</code> set to get an AI diagnosis and follow-up questions here.</div>`;
+    box.innerHTML = `<b>AI analysis</b><div class="mut">No AI provider is ready. ${esc($("provmsg").textContent)} Choose one under AI provider.</div>`;
     return;
   }
   box.innerHTML = `<div class="row"><b>AI analysis</b><span class="mut">${esc(llm.model)}</span></div>
@@ -594,11 +614,12 @@ function aiBlock(tag) {
     out.classList.add("mut"); out.textContent = question ? `Asking: ${question}…` : "Thinking…";
     try {
       const r = await fetch("api/copilot/query", { method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tag, question, nearby: nearTags }) });
+        body: JSON.stringify({ tag, question, nearby: nearTags, provider: llm.provider, model: llm.model }) });
       const j = await r.json();
       if (!r.ok) throw new Error(j.error || r.status);
       out.classList.remove("mut");
       out.innerHTML = (question ? `<div class="mut">Q: ${esc(question)}</div>` : "") + md(j.answer) +
+        (j.unverified_citations?.length ? `<div style="color:#f5b942;margin-top:6px">Not in the evidence, treat with care: ${j.unverified_citations.map(i => `<code>${esc(i)}</code>`).join(" ")}</div>` : "") +
         `<div class="mut" style="margin-top:6px">${esc(j.model)} · evidence: ${j.evidence_ids.map(i => `<code>${esc(i)}</code>`).join(" ")}</div>`;
     } catch (e) { out.innerHTML = `<span style="color:#ff5d5d">AI request failed: ${esc(String(e.message || e))}</span>`; }
   };
@@ -673,7 +694,7 @@ function analyze(b) {
     <li>Confirm what the object is on site (nameplate, QR/NFC) before linking it to an asset tag.</li>
     <li>If it is equipment, add <code>${it.id},&lt;tag&gt;</code> to <code>mapping.csv</code> and rebuild the scene.</li></ul>
     ${llm.on ? `<button class="idv">Identify with VLM</button> <span class="mut idv-out"></span>` :
-      `<div class="mut">Run <code>server.py</code> with <code>FEATHERLESS_API_KEY</code> to identify it with the VLM.</div>`}</div>`;
+      `<div class="mut">Choose a ready AI provider to identify it with the vision model.</div>`}</div>`;
   $("copilot").classList.add("show");
   $("copilot").querySelector(".x").onclick = clearAnalysis;
   const btn = $("copilot").querySelector(".idv");
@@ -686,7 +707,7 @@ function analyze(b) {
     btn.disabled = true; out.textContent = "Asking the VLM…";
     try {
       const r = await fetch("api/vlm/label", { method:"POST", headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({ box_id: it.id, image }) });
+        body: JSON.stringify({ box_id: it.id, image, provider: llm.provider, model: llm.model }) });
       const j = await r.json(); if (!r.ok || j.error) throw new Error(j.error || r.status);
       it.vlm = j; if (selBox === b) analyze(b);
     } catch (e) { out.innerHTML = `<span style="color:#ff5d5d">VLM request failed: ${esc(String(e.message || e))}</span>`; btn.disabled = false; }
@@ -875,7 +896,7 @@ async function vlmScan(ev) {
     const image = grabCrop(b.it); if (!image) continue;
     try {
       const r = await (await fetch("api/vlm/label", { method:"POST", headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({ box_id: b.it.id, image }) })).json();
+        body: JSON.stringify({ box_id: b.it.id, image, provider: llm.provider, model: llm.model }) })).json();
       if (r.error) throw new Error(r.error);
       b.it.vlm = r; ok++; console.log("[vlm]", b.it.id, r.asset_class, r.label, r.confidence);
     } catch (e) { console.log("[vlm]", b.it.id, "error", e.message); $("status").textContent = `VLM error on ${b.it.id}: ${e.message}`; await nextFrames(60); }
@@ -919,7 +940,7 @@ async function vlmDetect() {
       camera.position.copy(eye); camera.lookAt(eye.clone().add(new THREE.Vector3(Math.sin(a), -0.25, Math.cos(a))));
       $("status").textContent = `VLM detect: spot ${k + 1}/${spots.length}, view ${h + 1}/${HEADS} · ${found} detections`;
       await nextFrames(30);
-      const body = { run, view_id: `S${String(k).padStart(2, "0")}_H${h}`, ...grabFrame() };
+      const body = { run, view_id: `S${String(k).padStart(2, "0")}_H${h}`, provider: llm.provider, model: llm.model, ...grabFrame() };
       const p = fetch("api/vlm/detect", { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(body) })
         .then(r => r.json()).then(r => { if (r.error) throw new Error(r.error); views++; found += r.detections.length;
           console.log("[detect]", body.view_id, r.detections.map(d => `${d.asset_class}:${d.label}`).join(", ") || "-"); })

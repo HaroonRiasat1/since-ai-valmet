@@ -2,10 +2,12 @@
 from dataclasses import asdict
 from functools import lru_cache
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from backend import copilot, llm, vision
 from backend.config import get_settings
 from backend.routing import RouteError, nearest_next
 from backend.scene import Scene
@@ -24,6 +26,21 @@ class RouteRequest(BaseModel):
 class RoundRequest(BaseModel):
     grid: str = "fine"
     position: Position | None = Field(default=None, min_length=3, max_length=3)
+
+
+class CopilotRequest(BaseModel):
+    tag: str
+    question: str = Field(default="", max_length=500)
+    nearby: list[str] = []
+    provider: str = "lmstudio"
+    model: str | None = None
+
+
+class LabelRequest(BaseModel):
+    box_id: str
+    image: str
+    provider: str = "lmstudio"
+    model: str | None = None
 
 
 @lru_cache
@@ -47,9 +64,17 @@ app = FastAPI(title="Field-Service Navigator")
 
 @app.exception_handler(RouteError)
 async def route_error(_, error: RouteError):
-    from fastapi.responses import JSONResponse
-
     return JSONResponse(status_code=422, content={"error": str(error)})
+
+
+@app.exception_handler(llm.ProviderError)
+async def provider_error(_, error: llm.ProviderError):
+    return JSONResponse(status_code=502, content={"error": str(error)})
+
+
+@app.exception_handler(ValueError)
+async def bad_value(_, error: ValueError):
+    return JSONResponse(status_code=400, content={"error": str(error)})
 
 
 @app.get("/api/health")
@@ -85,6 +110,30 @@ def inspection_round(request: RoundRequest):
     todo = [a for a in scene.assets() if a["state"] != "healthy"]
     legs = nearest_next(grid, request.position or scene.default_start(), todo)
     return {"legs": [{"target": item["tag"], **asdict(leg)} for item, leg in legs]}
+
+
+@app.get("/api/providers")
+def list_providers():
+    return [llm.status(p) for p in llm.providers().values()]
+
+
+@app.post("/api/copilot/query")
+def copilot_query(request: CopilotRequest):
+    scene = get_scene()
+    if request.tag not in scene.copilot:
+        raise HTTPException(status_code=400, detail=f"unknown asset {request.tag}")
+    return copilot.diagnose(scene, llm.get_provider(request.provider), request.tag, request.question.strip(), request.nearby, request.model)
+
+
+@app.post("/api/vlm/label")
+def vlm_label(request: LabelRequest):
+    return vision.label(llm.get_provider(request.provider), get_settings().web_dir / "data", request.box_id, request.image, request.model)
+
+
+@app.post("/api/vlm/detect")
+async def vlm_detect(request: Request):
+    body = await request.json()
+    return vision.detect(llm.get_provider(body.get("provider", "lmstudio")), get_settings().web_dir / "data", body)
 
 
 @app.get("/api/assets")
