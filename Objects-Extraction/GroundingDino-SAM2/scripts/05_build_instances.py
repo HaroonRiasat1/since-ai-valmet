@@ -14,13 +14,14 @@ import numpy as np
 _REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_REPO))
 
-from splat_objects.config import load_config, resolve_repo_path
+from splat_objects.config import load_config, resolve_repo_path, slug
 from splat_objects.instances import (
     Instance,
     affinity_matrix,
     agglomerate,
     box_containment,
     cleanup,
+    cross_class_pair,
     detection_consistency,
     load_lifting,
     local_box,
@@ -48,6 +49,13 @@ def merge_pair(a: Instance, b: Instance) -> Instance:
         views=sorted(set(a.views) | set(b.views)),
         confidence=float(np.mean([q.score for q in props])),
     )
+
+
+def absorb(keep: Instance, other: Instance) -> Instance:
+    """keep takes other's Gaussians, views and proposals, and keeps its own class and confidence."""
+    merged = merge_pair(keep, other)
+    merged.confidence = keep.confidence
+    return merged
 
 
 def main() -> None:
@@ -158,6 +166,17 @@ def main() -> None:
             if merged:
                 break
 
+    # Two prompts can name the same object; the more confident one keeps it, with the other's Gaussians.
+    if "cross_class_dup_iou" in ic:
+        limit = float(ic["cross_class_dup_iou"])
+        while (pair := cross_class_pair(instances, ply.n, limit)) is not None:
+            i, j, iou = pair
+            keep, other = (instances[i], instances[j]) if instances[i].confidence >= instances[j].confidence else (instances[j], instances[i])
+            print(f"  merge {classes[other.class_id]['display']} into {classes[keep.class_id]['display']} (IoU {iou:.2f})")
+            m = finish(absorb(keep, other))
+            instances[min(i, j)] = m if m is not None else keep
+            del instances[max(i, j)]
+
     # Each Gaussian belongs to at most one object: highest vote ratio x confidence wins.
     owner = np.full(ply.n, -1, dtype=np.int64)
     best = np.zeros(ply.n, dtype=np.float32)
@@ -195,7 +214,7 @@ def main() -> None:
             continue
         k = per_class.get(c["display"], 0)
         per_class[c["display"]] = k + 1
-        name = f'{c["display"].replace(" ", "_")}_{k:02d}'
+        name = f'{slug(c["display"])}_{k:02d}'
         best = max(inst.proposals, key=lambda q: q.mask_px)
         records.append(
             {

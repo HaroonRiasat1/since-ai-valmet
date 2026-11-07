@@ -1,20 +1,33 @@
 from __future__ import annotations
 
+import colorsys
 from pathlib import Path
 
 import cv2
 import numpy as np
 
+
+def _palette(base: list[tuple[int, int, int]], n: int, min_dist: float = 40.0) -> list[tuple[int, int, int]]:
+    """base, then golden-ratio hues at four saturation/value levels, skipping colors closer than min_dist to one taken."""
+    levels = ((0.9, 0.95), (0.55, 1.0), (0.9, 0.7), (0.45, 0.8))
+    colors = np.array(base, dtype=np.float64)
+    for k in range(20000):
+        if len(colors) >= n:
+            break
+        s, v = levels[k % len(levels)]
+        r, g, b = colorsys.hsv_to_rgb((k * 0.618033988749895) % 1.0, s, v)
+        c = np.array([round(b * 255), round(g * 255), round(r * 255)], dtype=np.float64)
+        if np.linalg.norm(colors - c, axis=1).min() >= min_dist:
+            colors = np.vstack([colors, c])
+    if len(colors) < n:
+        raise ValueError(f"only {len(colors)} colors are {min_dist} apart")
+    return [tuple(int(x) for x in c) for c in colors]
+
+
 # BGR colors per class index
-PALETTE_BGR = [
-    (60, 200, 60),
-    (240, 140, 30),
-    (40, 40, 240),
-    (0, 210, 255),
-    (220, 60, 220),
-    (255, 255, 0),
-    (128, 128, 255),
-]
+PALETTE_BGR = _palette(
+    [(60, 200, 60), (240, 140, 30), (40, 40, 240), (0, 210, 255), (220, 60, 220), (255, 255, 0), (128, 128, 255)], 64
+)
 
 
 def class_color_bgr(class_id: int) -> tuple[int, int, int]:
@@ -34,7 +47,7 @@ def draw_label(img_bgr: np.ndarray, text: str, x: int, y: int, color: tuple[int,
     cv2.putText(img_bgr, text, (x + 2, y - 2), cv2.FONT_HERSHEY_SIMPLEX, scale, (0, 0, 0), 1, cv2.LINE_AA)
 
 
-def overlay_detections(img_rgb: np.ndarray, dets: list[dict], alpha: float = 0.45) -> np.ndarray:
+def overlay_detections(img_rgb: np.ndarray, dets: list[dict], alpha: float = 0.45, labels: bool = True) -> np.ndarray:
     """dets: dicts with class_id, label, score, box_xyxy, mask (H, W bool)."""
     bgr = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2BGR)
     over = bgr.copy()
@@ -45,7 +58,8 @@ def overlay_detections(img_rgb: np.ndarray, dets: list[dict], alpha: float = 0.4
         c = class_color_bgr(d["class_id"])
         x0, y0, x1, y1 = (int(round(v)) for v in d["box_xyxy"])
         cv2.rectangle(bgr, (x0, y0), (x1, y1), c, 2)
-        draw_label(bgr, f'{d["label"]} {d["score"]:.2f}', x0, y0, c)
+        if labels:
+            draw_label(bgr, f'{d["label"]} {d["score"]:.2f}', x0, y0, c)
     return bgr
 
 

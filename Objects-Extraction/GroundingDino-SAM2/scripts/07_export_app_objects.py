@@ -13,6 +13,7 @@ _REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_REPO))
 
 from splat_objects.app_export import (
+    app_class,
     known_tags_from_layer,
     load_app_checker,
     same_class_overlaps,
@@ -37,7 +38,7 @@ def main() -> None:
 
     records = json.loads(objects_json.read_text(encoding="utf-8"))
     layer = json.loads(layer_path.read_text(encoding="utf-8"))
-    layer_objs = layer["objects"]
+    layer_objs = [o for o in layer["objects"] if o.get("source") != ae["source"]]  # our earlier export may be in the layer
 
     raw_app = [to_app_object(r, cfg, layer_objs) for r in records]
     raw_app.sort(key=lambda o: o["id"])
@@ -66,7 +67,7 @@ def main() -> None:
 
     by_cls = Counter(o["class"] for o in raw_app)
     by_conf = Counter(o["class_confidence"] for o in raw_app)
-    n_overlap = sum(1 for r in records if same_class_overlaps(r, layer_objs, float(ae["same_class_share"])))
+    n_overlap = sum(1 for r in records if same_class_overlaps(r, app_class(r, cfg), layer_objs, float(ae["same_class_share"])))
     n_tag = sum(1 for o in raw_app if "tag" in o)
 
     print(f"Wrote {len(raw_app)} objects -> {out_path}")

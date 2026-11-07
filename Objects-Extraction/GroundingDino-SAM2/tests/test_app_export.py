@@ -10,6 +10,7 @@ sys.path.insert(0, str(_REPO))
 
 from splat_objects.app_export import (
     app_box,
+    app_class,
     app_object_id,
     class_confidence,
     load_app_checker,
@@ -63,6 +64,7 @@ class TestAppExport(unittest.TestCase):
     def test_overlap_note_on_synthetic_layer_hit(self) -> None:
         record = {
             "name": "Valves_07",
+            "class_id": 2,
             "class_key": "valve",
             "confidence": 0.27,
             "n_detected_views": 3,
@@ -83,16 +85,20 @@ class TestAppExport(unittest.TestCase):
             }
         ]
         obj = to_app_object(record, self.cfg, layer)
+        self.assertEqual(obj["class"], "valve")
         self.assertIn("Overlaps cls_123", obj["note"])
         self.assertIn("CV-006", obj["note"])
 
+    def test_app_class_is_the_lower_case_prompt(self) -> None:
+        cfg = load_config(repo_root() / "config_all_objects.yaml")
+        ids = {c["prompt"]: k for k, c in enumerate(cfg["classes"])}
+        self.assertEqual(app_class({"class_id": ids["pipe/fittings"]}, cfg), "pipe/fittings")
+        self.assertEqual(app_class({"class_id": ids["Wall"]}, cfg), "wall")
+
     def test_same_class_valve_matches_control_valve(self) -> None:
-        record = {
-            "class_key": "valve",
-            "box": {"aabb_min": [0, 0, 0], "aabb_max": [1, 1, 1]},
-        }
+        record = {"box": {"aabb_min": [0, 0, 0], "aabb_max": [1, 1, 1]}}
         layer = [{"id": "x", "class": "control valve", "box": {"min": [0.05, 0.05, 0.05], "max": [0.95, 0.95, 0.95]}}]
-        hits = same_class_overlaps(record, layer, 0.5)
+        hits = same_class_overlaps(record, "valve", layer, 0.5)
         self.assertEqual(len(hits), 1)
 
     @unittest.skipUnless(APP_ROOT.joinpath("data/semantic_layer.json").is_file(), "Since-AI layer missing")

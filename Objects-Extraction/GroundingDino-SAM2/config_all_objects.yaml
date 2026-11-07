@@ -1,0 +1,39 @@
+# Same scene, rendering, detection and fusion settings as config.yaml, with one class per prompt in
+# objects_to_extract.json. Results go to renders/ and outputs/ under equipment_room_all_objects.
+extends: config.yaml
+scene_id: equipment_room_all_objects
+classes_file: objects_to_extract.json
+
+# Applied to every prompt; class_overrides (keyed by the prompt in lower case) win.
+class_defaults:
+  box_threshold: 0.27
+  floor_standing: false
+  min_gaussians: 80
+
+class_overrides:
+  chair: {box_threshold: 0.35, floor_standing: true, min_gaussians: 500, min_height_m: 0.4}
+  washing machine: {box_threshold: 0.30, floor_standing: true, min_gaussians: 1000, min_height_m: 0.5}
+  valve: {box_threshold: 0.24, min_top_m: 0.15, max_size_m: 0.8}
+  # Valve-type prompts score like valves (0.22 to 0.33), so they share the valve threshold.
+  control valve: {box_threshold: 0.24}
+  handwheel valve: {box_threshold: 0.24}
+  valve actuator: {box_threshold: 0.24}
+  ladder: {box_threshold: 0.26, floor_standing: true, min_gaussians: 500, min_height_m: 0.6}
+  door: {box_threshold: 0.30, min_gaussians: 500, min_height_m: 1.2}
+  appliance: {floor_standing: true}
+  cabinet: {floor_standing: true}
+  cage: {floor_standing: true}
+  cart: {floor_standing: true}
+  crate: {floor_standing: true}
+  electrical cabinet: {floor_standing: true}
+  hand truck: {floor_standing: true}
+  pallet truck: {floor_standing: true}
+  process pump: {floor_standing: true}
+  pump: {floor_standing: true}
+  tank: {floor_standing: true}
+
+detection:
+  prompts_per_pass: 5          # one Grounding DINO pass per group of 5 prompts; all 43 in one pass dilute the scores
+
+instances:
+  cross_class_dup_iou: 0.5     # two prompts on the same object: the more confident one absorbs the other

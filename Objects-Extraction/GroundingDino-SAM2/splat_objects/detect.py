@@ -40,19 +40,23 @@ class GroundedSAM2:
         self.gdino = AutoModelForZeroShotObjectDetection.from_pretrained(dc["grounding_model"]).to(self.device).eval()
         ckpt = (repo_root / dc["sam2_checkpoint"]).resolve()
         self.sam = SAM2ImagePredictor(build_sam2(dc["sam2_config"], str(ckpt), device=self.device))
-        self.text = " ".join(f'{c["prompt"].strip().lower()}.' for c in self.classes)
+        # Long prompts dilute Grounding DINO's scores, so classes are detected in groups, one pass per group.
+        per_pass = int(dc.get("prompts_per_pass", len(self.classes)))
+        self.groups = [list(range(i, min(i + per_pass, len(self.classes)))) for i in range(0, len(self.classes), per_pass)]
+        self.texts = [" ".join(f'{self.classes[k]["prompt"].strip().lower()}.' for k in g) for g in self.groups]
+        self.text = " | ".join(self.texts)
         # Keep weak candidates here; per-class box_threshold is applied when lifting.
         cand = float(dc["candidate_threshold"])
         self.thresholds = torch.tensor(
             [min(cand, float(c.get("box_threshold", dc["default_box_threshold"]))) for c in self.classes]
         )
-        self.spans: list[list[int]] | None = None
+        self.spans: list[list[list[int]] | None] = [None] * len(self.groups)
 
-    def _class_spans(self, input_ids: torch.Tensor) -> list[list[int]]:
+    def _class_spans(self, input_ids: torch.Tensor, group: list[int]) -> list[list[int]]:
         ids = input_ids[0].tolist()
         spans, pos = [], 0
-        for c in self.classes:
-            sub = self.processor.tokenizer(c["prompt"].strip().lower(), add_special_tokens=False)["input_ids"]
+        for k in group:
+            sub = self.processor.tokenizer(self.classes[k]["prompt"].strip().lower(), add_special_tokens=False)["input_ids"]
             span = _find_span(ids, sub, pos)
             spans.append(span)
             pos = span[-1] + 1
@@ -62,19 +66,24 @@ class GroundedSAM2:
     def detect(self, image_rgb: np.ndarray) -> list[dict[str, Any]]:
         dc = self.cfg["detection"]
         h, w = image_rgb.shape[:2]
-        inputs = self.processor(images=Image.fromarray(image_rgb), text=self.text, return_tensors="pt").to(self.device)
-        out = self.gdino(**inputs)
-        if self.spans is None:
-            self.spans = self._class_spans(inputs.input_ids)
-
-        probs = out.logits[0].sigmoid().float().cpu()
-        cls_scores = torch.stack([probs[:, s].max(dim=1).values for s in self.spans], dim=1)
-        score, cls = cls_scores.max(dim=1)
-        keep = score >= self.thresholds[cls]
-        if not bool(keep.any()):
+        image = Image.fromarray(image_rgb)
+        found = []
+        for gi, (group, text) in enumerate(zip(self.groups, self.texts)):
+            inputs = self.processor(images=image, text=text, return_tensors="pt").to(self.device)
+            out = self.gdino(**inputs)
+            if self.spans[gi] is None:
+                self.spans[gi] = self._class_spans(inputs.input_ids, group)
+            probs = out.logits[0].sigmoid().float().cpu()
+            cls_scores = torch.stack([probs[:, s].max(dim=1).values for s in self.spans[gi]], dim=1)
+            score, local = cls_scores.max(dim=1)
+            cls = torch.tensor(group)[local]
+            keep = score >= self.thresholds[cls]
+            found.append((out.pred_boxes[0].float().cpu()[keep], score[keep], cls[keep]))
+        cxcywh = torch.cat([f[0] for f in found])
+        score = torch.cat([f[1] for f in found])
+        cls = torch.cat([f[2] for f in found])
+        if len(score) == 0:
             return []
-        cxcywh = out.pred_boxes[0].float().cpu()[keep]
-        score, cls = score[keep], cls[keep]
         boxes = torch.stack(
             [
                 (cxcywh[:, 0] - cxcywh[:, 2] / 2) * w,

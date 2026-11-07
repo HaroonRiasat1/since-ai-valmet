@@ -272,6 +272,22 @@ def box_containment(a: tuple[np.ndarray, np.ndarray], b: tuple[np.ndarray, np.nd
     return inter / max(min(va, vb), 1e-12)
 
 
+def cross_class_pair(instances: list[Instance], n_gaussians: int, min_iou: float) -> tuple[int, int, float] | None:
+    """The two instances of different classes whose Gaussian sets overlap most, if their IoU reaches min_iou."""
+    if len(instances) < 2:
+        return None
+    rows = np.concatenate([np.full(len(inst.members), k) for k, inst in enumerate(instances)])
+    cols = np.concatenate([inst.members for inst in instances])
+    m = sparse.csr_matrix((np.ones(len(rows), np.float32), (rows, cols)), shape=(len(instances), n_gaussians))
+    inter = (m @ m.T).toarray()
+    sizes = np.diag(inter).copy()
+    iou = inter / np.maximum(1.0, sizes[:, None] + sizes[None, :] - inter)
+    cls = np.array([inst.class_id for inst in instances])
+    iou[cls[:, None] == cls[None, :]] = 0.0
+    i, j = np.unravel_index(int(np.argmax(iou)), iou.shape)
+    return (int(i), int(j), float(iou[i, j])) if iou[i, j] >= min_iou else None
+
+
 def oriented_box(frame: SceneFrame, xyz: np.ndarray) -> dict[str, Any]:
     L = frame.local(xyz)
     lo, hi = np.percentile(L, 1, axis=0), np.percentile(L, 99, axis=0)

@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
-"""Rebuild docs/assets (the figures used in docs/README.md) from the pipeline outputs."""
+"""Rebuild docs/assets (the figures used in docs/README.md) from the pipeline outputs.
+
+Figures carry no class names: masks, boxes and splats are colored by class, and objects are numbered.
+"""
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -15,18 +19,14 @@ sys.path.insert(0, str(REPO))
 
 from splat_objects.cameras import camera_from_record, project_points
 from splat_objects.config import load_config, resolve_repo_path
+from splat_objects.detect import rle_to_mask
+from splat_objects.export import draw_box
 from splat_objects.ply_io import read_binary_gaussian_ply
 from splat_objects.render_mlx import SplatScene, render_rgb, to_uint8
+from splat_objects.viz import class_color_bgr, overlay_detections
 
-SCENE = "equipment_room"
-RENDERS = REPO / "renders" / SCENE
-OUT = REPO / "outputs" / SCENE
 ASSETS = Path(__file__).resolve().parent / "assets"
 FONTS = ["/System/Library/Fonts/Helvetica.ttc", "/System/Library/Fonts/SFNS.ttf", "/Library/Fonts/Arial.ttf"]
-SEGMENT_VIEWS = ["v0017", "v0110"]
-DETECTION_VIEWS = ["v0110", "v0006"]
-MOSAIC_OBJECTS = ["Washing_Machine_00", "Chair_00", "Chair_01", "Ladders_01", "Doors_00", "Valves_13"]
-LIFT_OBJECT = "Washing_Machine_00"
 
 
 def font(size: int) -> ImageFont.ImageFont:
@@ -88,7 +88,11 @@ def stack(rows: list[np.ndarray], gap: int = 10) -> np.ndarray:
     return np.concatenate(out, axis=0)
 
 
-def crop_to_alpha(rgb_bgr: np.ndarray, alpha: np.ndarray, pad: float = 0.3, min_side: int = 240) -> tuple[int, int, int, int]:
+def grid(tiles: list[np.ndarray], cols: int, gap: int = 10) -> np.ndarray:
+    return stack([row(tiles[i : i + cols], gap) for i in range(0, len(tiles), cols)], gap)
+
+
+def crop_to_alpha(alpha: np.ndarray, pad: float = 0.3, min_side: int = 240) -> tuple[int, int, int, int]:
     ys, xs = np.nonzero(alpha > 0.15)
     h, w = alpha.shape
     if len(xs) < 20:
@@ -103,14 +107,6 @@ def crop_to_alpha(rgb_bgr: np.ndarray, alpha: np.ndarray, pad: float = 0.3, min_
 def render_bgr(scene: SplatScene, cam_rec: dict, bg=(0.12, 0.12, 0.12)) -> tuple[np.ndarray, np.ndarray]:
     rgb, alpha = render_rgb(scene, camera_from_record(cam_rec), True, bg)
     return cv2.cvtColor(to_uint8(rgb), cv2.COLOR_RGB2BGR), alpha
-
-
-def proposal_members(stem: str, det_idx: int) -> np.ndarray:
-    z = np.load(OUT / "lifting" / f"{stem}.npz")
-    for j, meta in enumerate(json.loads(str(z["props_json"]))):
-        if meta["det_idx"] == det_idx:
-            return z["members"][z["offsets"][j] : z["offsets"][j + 1]].astype(np.int64)
-    raise KeyError((stem, det_idx))
 
 
 def pipeline_figure(cards: list[tuple[str, np.ndarray, str]]) -> np.ndarray:
@@ -136,22 +132,89 @@ def pipeline_figure(cards: list[tuple[str, np.ndarray, str]]) -> np.ndarray:
     return cv2.cvtColor(np.array(canvas), cv2.COLOR_RGB2BGR)
 
 
+class Figures:
+    def __init__(self, cfg: dict) -> None:
+        self.cfg = cfg
+        scene_id = cfg["scene_id"]
+        self.renders = REPO / "renders" / scene_id
+        self.out = REPO / "outputs" / scene_id
+        self.cams = json.loads((self.renders / "cameras.json").read_text(encoding="utf-8"))
+        self.by_stem = {Path(c["image"]).stem: c for c in self.cams}
+        self.objects = json.loads((self.out / "objects" / "objects.json").read_text(encoding="utf-8"))
+        self.members = np.load(self.out / "instances" / "members.npz")
+        dc = cfg["detection"]
+        self.thresholds = [float(c.get("box_threshold", dc["default_box_threshold"])) for c in cfg["classes"]]
+        self.dets = {
+            stem: [a for a in json.loads((self.out / "detections" / f"{stem}.json").read_text(encoding="utf-8"))["annotations"]
+                   if a["score"] >= self.thresholds[int(a["class_id"])]]
+            for stem in self.by_stem
+        }
+
+    def frames(self, score: dict[str, float], n: int) -> list[str]:
+        """The n highest-scoring frames, each from a different camera position."""
+        out, used = [], set()
+        for stem in sorted(score, key=lambda s: (-score[s], s)):
+            pos = self.by_stem[stem]["position_index"]
+            if pos not in used:
+                out.append(stem)
+                used.add(pos)
+            if len(out) == n:
+                break
+        return out
+
+    def objects_by_support(self, n: int, skip_classes: set[int], min_gaussians: int = 300) -> list[dict]:
+        """Well-supported objects, one per class."""
+        out, used = [], set(skip_classes)
+        for o in sorted(self.objects, key=lambda o: (-o["n_detected_views"] * o["confidence"], o["id"])):
+            if o["class_id"] not in used and o["n_gaussians"] >= min_gaussians:
+                out.append(o)
+                used.add(o["class_id"])
+            if len(out) == n:
+                break
+        return out
+
+    def overlay(self, stem: str, only: int | None = None, color_class: int | None = None) -> np.ndarray:
+        rgb = cv2.cvtColor(read(self.renders / self.by_stem[stem]["image"]), cv2.COLOR_BGR2RGB)
+        payload = json.loads((self.out / "detections" / f"{stem}.json").read_text(encoding="utf-8"))
+        anns = [payload["annotations"][only]] if only is not None else self.dets[stem]
+        dets = [
+            {"class_id": int(a["class_id"]) if color_class is None else color_class, "label": "", "score": a["score"],
+             "box_xyxy": a["bbox"], "mask": rle_to_mask(a["segmentation"])}
+            for a in anns
+        ]
+        return overlay_detections(rgb, dets, labels=False)
+
+    def topdown_boxes(self) -> np.ndarray:
+        ov = self.out / "scene_overview"
+        td_rec = json.loads((ov / "topdown_camera.json").read_text(encoding="utf-8"))
+        td = read(ov / "topdown_plain.png")
+        for o in self.objects:
+            uv, _ = project_points(td_rec, np.array(o["box"]["corners"])[:4])
+            cv2.polylines(td, [uv.astype(np.int32).reshape(-1, 1, 2)], True, class_color_bgr(o["class_id"]), 2, cv2.LINE_AA)
+        return td
+
+
 def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--config", type=Path, default=REPO / "config_all_objects.yaml")
+    args = ap.parse_args()
+    cfg = load_config(args.config)
     ASSETS.mkdir(parents=True, exist_ok=True)
-    cfg = load_config(REPO / "config.yaml")
-    cams = json.loads((RENDERS / "cameras.json").read_text(encoding="utf-8"))
-    by_stem = {Path(c["image"]).stem: c for c in cams}
-    objects = {o["name"]: o for o in json.loads((OUT / "objects" / "objects.json").read_text(encoding="utf-8"))}
-    members = np.load(OUT / "instances" / "members.npz")
-    ov = OUT / "scene_overview"
+    f = Figures(cfg)
+    cams, by_stem, objects, members = f.cams, f.by_stem, f.objects, f.members
+    ov = f.out / "scene_overview"
+
+    det_count = {s: float(len(a)) for s, a in f.dets.items()}
+    seen = {s: float(sum(1 for o in objects if by_stem[s]["id"] in o["view_ids"])) for s in by_stem}
+    detection_views = f.frames(det_count, 2)
+    segment_views = f.frames(seen, 2)
 
     # Stage 0: raw scene
     overview = read(ov / "overview_0.png")
-    topdown_plain = read(ov / "topdown_plain.png")
     save(
         "stage0_raw_scene.jpg",
         row([captioned(fit(overview, 760, 570), "In-room render of the raw splat"),
-             captioned(fit(topdown_plain, 700, 570), "Top-down render, ceiling removed")]),
+             captioned(fit(read(ov / "topdown_plain.png"), 700, 570), "Top-down render, ceiling removed")]),
     )
 
     # Stage 1: scene analysis
@@ -165,23 +228,28 @@ def main() -> None:
 
     # Stage 2: cameras and rendered frames
     save("stage2_camera_map.jpg", read(ov / "cameras_topdown.png"), 1200)
-    save("stage2_rendered_frames.jpg", read(RENDERS / "contact_sheets" / "renders_00.jpg"))
+    save("stage2_rendered_frames.jpg", read(f.renders / "contact_sheets" / "renders_00.jpg"))
 
-    # Stage 3: detections
-    det = [captioned(fit(read(OUT / "detections" / "annotated" / f"{s}.jpg"), 760, 570), f"{s}: Grounding DINO box + SAM 2.1 mask")
-           for s in DETECTION_VIEWS]
-    save("stage3_detections.jpg", row(det))
-    save("stage3_detection_sheet.jpg", read(OUT / "detections" / "contact_sheets" / "detections_00.jpg"))
+    # Stage 3: detections (masks and boxes colored by class, no labels)
+    save("stage3_detections.jpg", row([
+        captioned(fit(f.overlay(s), 760, 570), f"{s}: {len(f.dets[s])} Grounding DINO boxes + SAM 2.1 masks")
+        for s in detection_views
+    ]))
+    sheet_stems = [Path(cams[i]["image"]).stem for i in np.linspace(0, len(cams) - 1, 24).round().astype(int)]
+    save("stage3_detection_sheet.jpg",
+         grid([captioned(fit(f.overlay(s), 320, 240), f"{s}: {len(f.dets[s])} masks", 16) for s in sheet_stems], 6, 6), 1920)
 
     ply_path = resolve_repo_path(cfg, cfg["input_ply"])
     scene = SplatScene.load(ply_path)
+    centers_all = read_binary_gaussian_ply(ply_path).xyz()
 
     # Stage 4: one mask lifted to Gaussians vs. the fused 3D instance
-    obj = objects[LIFT_OBJECT]
+    big = [o for o in objects if o["n_gaussians"] >= 2000] or objects
+    obj = max(big, key=lambda o: (o["n_detected_views"], -o["id"]))
     cam_a = cams[obj["best_view"]]
     stem_a = Path(cam_a["image"]).stem
     fwd_a = np.array(cam_a["forward"])
-    centers = read_binary_gaussian_ply(ply_path).xyz()[members[obj["name"]]]
+    centers = centers_all[members[obj["name"]]]
 
     def fully_in_frame(c: dict, margin: float = 40.0) -> bool:
         uv, z = project_points(c, centers)
@@ -189,65 +257,79 @@ def main() -> None:
         inside &= (uv[:, 1] > margin) & (uv[:, 1] < c["height"] - margin)
         return bool(inside.mean() > 0.98)
 
-    cand = [c for c in cams if c["id"] in obj["view_ids"] and fully_in_frame(c)]
+    others = [c for c in cams if c["id"] in obj["view_ids"] and c["id"] != cam_a["id"]]
+    cand = [c for c in others if fully_in_frame(c)] or others or [cam_a]
     cam_b = min(cand, key=lambda c: float(np.dot(fwd_a, np.array(c["forward"]))))
-    single = scene.subset(proposal_members(stem_a, obj["best_det"]))
+    z = np.load(f.out / "lifting" / f"{stem_a}.npz")
+    metas = json.loads(str(z["props_json"]))
+    j = next(k for k, meta in enumerate(metas) if meta["det_idx"] == obj["best_det"])
+    single = scene.subset(z["members"][z["offsets"][j] : z["offsets"][j + 1]].astype(np.int64))
     fused = scene.subset(members[obj["name"]])
     fused_a, alpha_a = render_bgr(fused, cam_a)
     fused_b, alpha_b = render_bgr(fused, cam_b)
     single_a, _ = render_bgr(single, cam_a)
     single_b, _ = render_bgr(single, cam_b)
-    ba, bb = crop_to_alpha(fused_a, alpha_a), crop_to_alpha(fused_b, alpha_b)
+    ba, bb = crop_to_alpha(alpha_a), crop_to_alpha(alpha_b)
 
     def cut(img: np.ndarray, box) -> np.ndarray:
         x0, y0, x1, y1 = box
         return fit(img[y0:y1, x0:x1], 460, 400)
 
-    annotated_a = read(OUT / "detections" / "annotated" / f"{stem_a}.jpg")
+    mask_a = f.overlay(stem_a, only=obj["best_det"], color_class=obj["class_id"])
     save(
         "stage4_lifting.jpg",
-        row([captioned(cut(annotated_a, ba), f"(a) SAM 2.1 mask in {stem_a}", 20),
+        row([captioned(cut(mask_a, ba), f"(a) SAM 2.1 mask in {stem_a}", 20),
              captioned(cut(single_a, ba), "(b) Gaussians lifted from that mask", 20),
              captioned(cut(single_b, bb), f"(c) same Gaussians seen from {Path(cam_b['image']).stem}", 20),
              captioned(cut(fused_b, bb), f"(d) fused over {obj['n_detected_views']} views", 20)]),
     )
 
     # Stage 5: instances on the floor plan + colored segmentation
-    save("stage5_instances_topdown.jpg", read(OUT / "objects" / "topdown_boxes.png"), 1200)
-    colored = SplatScene.load(OUT / "objects" / "scene_segmented_colored.ply")
+    save("stage5_instances_topdown.jpg", f.topdown_boxes(), 1200)
+    colored = SplatScene.load(f.out / "objects" / "scene_segmented_colored.ply")
     pairs = []
-    for s in SEGMENT_VIEWS:
+    for s in segment_views:
         rec = by_stem[s]
-        orig = read(RENDERS / rec["image"])
         seg, _ = render_bgr(colored, rec, (0.0, 0.0, 0.0))
-        pairs.append(row([captioned(fit(orig, 700, 525), f"{s}: rendered frame"),
+        pairs.append(row([captioned(fit(read(f.renders / rec["image"]), 700, 525), f"{s}: rendered frame"),
                           captioned(fit(seg, 700, 525), f"{s}: extracted objects painted by class")]))
     save("stage5_segmentation.jpg", stack(pairs))
 
-    # Stage 6: isolated object splats
+    # Stage 6: isolated object splats, then each object in its best frame next to its isolated splat
+    mosaic_objs = f.objects_by_support(6, set())
     tiles = []
-    for name in MOSAIC_OBJECTS:
-        o = objects[name]
-        rec = cams[o["best_view"]]
-        img, alpha = render_bgr(scene.subset(members[name]), rec)
-        x0, y0, x1, y1 = crop_to_alpha(img, alpha, pad=0.12, min_side=120)
-        tiles.append(captioned(fit(img[y0:y1, x0:x1], 360, 320), f'{name} ({o["n_gaussians"]} splats)', 19))
-    mosaic = stack([row(tiles[:3]), row(tiles[3:])])
+    for o in mosaic_objs:
+        img, alpha = render_bgr(scene.subset(members[o["name"]]), cams[o["best_view"]])
+        x0, y0, x1, y1 = crop_to_alpha(alpha, pad=0.12, min_side=120)
+        tiles.append(captioned(fit(img[y0:y1, x0:x1], 360, 320), f'object {o["id"]} ({o["n_gaussians"]} splats)', 19))
+    mosaic = grid(tiles, 3)
     save("stage6_object_splats.jpg", mosaic)
-    save("stage6_previews.jpg", read(OUT / "objects" / "previews" / "gallery_00.jpg"))
+
+    previews = []
+    for o in f.objects_by_support(6, {o["class_id"] for o in mosaic_objs}) or mosaic_objs:
+        rec = cams[o["best_view"]]
+        full = read(f.renders / rec["image"])
+        draw_box(full, rec, np.array(o["box"]["corners"]), class_color_bgr(o["class_id"]))
+        img, alpha = render_bgr(scene.subset(members[o["name"]]), rec)
+        x0, y0, x1, y1 = crop_to_alpha(alpha, pad=0.25, min_side=220)
+        pair = row([fit(full[y0:y1, x0:x1], 300, 300), fit(img[y0:y1, x0:x1], 300, 300)], 4)
+        previews.append(captioned(pair, f'object {o["id"]}: {o["n_detected_views"]} views, score {o["confidence"]:.2f}', 18))
+    save("stage6_previews.jpg", grid(previews, 3))
 
     # Pipeline overview figure
-    frames = [read(RENDERS / by_stem[s]["image"]) for s in ["v0017", "v0006", "v0109", "v0102"]]
+    spread = f.frames(det_count, 4)
+    frames = [read(f.renders / by_stem[s]["image"]) for s in spread]
     frames_grid = stack([row([fit(frames[0], 400, 300), fit(frames[1], 400, 300)], 6),
                          row([fit(frames[2], 400, 300), fit(frames[3], 400, 300)], 6)], 6)
-    seg_card, _ = render_bgr(colored, by_stem[SEGMENT_VIEWS[0]], (0.0, 0.0, 0.0))
+    seg_card, _ = render_bgr(colored, by_stem[segment_views[0]], (0.0, 0.0, 0.0))
+    n_pos = len({c["position_index"] for c in cams})
     cards = [
-        ("0  Raw scene", overview, "Equipment Room.ply\n1,676,481 Gaussians, SH degree 3"),
+        ("0  Raw scene", overview, f"{ply_path.name}\n{scene.n:,} Gaussians, SH degree {scene.sh_degree}"),
         ("1  Scene analysis", read(ov / "topdown.png"), "floor plane, up axis, floor plan,\nceiling height, clearance map"),
-        ("2  Rendered frames", frames_grid, "26 positions x 8 directions\n147 validated RGB-D frames"),
-        ("3  Detections", read(OUT / "detections" / "annotated" / "v0110.jpg"), "Grounding DINO boxes\n+ SAM 2.1 masks per frame"),
+        ("2  Rendered frames", frames_grid, f"{n_pos} positions x {cfg['render']['yaws']} directions\n{len(cams)} validated RGB-D frames"),
+        ("3  Detections", f.overlay(detection_views[0]), f"Grounding DINO boxes + SAM 2.1\nmasks for {len(cfg['classes'])} text prompts"),
         ("4  Lift and fuse", seg_card, "mask -> Gaussian weights (VJP)\ncross-view voting, cleanup"),
-        ("5  Final outputs", mosaic, "26 object splats (.ply)\n+ objects.json with 3D boxes"),
+        ("5  Final outputs", mosaic, f"{len(objects)} object splats (.ply)\n+ objects.json with 3D boxes"),
     ]
     save("pipeline_overview.png", pipeline_figure(cards), 2800)
 

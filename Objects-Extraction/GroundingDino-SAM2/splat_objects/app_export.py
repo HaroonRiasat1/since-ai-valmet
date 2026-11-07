@@ -18,8 +18,9 @@ def app_object_id(record: dict[str, Any]) -> str:
     return f"{key}_{suffix}"
 
 
-def class_label(class_key: str) -> str:
-    return class_key.replace("_", " ")
+def app_class(record: dict[str, Any], cfg: dict[str, Any]) -> str:
+    """The app's class text: the object's detection prompt in lower case."""
+    return str(cfg["classes"][int(record["class_id"])]["prompt"]).strip().lower()
 
 
 def _round4(v: float) -> float:
@@ -73,18 +74,18 @@ def _same_class(ours: str, layer_class: str) -> bool:
 
 def same_class_overlaps(
     record: dict[str, Any],
+    cls_text: str,
     layer_objects: list[dict[str, Any]],
     min_share: float,
 ) -> list[tuple[str, str, str | None, float]]:
     """Layer hits where class matches and intersection covers >= min_share of our AABB volume."""
-    key = class_label(str(record["class_key"]))
     a0, a1 = record["box"]["aabb_min"], record["box"]["aabb_max"]
     va = _box_volume(a0, a1)
     if va <= 0:
         return []
     hits: list[tuple[str, str, str | None, float]] = []
     for obj in layer_objects:
-        if not _same_class(key, str(obj.get("class", ""))):
+        if not _same_class(cls_text, str(obj.get("class", ""))):
             continue
         b0, b1 = obj["box"]["min"], obj["box"]["max"]
         share = _intersection_volume(a0, a1, b0, b1) / va
@@ -105,7 +106,7 @@ def _overlap_note(hits: list[tuple[str, str, str | None, float]]) -> str:
     return f"Overlaps {lid} ({lcls}{link}) in the scan layer."
 
 
-def evidence_note(record: dict[str, Any], source: str) -> str:
+def evidence_note(record: dict[str, Any]) -> str:
     name = record["name"]
     views = record["n_detected_views"]
     vis = record.get("n_visible_views", views)
@@ -120,14 +121,15 @@ def to_app_object(
     layer_objects: list[dict[str, Any]],
 ) -> dict[str, Any]:
     ae = cfg["app_export"]
-    note = evidence_note(record, str(ae.get("source", "grounded-sam-2")))
-    hits = same_class_overlaps(record, layer_objects, float(ae["same_class_share"]))
+    cls_text = app_class(record, cfg)
+    note = evidence_note(record)
+    hits = same_class_overlaps(record, cls_text, layer_objects, float(ae["same_class_share"]))
     extra = _overlap_note(hits)
     if extra:
         note = f"{note} {extra}"
     out: dict[str, Any] = {
         "id": app_object_id(record),
-        "class": class_label(str(record["class_key"])),
+        "class": cls_text,
         "box": app_box(record),
         "class_confidence": class_confidence(record, cfg),
         "source": str(ae["source"]),

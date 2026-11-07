@@ -15,7 +15,7 @@ _REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_REPO))
 
 from splat_objects.cameras import camera_from_record, project_points
-from splat_objects.config import load_config, resolve_repo_path
+from splat_objects.config import load_config, resolve_repo_path, slug
 from splat_objects.export import draw_box, recolored, write_subset
 from splat_objects.ply_io import read_binary_gaussian_ply, write_binary_gaussian_ply
 from splat_objects.render_mlx import SplatScene, load_rgb, render_rgb, to_uint8
@@ -71,7 +71,7 @@ def main() -> None:
     groups = []
     for r in records:
         idx = members[r["name"]]
-        path = out_dir / r["label"].replace(" ", "_") / f'{r["name"]}.ply'
+        path = out_dir / slug(r["label"]) / f'{r["name"]}.ply'
         write_subset(ply, idx, path)
         r["ply"] = str(path.relative_to(out_dir))
         claimed[idx] = True
