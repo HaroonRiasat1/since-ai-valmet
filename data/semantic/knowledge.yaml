@@ -1,0 +1,224 @@
+# Hand-written knowledge. pipeline/build_layer.py merges this with the builder pack and the scene into layer.yaml.
+# Edit this file, never layer.yaml.
+drop_columns: [synthetic_record, data_classification, source_profile, fairness_note, safe_evidence_workflow, sensor_bias]
+
+columns:   # applies to a column of this name in any entity
+  tag: {label: Asset tag, synonyms: [asset, device, tag]}
+  asset_id: {label: Asset ID}
+  asset_class: {label: Asset class, synonyms: [type, kind, device type]}
+  area_name: {label: Plant area, synonyms: [area, zone, location]}
+  area_id: {label: Area ID}
+  criticality: {description: "How much production depends on this asset. A is production critical."}
+  health_score: {label: Health score, unit: "0-100", agg: avg, synonyms: [health, condition score], description: "Higher is healthier."}
+  condition_state: {label: Condition, synonyms: [state, status], description: "healthy, watch, degraded or attention_required."}
+  issue_code: {label: Issue code, synonyms: [fault, problem]}
+  issue_summary: {label: Issue, synonyms: [fault description, problem description]}
+  urgency: {synonyms: [priority]}
+  recommended_next_check: {label: Recommended next check, synonyms: [next step, recommendation]}
+  model_confidence: {label: Model confidence, agg: avg, description: "Confidence of the condition model, 0 to 1."}
+  knowledge_doc_id: {label: Knowledge document}
+  timestamp: {label: Time, role: date}
+  process_pressure_bar: {label: Process pressure, unit: bar, agg: avg, synonyms: [pressure]}
+  process_flow_pct: {label: Process flow, unit: "%", agg: avg, synonyms: [flow]}
+  position_setpoint_pct: {label: Position setpoint, unit: "%", agg: avg, synonyms: [setpoint]}
+  position_actual_pct: {label: Actual position, unit: "%", agg: avg, synonyms: [position]}
+  pneumatic_supply_bar: {label: Pneumatic supply, unit: bar, agg: avg, synonyms: [air supply]}
+  stiction_index: {label: Stiction index, agg: avg, synonyms: [stiction, friction]}
+  load_for_opening_pct: {label: Load for opening, unit: "%", agg: avg}
+  vibration_mm_s: {label: Vibration, unit: mm/s, agg: max, synonyms: [vibration, shaking]}
+  bearing_temp_c: {label: Bearing temperature, unit: C, agg: max, synonyms: [temperature, bearing temp, hot]}
+  motor_current_a: {label: Motor current, unit: A, agg: avg, synonyms: [current, load]}
+  speed_rpm: {label: Speed, unit: rpm, agg: avg, synonyms: [speed]}
+  signal_quality_pct: {label: Signal quality, unit: "%", agg: min}
+  duration_h: {label: Work duration, unit: h, agg: sum, synonyms: [work hours, labour]}
+  downtime_h: {label: Downtime, unit: h, agg: sum, synonyms: [downtime, outage, stoppage]}
+  service_interval_days: {label: Service interval, unit: days, agg: avg}
+  x: {role: attribute}
+  y: {role: attribute}
+  z: {role: attribute}
+  mapping_conf: {label: Mapping confidence, agg: avg, description: "How sure the link between the asset and the 3D object is, 0 to 1."}
+  matched: {label: Matches the 3D object, description: "1 when the 3D object looks like this asset class, 0 when the position is unconfirmed."}
+
+entities:
+  - name: asset
+    source: Asset_Master
+    label: Asset
+    kind: dimension
+    grain: one asset
+    description: The 30 plant assets with class, area, criticality, install date and service interval.
+    synonyms: [equipment, device, asset list, valve, pump, motor, transmitter, sensor]
+    joins:
+      - {name: state, to: asset_state, keys: [tag, tag]}
+      - {name: location, to: asset_location, keys: [tag, tag]}
+
+  - name: asset_state
+    source: Current_State
+    label: Current condition
+    kind: fact
+    grain: one asset, latest state
+    main_date: last_updated
+    description: Current health score, condition, issue, urgency and recommended next check of each asset.
+    synonyms: [health, condition, current state, faulty, degraded, worst, priority]
+    rules:
+      - "Average health is meaningful per class or area. Never sum health scores."
+      - "A low model_confidence or an open data-quality issue lowers trust in the state."
+    joins:
+      - {name: asset, to: asset, keys: [tag, tag]}
+      - {name: doc, to: knowledge_doc, keys: [knowledge_doc_id, doc_id]}
+      - {name: location, to: asset_location, keys: [tag, tag]}
+
+  - name: telemetry
+    source: Telemetry_Sample_3d
+    label: Telemetry
+    kind: fact
+    grain: one asset, every 30 minutes, 3 days
+    main_date: timestamp
+    description: Three days of sensor readings such as pressure, flow, position, vibration, temperature and current.
+    synonyms: [sensor readings, trend, measurements, time series, readings]
+    required_filters:
+      - any_of: [tag, asset_class]
+        message: "Choose an asset or an asset class. Each class reports different signals, so a plant-wide figure means nothing."
+    rules:
+      - "A signal is empty where the class does not have it, for example vibration on a valve."
+      - "This is a 4,320-row sample of the 20,160 raw records in the pack."
+    joins:
+      - {name: asset, to: asset, keys: [tag, tag]}
+
+  - name: event
+    source: Alarms_Events
+    label: Alarms and events
+    kind: fact
+    grain: one event
+    main_date: timestamp
+    description: Diagnostic alerts, condition changes, inspection notes, service recommendations and data-quality events.
+    synonyms: [alarm, alert, event, notification, open alerts]
+    rules:
+      - "Open alerts are status = open. Closed events are history."
+    joins:
+      - {name: asset, to: asset, keys: [tag, tag]}
+      - {name: state, to: asset_state, keys: [tag, tag]}
+
+  - name: work_order
+    source: Maintenance_History
+    label: Maintenance history
+    kind: fact
+    grain: one work order
+    main_date: opened_at
+    description: Past maintenance with type, priority, result, work hours and downtime.
+    synonyms: [maintenance, service history, repair, work orders, wo]
+    rules:
+      - "result = follow_up_required means the work did not close the issue."
+    joins:
+      - {name: asset, to: asset, keys: [tag, tag]}
+      - {name: state, to: asset_state, keys: [tag, tag]}
+      - {name: doc, to: knowledge_doc, keys: [knowledge_doc_id, doc_id]}
+
+  - name: service_case
+    source: Historical_Service_Cases
+    label: Historical service cases
+    kind: reference
+    grain: one past case, by asset class
+    description: Past interpretations of an issue, with the check recommended. Cases belong to a class, not to one asset.
+    synonyms: [similar cases, past cases, history, precedent]
+    rules:
+      - "A case is a precedent for a class. It never proves what is wrong with one asset."
+
+  - name: knowledge_doc
+    source: Knowledge_Docs
+    label: Knowledge documents
+    kind: reference
+    grain: one document
+    description: Diagnostic guidance per class, plus the safety, evidence and mapping contracts.
+    synonyms: [document, guidance, manual, procedure, safety, policy]
+
+  - name: data_quality_issue
+    source: Data_Quality
+    label: Data-quality issues
+    kind: fact
+    grain: one issue
+    description: Known problems in the data for each asset, with the recommended handling.
+    synonyms: [data quality, bad data, dq, trust, reliability]
+    rules:
+      - "An issue with handling reduce_model_confidence should lower the confidence of any diagnosis."
+    joins:
+      - {name: asset, to: asset, keys: [tag, tag]}
+
+  - name: asset_location
+    source: scene
+    label: 3D location
+    kind: dimension
+    grain: one asset placed in the scan
+    description: Where each asset sits in the 3D scan, and how confident that mapping is.
+    synonyms: [position, 3d, where, mapping, placement, coordinates]
+    rules:
+      - "matched = 0 means the object does not look like this class, so its position is unconfirmed."
+
+recipes:
+  - name: priority_list
+    label: Maintenance priority list
+    description: Assets that are not healthy, lowest health first.
+    parameters: []
+    spec:
+      entity: asset_state
+      dimensions: [tag, asset_class, area_name, criticality, health_score, condition_state, issue_summary, urgency]
+      filters: [{field: condition_state, op: "!=", value: healthy}]
+      order_by: [{field: health_score, dir: asc}]
+
+  - name: open_high_alerts
+    label: Open high-severity alerts
+    description: Open high-severity events per asset, most first.
+    parameters: []
+    spec:
+      entity: event
+      measures: [count]
+      dimensions: [tag, area_name]
+      filters: [{field: status, op: "=", value: open}, {field: severity, op: "=", value: high}]
+      order_by: [{field: count, dir: desc}]
+
+  - name: repeat_work
+    label: Work that needed follow-up
+    description: Work orders that did not close the issue, per asset, most first.
+    parameters: []
+    spec:
+      entity: work_order
+      measures: [count, downtime_h]
+      dimensions: [tag]
+      filters: [{field: result, op: "=", value: follow_up_required}]
+      order_by: [{field: count, dir: desc}]
+
+  - name: asset_trend
+    label: Daily signal trend of one asset
+    description: Readings of one asset averaged per day.
+    parameters: [{name: tag, type: string, required: true}]
+    spec:
+      entity: telemetry
+      measures:
+        - {column: process_pressure_bar, agg: avg}
+        - {column: process_flow_pct, agg: avg}
+        - {column: vibration_mm_s, agg: max}
+        - {column: bearing_temp_c, agg: max}
+        - {column: motor_current_a, agg: avg}
+      dimensions: [day]
+      filters: [{field: tag, op: "=", value: "{tag}"}]
+      order_by: [{field: day, dir: asc}]
+
+  - name: health_by_class
+    label: Health by asset class
+    description: Assets, average health and assets under 70 per class.
+    parameters: []
+    spec:
+      entity: asset_state
+      measures: [count, health_score]
+      dimensions: [asset_class]
+      order_by: [{field: asset_class, dir: asc}]
+
+glossary:
+  - {term: CV, meaning: "Control valve. Tag prefix CV-."}
+  - {term: P, meaning: "Process pump. Tag prefix P-."}
+  - {term: M, meaning: "Electric motor. Tag prefix M-."}
+  - {term: PT, meaning: "Pressure transmitter. Tag prefix PT-."}
+  - {term: VS, meaning: "Vibration sensor. Tag prefix VS-."}
+  - {term: Stiction, meaning: "Static friction that stops a valve moving smoothly."}
+  - {term: Cavitation, meaning: "Vapour bubbles collapsing in a pump, which damages it."}
+  - {term: Lockout-tagout, meaning: "Isolating equipment before work. Always follow the site procedure."}
+  - {term: Fault target, meaning: "The asset the demo walks to, CV-003 by default."}
