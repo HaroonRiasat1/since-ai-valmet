@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Data pipeline</title><link rel="stylesheet" href="diagram.css">
+<style>
+  .main { display:grid; grid-template-columns:170px 30px auto; align-items:center; }
+  .ins { display:flex; flex-direction:column; gap:12px; }
+  .stages .box { min-width:112px; }
+  .outs { display:grid; grid-template-columns:auto; gap:10px; margin-top:8px; }
+  .fork { display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:6px; }
+</style></head>
+<body>
+<div class="diagram" id="d">
+  <h2>Data pipeline: from scan to twin</h2>
+  <p class="sub">Heavy GPU work runs once per scan. Its output is three sets of files the app reads at start.</p>
+  <div class="main">
+    <div class="box store" style="--c:var(--scan)"><b>Equipment Room.ply</b><small>1.68 M Gaussians</small></div>
+    <div class="arrow short"></div>
+    <div>
+      <div class="layer" style="--c:var(--extract)">
+        <div class="name">Objects-Extraction / GroundingDino-SAM2 · scripts 01–07</div>
+        <div class="row stages">
+          <div class="box"><span class="tag" style="--c:var(--extract)">1</span><b>Scene analysis</b><small>gravity · free space</small></div><div class="arrow short"></div>
+          <div class="box"><span class="tag" style="--c:var(--extract)">2</span><b>Render views</b><small>virtual cameras</small></div><div class="arrow short"></div>
+          <div class="box"><span class="tag" style="--c:var(--extract)">3</span><b>Detect + segment</b><small>Grounding DINO · SAM 2.1</small></div><div class="arrow short"></div>
+          <div class="box"><span class="tag" style="--c:var(--extract)">4</span><b>Lift masks</b><small>to Gaussians</small></div><div class="arrow short"></div>
+          <div class="box"><span class="tag" style="--c:var(--extract)">5</span><b>3D instances</b><small>fused across views</small></div>
+        </div>
+      </div>
+    </div>
+    <div class="box store" style="--c:var(--know); align-self:start; margin-top:84px"><b>builder_pack.xlsx</b><small>assets · telemetry · work orders</small></div>
+    <div class="arrow short" style="align-self:start; margin-top:120px"></div>
+    <div>
+      <div class="fork">
+        <div>
+          <div class="varrow"><span class="lbl">6–7 export objects</span></div>
+          <div class="layer" style="--c:var(--know)">
+            <div class="name">pipeline/</div>
+            <div class="row">
+              <div class="box code"><b>build_scene.py</b><small>objects ↔ assets · grid</small></div><div class="arrow short"></div>
+              <div class="box code"><b>build_layer.py</b><small>joins checked</small></div>
+            </div>
+          </div>
+          <div class="varrow"></div>
+          <div class="row" style="gap:10px; justify-content:center">
+            <div class="box store"><b>web/data/scene.json</b></div><div class="box store"><b>data/semantic/</b><small>layer.yaml · plant.sqlite</small></div>
+          </div>
+        </div>
+        <div>
+          <div class="varrow"><span class="lbl">scripts 08–12</span></div>
+          <div class="layer" style="--c:var(--bim)">
+            <div class="name">Scan-to-BIM</div>
+            <div class="row">
+              <div class="box"><b>Merge + fit</b><small>walls · equipment</small></div><div class="arrow short"></div>
+              <div class="box"><b>IFC4 + GLB</b><small>scan coordinates</small></div>
+            </div>
+          </div>
+          <div class="varrow"></div>
+          <div class="row" style="justify-content:center"><div class="box store"><b>web/data/bim/</b><small>equipment_room.glb · IFC</small></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body></html>

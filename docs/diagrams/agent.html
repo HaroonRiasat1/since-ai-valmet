@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Agent sequence</title><link rel="stylesheet" href="diagram.css">
+<style>
+  .seq { display:grid; grid-template-columns:repeat(6, 140px); position:relative; }
+  .actor { text-align:center; margin:0 8px 6px; }
+  .life { position:absolute; top:62px; bottom:0; width:0; border-left:1.5px dashed var(--line); }
+  .msg { position:relative; height:34px; }
+  .msg .ln { position:absolute; top:18px; height:2px; background:var(--c, var(--mut)); }
+  .msg .ln::after { content:""; position:absolute; top:-5px; border:6px solid transparent; }
+  .msg.r .ln::after { right:-1px; border-left:8px solid var(--c, var(--mut)); border-right:0; }
+  .msg.l .ln::after { left:-1px; border-right:8px solid var(--c, var(--mut)); border-left:0; }
+  .msg.ret .ln { background:repeating-linear-gradient(90deg, var(--c, var(--mut)) 0 6px, transparent 6px 10px); }
+  .msg .t { position:absolute; top:0; font-size:12px; white-space:nowrap; transform:translateX(-50%); background:#fff; padding:0 5px; }
+  .msg .t i { font-style:normal; display:inline-block; width:17px; height:17px; border-radius:50%; background:var(--ink); color:#fff; font:700 10px/17px sans-serif; text-align:center; margin-right:5px; }
+  .self { position:absolute; top:4px; font-size:12px; padding:3px 8px; border-radius:6px; border:1.5px solid var(--agent); background:#fff5f5; white-space:nowrap; transform:translateX(-50%); }
+</style></head>
+<body>
+<div class="diagram" id="d">
+  <h2>One question, end to end</h2>
+  <p class="sub">The model plans; code runs the query, plans the route and checks every figure before anything reaches the technician.</p>
+  <div class="seq" id="seq">
+    <div class="actor"><div class="box" style="--c:var(--ink)"><b>👷 Technician</b></div></div>
+    <div class="actor"><div class="box" style="--c:var(--scan)"><b>Web page</b></div></div>
+    <div class="actor"><div class="box code" style="--c:var(--agent)"><b>agent.py</b></div></div>
+    <div class="actor"><div class="box" style="--c:var(--know)"><b>Model</b><small>DeepSeek-V3.2</small></div></div>
+    <div class="actor"><div class="box code" style="--c:var(--data)"><b>semantic.py</b></div></div>
+    <div class="actor"><div class="box code" style="--c:var(--space)"><b>routing.py</b></div></div>
+  </div>
+</div>
+<script>
+// [from column, to column, text, kind]; kind: "" call, "ret" reply, "self" note on one lifeline
+const MSGS = [
+  [0, 1, "“Which handwheel valves need attention?”"], [1, 2, "POST /api/agent/chat"], [2, 3, "request + allowed tools"],
+  [3, 2, "run_query(spec)", "ret"], [2, 4, "check every name · bind values"], [4, 2, "rows from plant.sqlite", "ret"],
+  [3, 2, "route_to(\"HV-005\")", "ret"], [2, 5, "Dijkstra, walker-sized"], [5, 2, "path · length", "ret"],
+  [3, 2, "answer text", "ret"], [2, 2, "every tag and figure must come from a tool result", "self"],
+  [2, 1, "answer + table + query + route", "ret"], [1, 0, "walks the route · shows the evidence", "ret"],
+];
+const seq = document.getElementById("seq"), W = 140, x = (c) => c * W + W / 2;
+for (let c = 0; c < 6; c++) { const l = document.createElement("div"); l.className = "life"; l.style.left = x(c) + "px"; seq.appendChild(l); }
+MSGS.forEach(([a, b, text, kind = ""], k) => {
+  const row = document.createElement("div"); row.className = "msg"; row.style.gridColumn = "1 / -1";
+  if (kind === "self") { row.innerHTML = `<div class="self" style="left:${x(a)}px"><b>${k + 1}</b> ✓ ${text}</div>`; }
+  else {
+    const lo = Math.min(x(a), x(b)), hi = Math.max(x(a), x(b));
+    row.className += (b > a ? " r" : " l") + (kind === "ret" ? " ret" : "");
+    row.innerHTML = `<div class="ln" style="left:${lo}px; width:${hi - lo}px"></div><div class="t" style="left:${(lo + hi) / 2}px"><i>${k + 1}</i>${text}</div>`;
+  }
+  seq.appendChild(row);
+});
+</script>
+</body></html>

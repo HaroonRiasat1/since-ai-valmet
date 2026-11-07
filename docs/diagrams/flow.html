@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>The flow</title><link rel="stylesheet" href="diagram.css">
+<style>
+  .stages { display:flex; align-items:stretch; } .stages .box { width:150px; display:flex; flex-direction:column; justify-content:center; }
+  .stages .arrow { align-self:center; }
+  .branch { display:grid; grid-template-columns:150px 150px 150px; gap:24px; margin:0 0 0 auto; width:max-content; }
+  .down { display:grid; grid-template-columns:repeat(3, 150px); gap:24px; width:max-content; margin-left:auto; }
+  .merge { width:498px; margin:8px 0 0 auto; height:14px; border:2px solid var(--mut); border-top:0; border-radius:0 0 10px 10px; transform:translateX(-75px) scaleX(.7); }
+  .num { position:absolute; top:-10px; left:-10px; width:22px; height:22px; border-radius:50%; background:var(--c); color:#fff; font:700 12px/22px sans-serif; }
+</style></head>
+<body>
+<div class="diagram" id="d">
+  <h2>From a scan to a twin that helps you work</h2>
+  <p class="sub">Each stage feeds the next. Stages 1–6 run offline once per scan; 7 and 8 run live in the app.</p>
+
+  <div class="stages">
+    <div class="box filled" style="--c:var(--scan)"><span class="num">1</span><b>Scan</b><small>Gaussian splat<br>1.68 M Gaussians</small></div>
+    <div class="arrow"></div>
+    <div class="box filled" style="--c:var(--space)"><span class="num">2</span><b>Space</b><small>floor · levelling<br>60 × 60 grid</small></div>
+    <div class="arrow"></div>
+    <div class="box filled" style="--c:var(--extract)"><span class="num">3</span><b>Extract</b><small>multi-view segmentation<br>→ 3D instances</small></div>
+    <div class="arrow"></div>
+    <div class="box filled" style="--c:var(--know)"><span class="num">4</span><b>Understand</b><small>classes · asset tags<br>plant records</small></div>
+    <div class="arrow"></div>
+    <div class="box filled" style="--c:var(--know)"><span class="num">5</span><b>Semantic layers</b><small>spatial: what is where<br>data: what it means</small></div>
+  </div>
+
+  <div class="down" style="margin-top:6px">
+    <div class="varrow"></div><div class="varrow"></div><div class="varrow"></div>
+  </div>
+  <div class="branch">
+    <div class="box filled" style="--c:var(--bim)"><span class="num">6</span><b>Scan-to-BIM</b><small>IFC4 + GLB<br>layout editor</small></div>
+    <div class="box filled" style="--c:var(--space)"><span class="num">7</span><b>Navigate</b><small>Dijkstra, sized<br>for a real walker</small></div>
+    <div class="box filled" style="--c:var(--agent)"><span class="num">8</span><b>Ask the agent</b><small>tool calls · checked<br>queries · citations</small></div>
+  </div>
+  <div class="merge"></div><div class="down"><div></div><div class="varrow" style="margin-top:0"></div><div></div></div>
+  <div class="branch">
+    <div></div>
+    <div class="box goal" style="--c:var(--ink)"><b>👷 Technician</b><small>at the right asset,<br>knowing why</small></div>
+    <div></div>
+  </div>
+
+  <div class="legend">
+    <span><i style="--c:var(--scan)"></i>input</span><span><i style="--c:var(--space)"></i>space &amp; navigation</span>
+    <span><i style="--c:var(--extract)"></i>extraction</span><span><i style="--c:var(--know)"></i>knowledge</span>
+    <span><i style="--c:var(--bim)"></i>BIM</span><span><i style="--c:var(--agent)"></i>AI agent</span>
+  </div>
+</div>
+</body></html>

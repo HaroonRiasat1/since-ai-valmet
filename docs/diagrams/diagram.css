@@ -1,0 +1,42 @@
+/* Shared look for every diagram in docs/diagrams/. Render to PNG with docs/diagrams/render.py. */
+:root {
+  --ink:#1f2328; --mut:#59636e; --line:#d0d7de; --bg:#ffffff; --soft:#f6f8fa;
+  --scan:#0969da; --space:#8250df; --extract:#bf3989; --know:#1a7f37; --bim:#9a6700; --agent:#cf222e; --data:#57606a;
+}
+* { box-sizing:border-box; }
+html, body { margin:0; background:transparent; }
+body { font:14px/1.35 "Segoe UI", -apple-system, Helvetica, Arial, sans-serif; color:var(--ink); }
+.diagram { display:inline-block; background:var(--bg); border:1px solid var(--line); border-radius:14px; padding:22px 26px; }
+.diagram > h2 { margin:0 0 4px; font-size:18px; } .diagram > p.sub { margin:0 0 18px; color:var(--mut); font-size:13px; }
+
+/* boxes */
+.box { border:1.5px solid var(--c, var(--line)); border-radius:10px; background:#fff; padding:9px 12px; min-width:118px; text-align:center;
+       box-shadow:0 1px 0 rgba(31,35,40,.04); position:relative; }
+.box b { display:block; font-size:14px; } .box small { display:block; color:var(--mut); font-size:12px; margin-top:2px; }
+.box .tag { display:inline-block; margin-bottom:4px; font:600 10.5px/16px ui-monospace, Consolas, monospace; letter-spacing:.04em;
+            padding:0 7px; border-radius:8px; background:var(--c, var(--data)); color:#fff; }
+.box.filled { background:color-mix(in srgb, var(--c) 9%, #fff); }
+.box.store { border-radius:10px / 16px; border-style:solid; background:var(--soft); }
+.box.code b { font-family:ui-monospace, Consolas, monospace; font-size:13px; }
+.box.goal { border-width:2.5px; }
+
+/* flow rows and arrows */
+.row { display:flex; align-items:center; gap:0; }
+.col { display:flex; flex-direction:column; align-items:center; gap:10px; }
+.arrow { flex:0 0 auto; width:40px; height:2px; background:var(--mut); position:relative; margin:0 4px; }
+.arrow::after { content:""; position:absolute; right:-1px; top:-5px; border:6px solid transparent; border-left:8px solid var(--mut); border-right:0; }
+.arrow.long { width:70px; } .arrow.short { width:24px; }
+.arrow.dash { background:repeating-linear-gradient(90deg, var(--mut) 0 6px, transparent 6px 10px); }
+.arrow .lbl, .varrow .lbl { position:absolute; left:50%; transform:translateX(-50%); top:-19px; font-size:11px; color:var(--mut); white-space:nowrap; }
+.varrow { width:2px; height:26px; background:var(--mut); position:relative; margin:4px auto; }
+.varrow::after { content:""; position:absolute; bottom:-1px; left:-5px; border:6px solid transparent; border-top:8px solid var(--mut); border-bottom:0; }
+.varrow .lbl { top:5px; left:10px; transform:none; }
+.arrow.both::before { content:""; position:absolute; left:-1px; top:-5px; border:6px solid transparent; border-right:8px solid var(--mut); border-left:0; }
+.varrow.both::before { content:""; position:absolute; top:-1px; left:-5px; border:6px solid transparent; border-bottom:8px solid var(--mut); border-top:0; }
+
+/* layers */
+.layer { border:1.5px dashed var(--c, var(--line)); border-radius:12px; padding:12px 14px 14px; background:color-mix(in srgb, var(--c) 4%, #fff); }
+.layer > .name { font-size:11.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--c, var(--mut)); margin-bottom:10px; }
+.grid { display:grid; gap:10px; }
+.legend { display:flex; gap:16px; margin-top:16px; color:var(--mut); font-size:12px; }
+.legend i { display:inline-block; width:10px; height:10px; border-radius:3px; background:var(--c); margin-right:6px; vertical-align:-1px; }

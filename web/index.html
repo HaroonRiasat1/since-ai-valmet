@@ -563,7 +563,11 @@ const av = { ...AV_DEFAULT };
 try { Object.assign(av, JSON.parse(localStorage.getItem("avatar") || "{}")); } catch {}
 const avatar = new THREE.Group();
 let figure = new THREE.Group(), figMats = [], rotors = [], hover = 0, figTop = AVATAR_H;
-const ring = new THREE.Mesh(new THREE.RingGeometry(1.45, 1.5, 64), new THREE.MeshBasicMaterial({ color:0x5aa9ff, transparent:true, opacity:0.5, side:THREE.DoubleSide }));
+// The sprite's body radius comes from the route grid: its footprint (3 cells, or what the backend says) x cell size / 2.
+// Routes only use cells where that footprint fits, driving keeps the same distance from obstacles, and the ring shows it.
+let spriteR = scene_.cellgrid ? 3 * scene_.cellgrid.step / 2 : 0.225;
+const ring = new THREE.Mesh(new THREE.RingGeometry(spriteR * 0.82, spriteR, 48), new THREE.MeshBasicMaterial({ color:0x5aa9ff, transparent:true, opacity:0.5, side:THREE.DoubleSide }));
+function setSprite(cells, step) { spriteR = cells * step / 2; ring.geometry.dispose(); ring.geometry = new THREE.RingGeometry(spriteR * 0.82, spriteR, 48); }
 ring.rotation.x = -Math.PI/2; ring.position.y = 0.02;
 avatar.add(figure, ring); scene.add(avatar);
 
@@ -959,7 +963,7 @@ function fillFilter(key, id, all) {                // counts follow the other fi
 const fillFilters = () => { fillFilter("cls", "classsel", "All classes"); };
 fillFilters();
 $("classsel").onchange = (e) => { filters.cls = e.target.value; fillFilters(); };
-$("rad").oninput = (e) => { radius = +e.target.value; $("radv").textContent = radius.toFixed(1) + " m"; ring.scale.setScalar(radius / 1.5); };
+$("rad").oninput = (e) => { radius = +e.target.value; $("radv").textContent = radius.toFixed(1) + " m"; };   // nearby-asset radius; the ring is the sprite's body
 $("spd").oninput = (e) => { speed = +e.target.value; $("spdv").textContent = speed.toFixed(1) + "×"; };
 
 // ---------- click an object (or a nearby card) for AI analysis. A drag is a look/orbit, not a click.
@@ -1082,11 +1086,9 @@ addEventListener("keydown", (e) => {
 });
 addEventListener("keyup", (e) => keys.delete(e.code));
 addEventListener("blur", () => keys.clear());
-// Driving uses a looser body radius than route planning (planner keeps 0.25 clearance for
-// comfortable aisles; a person can squeeze closer), so narrow gaps stay passable.
-const DRIVE_CLEAR = 0.1;
+// Driving keeps the sprite's body radius (from the route grid) clear of obstacles, so you can only drive where routes can go.
 const clearAt = (v) => { const [i, j] = cellOf(v); return (i >= 0 && j >= 0 && i < GH && j < GW) ? clear[i * GW + j] * NG.cell : 0; };
-const walkableRaw = (v) => clearAt(v) >= DRIVE_CLEAR;
+const walkableRaw = (v) => clearAt(v) >= spriteR;
 function drive(dt) {
   const fast = keys.has("ShiftLeft") || keys.has("ShiftRight") ? 2.2 : 1;
   const turn = (keys.has("ArrowLeft") ? 1 : 0) - (keys.has("ArrowRight") ? 1 : 0);
@@ -1104,7 +1106,7 @@ function drive(dt) {
   const tryMove = (vS) => { const raw = world.worldToLocal(meS.clone().add(vS)); raw.setComponent(UP, mPos.getComponent(UP));
     const c = clearAt(raw);
     // allowed if the spot is free enough, or if it at least moves away from the obstacle (unsticks)
-    if (c >= DRIVE_CLEAR || (here < DRIVE_CLEAR && c > here) || (here < DRIVE_CLEAR && c > 0 && c >= here)) { mPos.copy(raw); return true; }
+    if (c >= spriteR || (here < spriteR && c > here) || (here < spriteR && c > 0 && c >= here)) { mPos.copy(raw); return true; }
     return false; };
   // full step, else slide along the obstacle on one axis
   if (!tryMove(dirS.clone().multiplyScalar(step)))
@@ -1195,6 +1197,7 @@ const parseSpot = (text) => {           // a tag or cell number anywhere in the 
 fetch("api/grids").then(r => r.ok ? r.json() : Promise.reject()).then(list => {
   backend = true;
   $("gridsel").innerHTML = list.map(g => `<option value="${g.name}">${g.label}</option>`).join("");
+  if (list[0]?.sprite) setSprite(list[0].sprite, list[0].step);
   syncRemovedToBackend();
 }).catch(() => { $("gridsel").innerHTML = `<option value="fine">Fine 5 cm (in page)</option>`; $("gridsel").disabled = true; navNote("No backend: routes run in the page."); });
 $("gridsel").onchange = (e) => { gridName = e.target.value; drawOverlay(); drawMap(); if (stops.length === 1) routeTo(stops[0].tag); };

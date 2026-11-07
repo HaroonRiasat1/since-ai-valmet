@@ -4,6 +4,7 @@ import json
 import numpy as np
 import pytest
 
+from backend.routing import sprite_sizes
 from backend.scene import Scene
 
 
@@ -17,9 +18,10 @@ def make_scene(tmp_path):
     fine[20, :] = 0
     fine[20, 30:34] = 1
     clear = np.where(fine, 6, 0)
-    sizes = np.ones((10, 10), dtype=np.uint8) * 3
-    sizes[5, :] = 0
-    sizes[5, 8] = 1
+    wall = np.zeros((10, 10), dtype=bool)   # cell grid: the same wall, with a gap three cells wide (z 1.4 to 2.0)
+    wall[5, :] = True
+    wall[5, 7:10] = False
+    sizes = sprite_sizes(wall)
     items = [
         {"id": "obj_a", "tag": "CV-001", "center": [0.3, 0, 0.3], "size": [0.1, 0.1, 0.1], "state": "degraded", "health": 50,
          "asset_class": "CONTROL_VALVE", "issue": "drift", "urgency": "high", "matched": True},

@@ -1,8 +1,4 @@
-"""Route planning on the two navigation grids.
-
-Fine grid: the 5 cm occupancy grid, planned with A* and shortened by line of sight.
-Cell grid: the numbered 60 x 60 grid, planned with Dijkstra, with tight cells costing more.
-"""
+"""Route planning on the numbered 60 x 60 cell grid, with Dijkstra: tight cells cost more, so routes keep to open floor."""
 import base64
 import heapq
 from dataclasses import dataclass
@@ -10,7 +6,17 @@ from dataclasses import dataclass
 import numpy as np
 from scipy import ndimage
 
-from pipeline import navigator
+
+
+SPRITE_CELLS = 3    # the walker's square footprint in grid cells (3 x 0.15 m = 0.45 m): routes only use cells where it fits
+REACH = 0.9         # metres: a goal further than this from the asset does not count as reaching it
+
+
+def sprite_sizes(blocked):
+    """Widest odd square sprite, in cells, that fits centred on each cell (0 on blocked cells); the grid edge counts as
+    blocked. Same result as pipeline/view_splat.py max_sprite_sizes, from a chessboard distance transform."""
+    depth = ndimage.distance_transform_cdt(np.pad(~np.asarray(blocked, bool), 1), metric="chessboard")[1:-1, 1:-1]
+    return np.where(depth > 0, 2 * depth - 1, 0)
 
 
 class RouteError(ValueError):
@@ -39,71 +45,14 @@ def _length(points):
     return float(np.linalg.norm(np.diff(pts, axis=0), axis=1).sum()) if len(pts) > 1 else 0.0
 
 
-class FineGrid:
-    """The 5 cm grid from navigator.py."""
-
-    name = "fine"
-    label = "Fine 5 cm (A*)"
-
-    def __init__(self, navgrid, floor):
-        shape = tuple(navgrid["shape"])
-        self.floor = floor
-        self.cell = navgrid["cell"]
-        self.origin = np.array(navgrid["origin"])
-        self.horiz = navgrid["horiz"]
-        self.walk = _decode(navgrid["walk"]).reshape(shape).astype(bool)
-        self.clear = _decode(navgrid["clear"]).reshape(shape).astype(float) * self.cell
-
-    def cell_of(self, position):
-        return tuple(np.floor((np.asarray(position, float)[self.horiz] - self.origin) / self.cell).astype(int))
-
-    def world_of(self, cell):
-        x, z = self.origin + (np.asarray(cell) + 0.5) * self.cell
-        return _world(x, z, self.floor)
-
-    def nearest_free(self, cell):
-        free = np.argwhere(self.walk)
-        if not len(free):
-            raise RouteError("the fine grid has no walkable cells")
-        return tuple(int(v) for v in free[np.argmin(((free - cell) ** 2).sum(axis=1))])
-
-    def goal_for(self, item, standoff=0.4):
-        free = np.argwhere(self.walk)
-        centres = self.origin + (free + 0.5) * self.cell
-        half = np.array(item["size"])[self.horiz] / 2
-        gaps = np.maximum(np.abs(centres - np.array(item["center"])[self.horiz]) - half, 0)
-        distance = np.hypot(gaps[:, 0], gaps[:, 1])
-        return tuple(int(v) for v in free[np.argmin(np.abs(distance - standoff) + (distance < 0.05) * 10)])
-
-    def plan(self, start, goal):
-        raw = navigator.astar(self.walk, self.clear, start, goal)
-        if raw is None:
-            raise RouteError("no walkable route on the fine grid")
-        points = [self.world_of(c) for c in navigator.simplify(self.walk, raw)]
-        return Route(self.name, points, round(_length(points), 2), len(raw) - 1)
-
-    def route(self, position, item):
-        return self.plan(self.nearest_free(self.cell_of(position)), self.goal_for(item))
-
-    def free_box(self, item, pad=0.03):
-        """Mark floor cells under an object's footprint walkable and refresh clearance."""
-        center, size = np.asarray(item["center"], float), np.asarray(item["size"], float)
-        half = size[self.horiz] / 2 + pad
-        low, high = center[self.horiz] - half, center[self.horiz] + half
-        for cell in np.ndindex(self.walk.shape):
-            point = self.origin + (np.array(cell) + 0.5) * self.cell
-            if low[0] <= point[0] <= high[0] and low[1] <= point[1] <= high[1]:
-                self.walk[cell] = True
-        self.clear = ndimage.distance_transform_edt(self.walk) * self.cell
-
-
 class CellGrid:
     """The numbered 60 x 60 grid. Cell 1 is the top-left of the top view, numbered row by row."""
 
     name = "cells"
     label = "Cells 60 x 60 (Dijkstra)"
 
-    def __init__(self, cellgrid, floor):
+    def __init__(self, cellgrid, floor, sprite=SPRITE_CELLS):
+        self.sprite = sprite   # footprint in cells; a cell is passable when sizes >= sprite
         self.cells = cellgrid["cells"]
         self.step = cellgrid["step"]
         self.span = self.step * self.cells
@@ -130,19 +79,24 @@ class CellGrid:
         x, z = self.center - self.span / 2 + (np.asarray(cell) + 0.5) * self.step
         return _world(x, z, self.floor)
 
-    def nearest_free(self, cell):
-        free = np.argwhere(self.sizes > 0)
-        if not len(free):
-            raise RouteError("the cell grid has no free cells")
-        return tuple(int(v) for v in free[np.argmin(((free - cell) ** 2).sum(axis=1))])
-
-    def goal_for(self, item, standoff=0.4):
-        free = np.argwhere(self.sizes > 0)
+    def goal_for(self, item, cells, standoff=0.4):
+        """Among cells, the one about standoff metres from the item's footprint, and its distance to it."""
+        free = cells
         centres = self.center - self.span / 2 + (free + 0.5) * self.step
         half = np.array(item["size"])[[0, 2]] / 2
         gaps = np.maximum(np.abs(centres - np.array(item["center"])[[0, 2]]) - half, 0)
         distance = np.hypot(gaps[:, 0], gaps[:, 1])
-        return tuple(int(v) for v in free[np.argmin(np.abs(distance - standoff) + (distance < 0.02) * 10)])
+        k = np.argmin(np.abs(distance - standoff) + (distance < 0.02) * 10)
+        return tuple(int(v) for v in free[k]), float(distance[k])
+
+    def passable(self):
+        """Cells where the sprite's square footprint fits."""
+        return self.sizes >= self.sprite
+
+    def _too_narrow(self, what, gap=None):
+        near = "" if gap is None else f"; the closest it gets is {gap:.1f} m"
+        return RouteError(f"no walkable route for the sprite ({self.sprite} cells, {self.sprite * self.step:.2f} m wide) "
+                          f"to {what}: the way is narrower than the sprite{near}")
 
     def plan(self, start, goal):
         best, parent, heap, order = {start: 0.0}, {start: None}, [(0.0, 0, start)], 0
@@ -154,7 +108,7 @@ class CellGrid:
                 continue
             x, z = cell
             for other in ((x + 1, z), (x - 1, z), (x, z + 1), (x, z - 1)):
-                if 0 <= other[0] < self.cells and 0 <= other[1] < self.cells and self.sizes[other] > 0:
+                if 0 <= other[0] < self.cells and 0 <= other[1] < self.cells and self.sizes[other] >= self.sprite:
                     total = cost + 1 + 1 / min(self.sizes[cell], self.sizes[other])
                     if total < best.get(other, np.inf):
                         best[other], parent[other] = total, cell
@@ -180,14 +134,46 @@ class CellGrid:
                 kept.append(cell)
         return kept + [path[-1]]
 
+    def _starts(self, position, ok, areas):
+        """Where the sprite can stand near position: passable cells within 1 m of the nearest one, by connected area."""
+        cand = np.argwhere(ok)
+        if not len(cand):
+            raise self._too_narrow("anywhere")
+        dist = np.hypot(*(cand - np.asarray(self.cell_of(position))).T) * self.step
+        near, dist = cand[dist <= dist.min() + 1.0], dist[dist <= dist.min() + 1.0]
+        best = {}
+        for cell, d in zip(near, dist):
+            area = areas[tuple(cell)]
+            if area not in best or d < best[area][1]:
+                best[area] = (tuple(int(v) for v in cell), d)
+        return best   # area -> (start cell, distance)
+
     def route(self, position, item):
-        return self.plan(self.nearest_free(self.cell_of(position)), self.goal_for(item))
+        """Route the sprite to the item, only through cells where it fits. Of the floor areas the sprite could be
+        standing in, use the one that gets closest to the item."""
+        ok = self.passable()
+        areas, _ = ndimage.label(ok)
+        options = []
+        for area, (start, d) in self._starts(position, ok, areas).items():
+            goal, gap = self.goal_for(item, np.argwhere(areas == area))
+            options.append((gap > REACH, gap, d, start, goal))
+        unreachable, gap, _, start, goal = min(options)
+        if unreachable:
+            raise self._too_narrow(item.get("tag") or item["id"], gap)
+        return self.plan(start, goal)
 
     def route_to_cell(self, position, number):
         goal = self.index_of(number)
         if self.sizes[goal] == 0:
             raise RouteError(f"cell {number} is blocked")
-        return self.plan(self.nearest_free(self.cell_of(position)), goal)
+        if self.sizes[goal] < self.sprite:
+            raise RouteError(f"cell {number} is too narrow for the sprite ({self.sprite} cells wide, room for {self.sizes[goal]})")
+        ok = self.passable()
+        areas, _ = ndimage.label(ok)
+        starts = self._starts(position, ok, areas)
+        if areas[goal] not in starts:
+            raise self._too_narrow(f"cell {number}")
+        return self.plan(starts[areas[goal]][0], goal)
 
     def free_box(self, item, pad=0.03):
         """Re-open cell-grid tiles covered by an object's footprint."""
@@ -198,7 +184,8 @@ class CellGrid:
             for row in range(self.cells):
                 pos = self.world_of((col, row))
                 if low_x <= pos[0] <= high_x and low_z <= pos[2] <= high_z and self.sizes[col, row] == 0:
-                    self.sizes[col, row] = 3
+                    self.sizes[col, row] = 1
+        self.sizes = sprite_sizes(self.sizes == 0)   # the freed floor changes how wide a sprite fits around it
 
 
 def nearest_next(grid, position, items):

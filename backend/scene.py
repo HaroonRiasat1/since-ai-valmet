@@ -2,7 +2,7 @@
 import json
 from pathlib import Path
 
-from backend.routing import CellGrid, FineGrid, RouteError
+from backend.routing import CellGrid, RouteError
 
 
 class Scene:
@@ -15,11 +15,13 @@ class Scene:
         self.by_tag = {i["tag"]: i for i in self.items if i.get("tag")}
         self.by_id = {i["id"]: i for i in self.items}
         floor = data["frame"]["floor"] * data["frame"]["down_sign"]
-        self.grids = {"fine": FineGrid(data["navgrid"], floor)}
-        if "cellgrid" in data:
-            self.grids["cells"] = CellGrid(data["cellgrid"], floor)
+        if "cellgrid" not in data:
+            raise RouteError("scene.json has no cell grid: rebuild the scene (README, 'Rebuilding the data')")
+        self.grids = {"cells": CellGrid(data["cellgrid"], floor)}   # the only route grid
 
     def grid(self, name):
+        if name == "fine":   # the committed web page still asks for the removed A* grid by default
+            name = "cells"
         if name not in self.grids:
             raise RouteError(f"unknown grid {name}")
         return self.grids[name]

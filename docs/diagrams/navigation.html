@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Navigation</title><link rel="stylesheet" href="diagram.css">
+<style>
+  .row .box { width:128px; }
+  .cells { display:grid; grid-template-columns:repeat(9, 16px); gap:2px; margin:6px auto 0; width:max-content; }
+  .cells i { width:16px; height:16px; border-radius:3px; background:#eaeef2; }
+  .cells i.b { background:#cf222e; } .cells i.w { background:color-mix(in srgb, var(--space) 70%, #fff); } .cells i.c { background:var(--space); }
+  .ex { display:flex; gap:28px; margin-top:18px; align-items:flex-start; }
+  .ex figure { margin:0; text-align:center; font-size:12px; color:var(--mut); }
+</style></head>
+<body>
+<div class="diagram" id="d">
+  <h2>From scan to a walkable route</h2>
+  <p class="sub">Every cell stores the widest square walker that fits centred on it, so one number answers “is it free?” and “do I fit?”.</p>
+  <div class="row">
+    <div class="box filled" style="--c:var(--scan)"><b>Splat .ply</b><small>raw scan</small></div><div class="arrow short"></div>
+    <div class="box filled" style="--c:var(--space)"><b>Find the floor</b><small>density-peak plane</small></div><div class="arrow short"></div>
+    <div class="box filled" style="--c:var(--space)"><b>Level it</b><small>up axis from normals</small></div><div class="arrow short"></div>
+    <div class="box filled" style="--c:var(--space)"><b>60 × 60 cells</b><small>blocked where objects stand</small></div><div class="arrow short"></div>
+    <div class="box filled" style="--c:var(--space)"><b>Walker size per cell</b><small>widest square that fits</small></div><div class="arrow short"></div>
+    <div class="box filled" style="--c:var(--agent)"><b>Dijkstra</b><small>only where the walker fits</small></div>
+  </div>
+  <div class="ex">
+    <figure><div class="cells" id="g1"></div><figcaption>a 1-cell gap: free, but a 0.45 m walker<br>(3 × 3 cells, purple) cannot pass</figcaption></figure>
+    <figure><div class="cells" id="g2"></div><figcaption>a 3-cell gap: the walker fits,<br>so the route goes through</figcaption></figure>
+    <div class="box" style="--c:var(--agent); align-self:center; text-align:left; max-width:330px">
+      <b>When it cannot fit</b><small style="font-family:ui-monospace,Consolas,monospace; font-size:11px">no walkable route for the sprite (3 cells, 0.45 m wide) to HV-005: the way is narrower than the sprite; the closest it gets is 1.6 m</small>
+    </div>
+  </div>
+</div>
+<script>
+// 9 x 7 cells: a wall across the middle row with a gap; the walker (3 x 3) shown where it tries to pass
+function draw(id, gap) {
+  const g = document.getElementById(id), rows = 7, cols = 9, mid = 3;
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+    const i = document.createElement("i");
+    const wall = r === mid && !(c >= 4 - Math.floor(gap / 2) && c <= 4 + Math.floor(gap / 2));
+    const walker = Math.abs(c - 4) <= 1 && Math.abs(r - (gap >= 3 ? mid : 1)) <= 1;
+    if (wall) i.className = "b"; else if (walker) i.className = (r === (gap >= 3 ? mid : 1) && c === 4) ? "c" : "w";
+    g.appendChild(i);
+  }
+}
+draw("g1", 1); draw("g2", 3);
+</script>
+</body></html>

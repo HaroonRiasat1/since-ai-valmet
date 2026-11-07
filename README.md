@@ -1,208 +1,211 @@
-# Field-Service Navigator
+<h1 align="center">Field-Service Navigator</h1>
 
-A demonstrator for the Valmet × Since AI 2026 Industrial Metaverse challenge. It turns a 3D Gaussian Splatting scan
-into a navigable digital twin: assets are extracted and mapped to plant records, a technician walks a collision-free
-route to a faulty device, and an AI assistant answers from the plant data with evidence it can show.
+<p align="center">
+  <b>From a Gaussian-splat scan to an intelligent industrial digital twin you can walk through and talk to.</b><br/>
+  Valmet × Since AI 2026 · Industrial Metaverse challenge
+</p>
+
+## Demo video
+
+<p align="center">
+  <a href="docs/media/demo.mp4"><img src="docs/media/demo_preview.gif" alt="Demo: from Gaussian splats to an intelligent digital twin" width="820"></a><br/>
+  <sub>Silent preview at 2× speed. ▶ <a href="docs/media/demo.mp4"><b>Watch the full 45-second video with narration</b></a> (MP4, 720p).<br/>
+  A conceptual walk-through of the pipeline: scan → space → extraction → understanding → BIM → layers → navigation → AI agent. The app itself runs on the real scan.</sub>
+</p>
+
+<details>
+<summary><b>What the video shows, scene by scene</b></summary>
+
+| Time | Scene | What happens |
+|---|---|---|
+| 0–4 s | Splats | The scan assembles from Gaussian splats, still tilted as captured |
+| 4–7 s | Space | The floor is found, the scan is levelled, the navigation grid draws itself and blocked cells rise |
+| 7–10 s | Route | Dijkstra plans a path around the obstacles and a walker follows it |
+| 10–15 s | Extract | A vision model proposes the object classes; camera views segment each object and every splat votes for its owner |
+| 15–19 s | Classify | Objects are named, clutter is rejected, each one is checked against the asset register |
+| 19–23 s | Scan-to-BIM | Each object becomes a clean surface model |
+| 23–26 s | Layers | The twin separates into pipes, pumps, valves and tanks |
+| 26–30 s | Twin | The twin finds the pump that needs inspection and plans the route |
+| 30–45 s | Agent | *"What's wrong with PUMP-001?"*: tool calls, telemetry, knowledge layer, a cited answer, then *"take me there"* |
+</details>
+
+<p align="center">
+  <a href="#demo-video">Demo</a> ·
+  <a href="#the-flow">The flow</a> ·
+  <a href="#what-you-can-do">What you can do</a> ·
+  <a href="#architecture">Architecture</a> ·
+  <a href="#repository-map">Repository map</a> ·
+  <a href="#results">Results</a> ·
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#documentation">Docs</a>
+</p>
+
+---
+
+## The idea in three lines
+
+1. **A scan is just millions of coloured blobs.** A field technician cannot ask it anything.
+2. **We turn it into a twin that knows what it contains:** every piece of equipment is found, separated, named,
+   linked to its plant records and rebuilt as a clean BIM model.
+3. **Then the twin helps you work:** it walks you to the asset that needs attention and an AI agent explains what is
+   wrong, with evidence from the plant data.
 
 All plant data is the synthetic builder pack supplied for the challenge.
 
-## What it does
+## The flow
 
-- **Extraction:** 166 objects in the scene (scan extraction, vision model, and grounded-sam-2). **40** carry full plant
-  metadata (30 builder-pack assets plus 10 grounded equipment linked via `data/synthetic/equipment_supplement.json`).
-  The rest are detection boxes only (class, box, notes).
-- **BIM export (optional):** stages 8–12 of the extraction pipeline write **IFC4** and a **GLB overlay** under
-  `web/data/bim/` (toggle **BIM** in the viewer). See `Objects-Extraction/GroundingDino-SAM2/docs/bim-export.md`.
-- **Navigation:** two selectable grids (5 cm occupancy and a numbered 60×60 grid), From and To by tag or cell number,
-  a floor overlay and a 2D map.
-- **Assistant:** "go to the valve" routes from the current position. "What should we fix first?" queries the plant
-  data and shows the table and the query behind it.
-- **Diagnosis:** on arrival, a grounded diagnosis that cites record IDs and separates observation from hypothesis.
-  Citations outside the evidence are flagged. Optional **AI analysis** on an asset runs only after you enter a question and press **Ask**.
-- **Pluggable AI:** choose Featherless or LM Studio and the model in the page. Any OpenAI-compatible server can be added.
+Each stage feeds the next; the table under [What you can do](#what-you-can-do) links to how each one works.
 
-## Quick start
+<p align="center">
+  <img src="docs/media/diagram_flow.png" alt="From scan to twin: the flow" width="920"><br/>
+  <sub>HTML source: <a href="docs/diagrams/flow.html"><code>docs/diagrams/flow.html</code></a> · re-render with <code>docs/diagrams/render.py</code></sub>
+</p>
 
-From the repo root (`Since-AI/`):
+<table>
+<tr>
+<td align="center" width="25%"><img src="Objects-Extraction/GroundingDino-SAM2/docs/assets/stage1_scene_analysis.jpg" alt="Scene analysis"><br/><sub><b>Space</b><br/>gravity frame and free floor</sub></td>
+<td align="center" width="25%"><img src="Objects-Extraction/GroundingDino-SAM2/docs/assets/stage3_detections.jpg" alt="Detections"><br/><sub><b>Extract</b><br/>detections on rendered views</sub></td>
+<td align="center" width="25%"><img src="Objects-Extraction/GroundingDino-SAM2/docs/assets/stage5_segmentation.jpg" alt="3D instances"><br/><sub><b>Understand</b><br/>separate 3D instances</sub></td>
+<td align="center" width="25%"><img src="Objects-Extraction/GroundingDino-SAM2/docs/assets/stage5_instances_topdown.jpg" alt="Top-down"><br/><sub><b>Navigate</b><br/>every object on the floor plan</sub></td>
+</tr>
+</table>
 
-```bash
-uv sync --all-extras          # backend, tests, pipeline (pandas/openpyxl for rebuilds)
-cp .env.example .env          # add FEATHERLESS_API_KEY, or use LM Studio (see below)
-uv run python -m backend --gpu
-```
+## What you can do
 
-`--gpu` opens the app in its own window on the NVIDIA GPU (about 124 fps, against 12 on the integrated GPU). Use it on any laptop with two GPUs. **Without `--gpu`**, the server starts alone: open **http://127.0.0.1:8000** in a browser (hard-refresh after pulling UI changes: `Cmd+Shift+R` / `Ctrl+Shift+R`).
-
-For a **local model**, start the LM Studio server, load a chat model that supports tools, and pick it under **AI provider** in the page (or set `LMSTUDIO_URL` / `LMSTUDIO_MODEL` in `.env`).
-
-With Docker: `docker build -t navigator . && docker run --env-file .env -p 8000:8000 navigator`.
-
-### What you need in the repo
-
-The committed `web/data/scene.json`, splat chunks, `data/semantic_layer.json`, and `data/semantic/` are enough to run the demo. To **rebuild** from the scan you also need (not in git):
-
-- `Equipment Room.ply` (or a symlink at the repo root)
-- `builder_pack.xlsx` (symlink at the repo root)
-
-### Using the 3D viewer
-
-1. Start the backend (above) and open the app URL.
-2. **Walk / route:** set **From**, choose a target tag or use the assistant chat.
-3. **Boxes:** turn on **All boxes** or filter by **class** / **source** (grounded-sam-2, extraction, vision model).
-4. **Click a box** (or a Nearby card) for the rule-based diagnosis card (from `scene.json`, no model call).
-5. **AI analysis** (below diagnosis): type a question and press **Ask**. The copilot does **not** run until you submit a non-empty question.
-6. Optional **BIM** toggle overlays `web/data/bim/equipment_room.glb` when present.
-
-Assistant chat (`api/agent/chat`) and per-asset AI (`api/copilot/query`) need a configured provider in `.env`.
+| Capability | How it works | Read more |
+|---|---|---|
+| **Walk the scan** | Real-time Gaussian splat in the browser (three.js + Spark), first-person or follow camera, drive with W/A/S/D | [Architecture](docs/architecture.md) |
+| **See what is there** | 166 objects extracted; 40 carry full plant metadata (30 builder-pack assets + 10 grounded equipment) | [Data pipeline](docs/data-pipeline.md) |
+| **Go to an asset** | Dijkstra on a 60 × 60 grid; the walker has a 0.45 m body, so routes only use gaps a person fits through | [Navigation](docs/navigation.md) |
+| **Inspection round** | One route through every asset that needs attention, nearest-next | [Navigation](docs/navigation.md) |
+| **Ask the agent** | *"What should we fix first?"*, *"take me to the pump with the highest vibration"*: tools, checked queries, cited answers | [Agent](docs/agent.md) |
+| **Diagnose on arrival** | Grounded diagnosis that separates observation from hypothesis; citations outside the evidence are flagged | [Agent](docs/agent.md) |
+| **See it as BIM** | IFC4 model and GLB overlay in scan coordinates, with a layout editor | [BIM export](Objects-Extraction/GroundingDino-SAM2/docs/bim-export.md) |
+| **Use any model** | Featherless or LM Studio, chosen in the page; any OpenAI-compatible server | [API & config](docs/api.md) |
 
 ## Architecture
 
+Three layers, each replaceable on its own. The browser only knows the HTTP API, the backend only knows two files,
+and the model is any OpenAI-compatible endpoint.
+
+<p align="center">
+  <img src="docs/media/diagram_architecture.png" alt="Architecture: three layers" width="920"><br/>
+  <sub>HTML source: <a href="docs/diagrams/architecture.html"><code>docs/diagrams/architecture.html</code></a> · re-render with <code>docs/diagrams/render.py</code></sub>
+</p>
+
+More: [docs/architecture.md](docs/architecture.md), including how to extend each part.
+
+## Repository map
+
+```text
+Since-AI/
+├── backend/                 ⚙️  run-time API, one job per module
+│   ├── app.py                   HTTP API and static files
+│   ├── scene.py                 loads scene.json once: objects, evidence, grid
+│   ├── routing.py               60×60 cell grid, Dijkstra, walker footprint
+│   ├── agent.py                 tool-calling agent with grounding checks
+│   ├── semantic.py              data semantic layer: specs, never raw SQL
+│   ├── copilot.py               grounded per-asset diagnosis
+│   ├── vision.py                vision-model labelling and detection
+│   ├── llm.py                   OpenAI-compatible providers
+│   └── config.py                settings from env / .env
+├── web/                     🖥️  browser app, no build step
+│   ├── index.html               navigator
+│   ├── layout.html              BIM model and layout editor
+│   └── data/                    scene.json, splat chunks, bim/
+├── pipeline/                🛠️  offline builders: scan + Excel → app data
+│   ├── build_scene.py           objects ↔ assets, grid → web/data/scene.json
+│   ├── build_layer.py           data semantic layer → data/semantic/
+│   ├── extract.py · semantic.py · refine_assets.py · navigator.py · view_splat.py
+│   └── scene_catalog/           vision-model vocabulary discovery
+├── Objects-Extraction/      🧩  Grounding DINO + SAM 2.1 extraction and scan-to-BIM
+│   └── GroundingDino-SAM2/      scripts/01–13, splat_objects/, docs/
+├── data/                    🗂️  semantic layers and added objects
+│   ├── semantic/                knowledge.yaml (hand-written), layer.yaml, plant.sqlite
+│   ├── objects/                 drop-in JSON objects
+│   └── synthetic/               supplement records
+├── data_format/             📄  object JSON format and examples
+├── tests/                   ✅  102 tests, AI providers stubbed
+├── docs/                    📚  architecture, navigation, agent, pipeline, API
+│   ├── diagrams/                HTML/CSS diagrams + render.py → PNG
+│   └── media/                   demo video, rendered diagrams, charts
+├── start.sh · stop.sh       ▶️  start and stop the app
+└── Dockerfile · pyproject.toml
 ```
-Browser (web/index.html: three.js + Spark, no build step)
-   |  routes, chat, diagnosis
-FastAPI (backend/)
-   |-- routing.py    both navigation grids
-   |-- agent.py      intent routing, tools, grounding checks
-   |-- semantic.py   data semantic layer and query compiler
-   |-- copilot.py    grounded diagnosis
-   |-- vision.py     vision-model labelling and detection
-   |-- llm.py        OpenAI-compatible providers
-   |
-   |-- web/data/scene.json        scene, grids and asset evidence
-   `-- data/semantic/             layer.yaml and plant.sqlite (read-only)
+
+## Results
+
+<table>
+<tr>
+<td width="50%"><img src="docs/media/chart_models.svg" alt="Model comparison"></td>
+<td width="50%"><img src="docs/media/chart_fps.svg" alt="Frame rate"></td>
+</tr>
+<tr>
+<td><img src="docs/media/chart_reach.svg" alt="Reachable assets by walker size"></td>
+<td><img src="docs/media/chart_route.svg" alt="Route planning time"></td>
+</tr>
+</table>
+
+- **Agent:** 12 of 12 real-scene requests right with DeepSeek-V3.2, including combined ones (query, then route). The
+  cost is speed: a median of 29 s, against near-instant answers from the rule fallback.
+- **Viewer:** loads in 1.4–1.9 s; about 124 fps on the laptop's NVIDIA GPU with `--gpu`.
+- **Routing:** about 2 ms per route; a 13-stop inspection round in 0.2 s.
+
+## Quick start
+
+```bash
+uv sync --all-extras            # backend, tests, pipeline
+cp .env.example .env            # add FEATHERLESS_API_KEY, or use LM Studio
+./start.sh                      # opens the app on the NVIDIA GPU (./start.sh --no-gpu: open http://127.0.0.1:8000)
+./stop.sh                       # stops the server on that port
 ```
 
-`pipeline/` builds those files from the scan and the builder pack. It is only needed to rebuild them.
+<details>
+<summary><b>Other ways to run</b></summary>
 
-### Two semantic layers
+```bash
+uv run python -m backend --gpu  # what start.sh runs, by hand
+docker build -t navigator . && docker run --env-file .env -p 8000:8000 navigator
+```
 
-- **Spatial** (`data/semantic_layer.json`): what is where in the scan, from extraction.
-- **Data** (`data/semantic/`): what the plant records mean. Nine entities with grain, units, synonyms, rules, proven
-  joins, verified reports and a glossary. Hand-written knowledge lives in `knowledge.yaml`. `layer.yaml` is generated.
+For a local model, start the LM Studio server with a tool-capable chat model and pick it under **AI provider** in the
+page. The committed `web/data/` and `data/semantic/` are enough to run the demo; rebuilding needs the scan and the
+builder pack ([data pipeline](docs/data-pipeline.md)).
+</details>
 
-### How the assistant stays grounded
+<details>
+<summary><b>Using the viewer</b></summary>
 
-The model never writes SQL and cannot set a path.
+1. Choose a destination tag, or ask the assistant (*"go to the valve that needs attention"*).
+2. Press **Start**; the walker follows the route. Drive yourself with **W/A/S/D**, **R** re-plans from where you are.
+3. **All boxes** or the class filter show the extracted objects; click one for its diagnosis card.
+4. **AI analysis** runs only when you type a question and press **Ask**.
+5. **Layout editor** opens the BIM model.
+</details>
 
-1. The model reads every request first and chooses its tools. It can combine them, for example a telemetry query
-   to find the pump with the highest vibration, then a route to it.
-2. Route tools are offered only when the request asks to go somewhere, so a question cannot move the technician.
-3. The model fills a query spec. Every name is checked against the layer and values are bound parameters. Unknown
-   columns and values come back as errors it can correct.
-4. If an answer has figures or tags that no tool returned, code replaces it with what the tools found. If nothing
-   was found, it says so.
-5. With no model, a failed provider, or a trip request the model did not route, rules handle navigation and the
-   glossary, so the demo never depends on the model being up.
+```bash
+uv run pytest -q && uv run ruff check .    # tests use a stub instead of any AI provider
+```
 
-On the real scene with DeepSeek-V3.2, 12 of 12 test requests were right, including combined ones. The cost is speed: a
-median of 29 s and up to 66 s, against near-instant answers from the rules.
+## Documentation
 
-| Tool | Purpose |
+| Page | What is in it |
 |---|---|
-| `search_layer`, `describe` | Find and explain entities, columns, reports and terms |
-| `run_query`, `run_report` | Run a checked spec or a verified report |
-| `search_assets`, `route_to`, `inspection_round` | Choose a destination and compute the path |
-| `diagnose` | Grounded diagnosis with citations, shown as written |
-
-### Choosing a model
-
-Eight plant questions with answers taken from the database, one run each, on Featherless:
-
-| Model | Correct |
-|---|---|
-| `deepseek-ai/DeepSeek-V3.2` (default) | 8 of 8, about 30 s per question |
-| `moonshotai/Kimi-K2-Instruct` | 6 of 8 |
-| `Qwen/Qwen2.5-7B-Instruct` | 0 of 8 |
-
-Times were measured with several requests running at once. Set `FEATHERLESS_MODELS` to change the list.
-
-## Measured performance
-
-On a laptop with an RTX 5050: 1.4 to 1.9 s to load, about 124 fps in the `--gpu` window, and only 12 fps if the browser stays on the integrated Intel GPU. To use a normal browser window instead, set it to High performance in Settings > System > Display > Graphics. Route to CV-003: 32 ms on the fine grid, 2 ms on the
-cell grid. A round of 13 stops: 1.9 s and 0.2 s.
-
-## Adding objects
-
-Drop a JSON file into `data/objects/` and rebuild. The format, examples and how objects show in the page are in
-[data_format/README.md](data_format/README.md).
-
-## Rebuilding the data
-
-Needs the scan and the builder pack, which are not in the repo.
-
-```bash
-uv sync --extra pipeline
-python pipeline/added_objects.py                          # validate data/objects/*.json
-SKIP_SPLAT=1 python pipeline/build_scene.py "Equipment Room.ply" builder_pack.xlsx data/semantic_layer.json web
-python pipeline/build_layer.py builder_pack.xlsx web/data/scene.json
-```
-
-Restart `python -m backend` after a rebuild (scene is cached at startup).
-
-**Synthetic grounded equipment** (10 tagged cabinets / handwheel valves / actuator) lives in
-`data/synthetic/equipment_supplement.json`. Regenerate and re-tag the export file:
-
-```bash
-python pipeline/make_supplement.py
-# then rebuild scene + layer as above
-```
-
-Details: [data_format/README.md](data_format/README.md).
-
-`SKIP_SPLAT=1` skips rewriting the splat chunks. `build_layer.py` stops with an error if a join or a dashboard figure
-does not hold (pack dashboard figures only; supplement classes are excluded). Extraction itself (`extract.py`, `semantic.py`, `refine_assets.py`) needs the `extraction` extra and a GPU.
-
-### Scene vocabulary from rendered previews
-
-`pipeline/scene_catalog/` contains the copied VLM scene-analysis code. It reads previews, records visible object types and descriptions, and unifies them into parent/subtype classes and Grounding DINO phrases. It exports `per_image.json`, `class_catalog.json`, `grounding_prompts.json`, and `report.html`.
-
-```bash
-uv run --with 'opencv-python>=4.10,<6' --with 'requests>=2.31,<3' \
-  python -c "from pathlib import Path; from pipeline.scene_catalog.catalog import run_catalog; run_catalog(Path('renders/equipment_room/images'), Path('out/scene-catalog'), Path('.env'))"
-```
-
-Set `FEATHERLESS_API_KEY` in `.env`; the default vision model is `Qwen/Qwen3-VL-32B-Instruct` (override with `FEATHERLESS_VISION_MODEL`). Completed requests are cached. `catalog_fast.finish_saved_catalog(Path('out/scene-catalog'))` can finalize saved results without further model calls. Classes are model hypotheses, not unique physical-instance counts.
-
-## Tests
-
-```bash
-uv run pytest -q
-uv run ruff check .
-```
-
-CI runs both and checks the page script. Tests use a stub in place of any AI provider.
-
-## Configuration
-
-| Variable | Default | Purpose |
-|---|---|---|
-| `FEATHERLESS_API_KEY` | none | Enables Featherless |
-| `FEATHERLESS_MODELS` | see `backend/llm.py` | Cloud models offered, first is the default |
-| `VLM_MODEL` | `Qwen/Qwen3-VL-32B-Instruct` | Cloud vision model |
-| `LMSTUDIO_URL` | `http://127.0.0.1:1234/v1` | Any OpenAI-compatible server |
-| `LMSTUDIO_MODEL` | first chat model | Local model |
-| `HOST`, `PORT`, `WEB_DIR`, `SEMANTIC_DIR`, `LOG_LEVEL` | see `backend/config.py` | Server settings |
-
-Keys stay in the server environment and never reach the browser.
-
-## API
-
-| Method | Route | Purpose |
-|---|---|---|
-| GET | `/api/health`, `/api/grids`, `/api/assets`, `/api/providers` | Status and lists |
-| POST | `/api/route`, `/api/route/round` | Compute routes |
-| POST | `/api/agent/chat` | Assistant |
-| POST | `/api/copilot/query` | Grounded diagnosis |
-| POST | `/api/vlm/label`, `/api/vlm/detect` | Vision |
-
-Interactive docs are at `/docs`.
+| [Architecture](docs/architecture.md) | Layers, module responsibilities, contracts, how to extend |
+| [Data pipeline](docs/data-pipeline.md) | Scan → extraction → scene and semantic layer, rebuild commands, stage images |
+| [Navigation](docs/navigation.md) | Grid, walker footprint, Dijkstra, route requests |
+| [Agent](docs/agent.md) | Grounding rules, tools, semantic layers, model choice |
+| [API & configuration](docs/api.md) | Endpoints, errors, environment variables |
+| [Object format](data_format/README.md) | Add objects from people or other tools |
+| [Extraction method](Objects-Extraction/GroundingDino-SAM2/docs/objects-extractio-pipeline.md) | Stage-by-stage extraction with figures |
 
 ## Known limits
 
-- There is no authentication, so the server binds to localhost by default. Add a gateway before exposing it.
-- 7 of 30 assets are not on a matching object, and no vibration sensor is visible in the scan.
-- The model comparison is one run of eight questions. It shows a large gap, not a precise ranking.
+- No authentication: the server binds to localhost by default. Put a gateway in front before exposing it.
+- 7 of 30 builder-pack assets are not on a matching scanned object, and no vibration sensor is visible in the scan.
+- With a 0.45 m walker, 10 of 40 assets sit behind gaps narrower than a person; the app says so instead of routing
+  through them.
+- The model comparison is one run of eight questions: it shows a large gap, not a precise ranking.
 - A correct-looking query can still answer the wrong question. The checks catch invented figures, not a wrong filter,
   which is why the page always shows the table and the query.
-- LM Studio with a real chat model is untested here: only a stub server has been used for the local path.
-- `pipeline/` predates the lint rules and is excluded from them.
+- The demo video is a conceptual animation (procedural room); the app runs on the real scan.

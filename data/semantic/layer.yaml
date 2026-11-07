@@ -1565,6 +1565,12 @@ glossary:
   meaning: Pressure transmitter. Tag prefix PT-.
 - term: VS
   meaning: Vibration sensor. Tag prefix VS-.
+- term: HV
+  meaning: Handwheel valve, a manually operated valve. Tag prefix HV-.
+- term: EC
+  meaning: Electrical cabinet. Tag prefix EC-.
+- term: VA
+  meaning: Valve actuator. Tag prefix VA-.
 - term: Stiction
   meaning: Static friction that stops a valve moving smoothly.
 - term: Cavitation

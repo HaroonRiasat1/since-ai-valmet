@@ -20,7 +20,7 @@ MAX_IMAGE = 12_000_000   # characters of base64, about 9 MB
 
 
 class RouteRequest(BaseModel):
-    grid: str = "fine"
+    grid: str = "cells"
     position: Position | None = Field(default=None, min_length=3, max_length=3)
     start_cell: int | None = None
     target: str | None = None
@@ -28,7 +28,7 @@ class RouteRequest(BaseModel):
 
 
 class RoundRequest(BaseModel):
-    grid: str = "fine"
+    grid: str = "cells"
     position: Position | None = Field(default=None, min_length=3, max_length=3)
 
 
@@ -47,7 +47,7 @@ class ChatLine(BaseModel):
 
 class AgentRequest(BaseModel):
     message: str = Field(min_length=1, max_length=500)
-    grid: str = "fine"
+    grid: str = "cells"
     position: Position | None = Field(default=None, min_length=3, max_length=3)
     provider: str = "lmstudio"
     model: str | None = None
@@ -116,7 +116,7 @@ def health():
 
 @app.get("/api/grids")
 def grids():
-    return [{"name": g.name, "label": g.label} for g in get_scene().grids.values()]
+    return [{"name": g.name, "label": g.label, "sprite": g.sprite, "step": g.step} for g in get_scene().grids.values()]   # sprite: footprint in cells
 
 
 @app.post("/api/route")

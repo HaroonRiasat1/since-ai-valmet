@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Architecture</title><link rel="stylesheet" href="diagram.css">
+<style>
+  .wrap { display:grid; grid-template-columns:auto auto; gap:0; align-items:start; }
+  .stack { display:flex; flex-direction:column; width:820px; }
+  .mods { grid-template-columns:repeat(4, 1fr); }
+  .stores { grid-template-columns:repeat(3, 1fr); }
+  .side { display:flex; align-items:center; margin:330px 0 0 0; } .side .note { color:var(--mut); font-size:12px; text-align:center; margin-top:8px; }
+  .hline { display:flex; align-items:center; }
+</style></head>
+<body>
+<div class="diagram" id="d">
+  <h2>Three layers, each replaceable on its own</h2>
+  <p class="sub">The browser only knows the HTTP API, the backend only reads two built files, and the model is any OpenAI-compatible endpoint.</p>
+  <div class="wrap">
+    <div class="stack">
+      <div class="layer" style="--c:var(--scan)">
+        <div class="name">Browser · web/ · no build step</div>
+        <div class="grid" style="grid-template-columns:1fr 1fr">
+          <div class="box code"><b>index.html</b><small>splat view · walker · routes · chat · diagnosis</small></div>
+          <div class="box code"><b>layout.html</b><small>BIM model · layout editor</small></div>
+        </div>
+      </div>
+      <div class="varrow both"><span class="lbl">/api/*  JSON</span></div>
+      <div class="layer" style="--c:var(--agent)">
+        <div class="name">FastAPI · backend/ · one job per module</div>
+        <div class="box code" style="margin-bottom:10px"><b>app.py</b><small>HTTP API · clear errors (422 no route, 502 provider down)</small></div>
+        <div class="grid mods">
+          <div class="box code"><b>agent.py</b><small>tool-calling agent<br>grounding checks</small></div>
+          <div class="box code"><b>semantic.py</b><small>checked query specs<br>never raw SQL</small></div>
+          <div class="box code"><b>routing.py</b><small>60×60 grid · Dijkstra<br>walker footprint</small></div>
+          <div class="box code"><b>copilot.py</b><small>grounded diagnosis<br>citations checked</small></div>
+          <div class="box code"><b>scene.py</b><small>scene loaded once</small></div>
+          <div class="box code"><b>vision.py</b><small>VLM label · detect</small></div>
+          <div class="box code"><b>llm.py</b><small>OpenAI-compatible</small></div>
+          <div class="box code"><b>config.py</b><small>env / .env only</small></div>
+        </div>
+      </div>
+      <div class="varrow"><span class="lbl">read at start · read-only</span></div>
+      <div class="layer" style="--c:var(--data)">
+        <div class="name">Built offline · contracts on disk</div>
+        <div class="grid stores">
+          <div class="box store"><b>web/data/scene.json</b><small>objects · grid · evidence</small></div>
+          <div class="box store"><b>data/semantic/</b><small>layer.yaml · plant.sqlite</small></div>
+          <div class="box store"><b>web/data/bim/</b><small>GLB · IFC4</small></div>
+        </div>
+      </div>
+      <div class="varrow" style="transform:rotate(180deg)"></div>
+      <div class="layer" style="--c:var(--extract)">
+        <div class="name">Offline builders · once per scan</div>
+        <div class="row" style="justify-content:center">
+          <div class="box"><b>Scan + Excel</b><small>.ply · builder pack</small></div><div class="arrow short"></div>
+          <div class="box code"><b>Objects-Extraction/</b><small>Grounding DINO + SAM 2.1</small></div><div class="arrow short"></div>
+          <div class="box code"><b>pipeline/</b><small>build_scene · build_layer</small></div><div class="arrow short"></div>
+          <div class="box code"><b>scripts 08–12</b><small>scan-to-BIM</small></div>
+        </div>
+      </div>
+    </div>
+    <div class="side">
+      <div class="arrow long both" style="width:110px; margin:0 8px"><span class="lbl">chat + tool calls</span></div>
+      <div><div class="box filled" style="--c:var(--know)"><b>🤖 Any model</b><small>DeepSeek-V3.2 default<br>Featherless · LM Studio</small></div>
+      <div class="note">used by agent · copilot · vision<br>via llm.py</div></div>
+    </div>
+  </div>
+</div>
+</body></html>

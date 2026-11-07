@@ -31,7 +31,7 @@ def script(monkeypatch, *replies):
 
 
 def ask(scene, message, provider=PROVIDER):
-    return agent.respond(scene, scene.grid("fine"), START, message, provider)
+    return agent.respond(scene, scene.grid("cells"), START, message, provider)
 
 
 def last_tool_output(seen):
@@ -50,7 +50,7 @@ def test_model_picks_the_destination_and_code_computes_the_path(scene, monkeypat
     script(monkeypatch, tool_call("route_to", tag="P-001"), text("Heading to P-001."))
     out = ask(scene, "take me to whatever is leaking")
     assert out["tools"] == ["route_to"] and out["action"]["length"] > 0
-    assert out["action"]["points"][0][0] == pytest.approx(START[0], abs=0.1)
+    assert out["action"]["points"][0][0] == pytest.approx(START[0], abs=0.25)   # START is at the wall: the sprite stands where it fits
 
 
 def test_data_can_choose_a_destination(scene, monkeypatch):
@@ -205,15 +205,22 @@ def test_unknown_tag_in_a_rule_moves_nobody(scene):
 
 
 def test_rules_ignore_questions(scene):
-    assert agent.rule_based(agent.Turn(scene, scene.grid("fine"), START), "what does CV-001 do?") is None
+    assert agent.rule_based(agent.Turn(scene, scene.grid("cells"), START), "what does CV-001 do?") is None
 
 
 def test_search_sorts_by_walking_distance(scene):
-    rows = agent.Turn(scene, scene.grid("fine"), START).search_assets()
+    rows = agent.Turn(scene, scene.grid("cells"), START).search_assets()
     assert [r["tag"] for r in rows] == ["CV-001", "P-001"]
     assert rows[0]["walk"] <= rows[1]["walk"]
 
 
 def test_worst_looks_past_the_nearest_assets(scene, monkeypatch):
     monkeypatch.setattr(agent, "WALK_CHECKS", 1)
-    assert agent.Turn(scene, scene.grid("fine"), [1.7, 1.0, 0.3]).search_assets(order="health")[0]["tag"] == "CV-001"
+    assert agent.Turn(scene, scene.grid("cells"), [1.7, 1.0, 0.3]).search_assets(order="health")[0]["tag"] == "CV-001"
+
+
+def test_any_tag_family_is_recognised():
+    """New tag families (handwheel valves, cabinets, actuators...) must route without a code change."""
+    for tag in ("HV-005", "EC-001", "VA-001", "CV-003", "P-002"):
+        assert agent.TAG.search(f"go to {tag} please").group(0).upper() == tag
+    assert agent.TAG.search("EVT-00012 and WO-00031") is None   # record ids are not tags
