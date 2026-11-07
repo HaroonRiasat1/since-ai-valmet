@@ -355,7 +355,7 @@ function setRoute(legs) {                    // legs: [{ tag, pts:[Vector3...] }
   pathLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts.map(lift)), new THREE.LineDashedMaterial({ color:0x5aa9ff, dashSize:0.15, gapSize:0.08 }));
   pathLine.computeLineDistances(); world.add(pathLine);
   startMarker.position.copy(toScene(pts[0]));
-  s = 0; stopIdx = 0; playing = false; finished = false; focusTag = null;
+  s = 0; stopIdx = 0; playing = false; finished = false; focusTag = null; selBox = null;
   if (typeof manual !== "undefined") { manual = false; $("drive").style.display = "none"; }
   $("copilot").classList.remove("show"); $("play").textContent = "▶ Start";
   renderMission(); snapCam();
@@ -441,13 +441,14 @@ const fmt = (k) => k.replace(/_(pct|bar|mm_s|c|a|rpm)$/, "").replace(/_/g, " ");
 const vlmLine = (it) => it.vlm ? `<div class="mut" title="${it.vlm.visual_evidence || ""}">VLM: ${it.vlm.label} · ${human(it.vlm.asset_class)} · ${it.vlm.confidence}</div>` : "";
 function card(it, d) {
   const c = stateCol(it);
-  if (!it.tag) return `<div class="card"><div class="row"><span class="tag">${it.id}</span><span class="pill" style="color:${c};border-color:${c}">unmapped</span></div>
+  const sel = selBox && selBox.it === it ? ";border-color:#fff" : "";
+  if (!it.tag) return `<div class="card" data-box="${it.id}" style="cursor:pointer${sel}" title="Click for AI analysis"><div class="row"><span class="tag">${it.id}</span><span class="pill" style="color:${c};border-color:${c}">unmapped</span></div>
     <div class="mut">${d.toFixed(1)} m · context object, no asset identity (mapping confidence 0)</div>
     ${vlmLine(it)}
     ${showXYZ ? `<div class="mut" style="font-family:ui-monospace,monospace">centre ${it.center.map(v => v.toFixed(2)).join(", ")}</div>` : ""}</div>`;
   const tel = Object.entries(it.telemetry).slice(0,4).map(([k,v]) => `<span>${fmt(k)}</span><span>${v.last} ${unit(k)}</span>`).join("");
   const isStop = stops.some(st => st.tag === it.tag);
-  return `<div class="card" ${isStop ? 'style="border-color:#ff5d5d"' : ""}>
+  return `<div class="card" data-box="${it.id}" title="Click for AI analysis" style="cursor:pointer${isStop ? ";border-color:#ff5d5d" : ""}${sel}">
     <div class="row"><span class="tag">${it.tag} <span class="mut">${human(it.asset_class)}</span></span>
     <span class="pill" style="color:${c};border-color:${c}">${human(it.state)} · ${it.health}</span></div>
     <div class="mut">${d.toFixed(1)} m · ${it.area} · ${it.criticality}</div>
@@ -560,10 +561,10 @@ $("round").onclick = () => routeRound();
 $("play").onclick = () => {
   if (manual) { manual = false; $("drive").style.display = "none"; snapCam(); }   // back to the planned route where it was left
   if (finished) return;
-  if (!playing && focusTag && stopIdx < stops.length) $("copilot").classList.remove("show");
+  if (!playing && (focusTag && stopIdx < stops.length || selBox)) { $("copilot").classList.remove("show"); selBox = null; }
   playing = !playing; $("play").textContent = playing ? "❚❚ Pause" : "▶ Continue";
 };
-$("reset").onclick = () => { manual = false; $("drive").style.display = "none"; s = 0; stopIdx = 0; playing = false; finished = false; focusTag = null;
+$("reset").onclick = () => { manual = false; $("drive").style.display = "none"; s = 0; stopIdx = 0; playing = false; finished = false; focusTag = null; selBox = null;
   $("copilot").classList.remove("show"); $("play").textContent = "▶ Start"; renderMission(); snapCam(); };
 $("follow").onclick = () => setCamMode({ fp:"follow", follow:"free", free:"fp" }[camMode]);
 addEventListener("keydown", (e) => { if (e.code === "KeyV" && e.target.tagName !== "INPUT" && e.target.tagName !== "SELECT") $("follow").click(); });
@@ -586,6 +587,70 @@ renderer.domElement.addEventListener("click", (ev) => {
   startCell = c; $("setstart").click();
   stops.length > 1 ? routeRound() : routeTo($("target").value);
 });
+
+// ---------- click an object (or a nearby card) for AI analysis. A drag is a look/orbit, not a click.
+// Mapped boxes open the grounded copilot; unmapped ones show their VLM evidence and can be identified
+// from the current view (identity is never guessed, DOC-3D-MAPPING).
+let selBox = null, downAt = null;
+const boxRay = new THREE.Raycaster();
+function boxAt(ev) {                               // nearest box under the cursor, hidden ones included
+  boxRay.setFromCamera(new THREE.Vector2(ev.clientX / innerWidth * 2 - 1, -(ev.clientY / innerHeight) * 2 + 1), camera);
+  const hit = boxRay.intersectObjects(boxObjs.map(b => b.fill), false)[0];
+  return hit && boxObjs.find(b => b.fill === hit.object);
+}
+function analyze(b) {
+  selBox = b; lastList = "";
+  if (b.it.tag && copilot[b.it.tag]) {
+    showCopilot(b.it.tag);
+    const bar = document.createElement("div"); bar.className = "row"; bar.style.margin = "0 0 6px";
+    bar.innerHTML = `<span class="mut">Selected by click</span><span><button class="go">Route here</button> <button class="x">✕</button></span>`;
+    bar.querySelector(".go").onclick = () => { $("target").value = b.it.tag; routeTo(b.it.tag); };
+    bar.querySelector(".x").onclick = clearAnalysis;
+    $("copilot").insertBefore(bar, $("copilot").children[1]);
+    return;
+  }
+  const it = b.it, v = it.vlm, d = distToBox(manual ? mPos : posAt(s).p, it);
+  $("copilot").innerHTML = `<h2>AI object analysis</h2><div class="card" style="border-color:${stateCol(it)}">
+    <div class="row"><b>${it.id}</b><span><span class="pill" style="color:${stateCol(it)};border-color:${stateCol(it)}">unmapped</span> <button class="x">✕</button></span></div>
+    <div class="mut">${d.toFixed(1)} m away · size ${it.size.map(x => x.toFixed(2)).join(" × ")}${it.label ? ` · detector: ${esc(it.label)}` : ""}</div>
+    <h3>Observation</h3><ul>
+    ${v ? `<li>VLM sees <b>${esc(v.label)}</b> (${human(v.asset_class)}), confidence ${v.confidence}.</li>
+      ${v.visual_evidence ? `<li class="mut">${esc(v.visual_evidence)}</li>` : ""}` : "<li>No VLM label for this box yet.</li>"}
+    <li>No builder-pack record is linked to this box, so there is no telemetry, alarm or work-order evidence to diagnose. <code>DOC-3D-MAPPING</code></li></ul>
+    <h3>Next safe verification steps</h3><ul>
+    <li>Confirm what the object is on site (nameplate, QR/NFC) before linking it to an asset tag.</li>
+    <li>If it is equipment, add <code>${it.id},&lt;tag&gt;</code> to <code>mapping.csv</code> and rebuild the scene.</li></ul>
+    ${llm.on ? `<button class="idv">Identify with VLM</button> <span class="mut idv-out"></span>` :
+      `<div class="mut">Run <code>server.py</code> with <code>FEATHERLESS_API_KEY</code> to identify it with the VLM.</div>`}</div>`;
+  $("copilot").classList.add("show");
+  $("copilot").querySelector(".x").onclick = clearAnalysis;
+  const btn = $("copilot").querySelector(".idv");
+  if (btn) btn.onclick = async () => {
+    const out = $("copilot").querySelector(".idv-out");
+    const hidden = [avatar, startMarker, pathLine, ...boxObjs.map(o => o.grp)].filter(o => o && o.visible);
+    hidden.forEach(o => o.visible = false);       // the VLM must see the scan only
+    const image = grabCrop(it); hidden.forEach(o => o.visible = true);
+    if (!image) { out.textContent = "Object is not on screen; look at it and try again."; return; }
+    btn.disabled = true; out.textContent = "Asking the VLM…";
+    try {
+      const r = await fetch("api/vlm/label", { method:"POST", headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ box_id: it.id, image }) });
+      const j = await r.json(); if (!r.ok || j.error) throw new Error(j.error || r.status);
+      it.vlm = j; if (selBox === b) analyze(b);
+    } catch (e) { out.innerHTML = `<span style="color:#ff5d5d">VLM request failed: ${esc(String(e.message || e))}</span>`; btn.disabled = false; }
+  };
+}
+function clearAnalysis() { selBox = null; lastList = ""; $("copilot").classList.remove("show"); }
+renderer.domElement.addEventListener("pointerdown", (e) => downAt = { x: e.clientX, y: e.clientY });
+renderer.domElement.addEventListener("click", (ev) => {
+  if (picking || scanning || !downAt || Math.hypot(ev.clientX - downAt.x, ev.clientY - downAt.y) > 5) return;
+  const b = boxAt(ev); if (b) analyze(b);
+});
+renderer.domElement.addEventListener("pointermove", (ev) => {
+  if (ev.buttons || picking || scanning) return;
+  renderer.domElement.style.cursor = boxAt(ev) ? "pointer" : "";
+});
+$("near").onclick = (e) => { const c = e.target.closest("[data-box]"); if (c) analyze(boxObjs.find(b => b.it.id === c.dataset.box)); };
 addEventListener("resize", () => { camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
 
 // ---------- keyboard driving: W/S or ↑/↓ walk, A/D or ←/→ turn, Shift faster, R = route from here
@@ -827,7 +892,7 @@ renderer.setAnimationLoop(() => {
     s = Math.min(pathLen, s + dt * speed);
     const st = stops[stopIdx];
     if (st && s >= st.d - 1e-6) {             // reached a stop: pause and diagnose
-      s = st.d; playing = false; focusTag = st.tag; stopIdx++; showCopilot(st.tag); renderMission();
+      s = st.d; playing = false; focusTag = st.tag; selBox = null; stopIdx++; showCopilot(st.tag); renderMission();
       finished = stopIdx >= stops.length;
       $("play").textContent = finished ? "✓ Done" : `▶ Continue to ${stops[stopIdx].tag}`;
     }
@@ -850,9 +915,11 @@ renderer.setAnimationLoop(() => {
   const near = [];
   for (const b of boxObjs) {
     const d = distToBox(p, b.it), isT = stopTags.has(b.it.tag), inR = d <= radius;
-    b.grp.visible = showAll || inR || isT;
+    const isSel = b === selBox;
+    b.grp.visible = showAll || inR || isT || isSel;
     b.fill.material.opacity = camMode === "fp" ? (inR && d > 0.4 ? 0.1 : 0) : inR ? 0.22 : 0.06;   // fills turn into walls up close
-    b.edges.material.opacity = inR || isT ? 1 : 0.35;
+    b.edges.material.opacity = inR || isT || isSel ? 1 : 0.35;
+    b.edges.material.color.set(isSel ? 0xffffff : stateCol(b.it));
     if (inR) near.push({ it: b.it, d });
   }
   near.sort((a, b) => a.d - b.d); nearTags = near.filter(n => n.it.tag).map(n => n.it.tag);

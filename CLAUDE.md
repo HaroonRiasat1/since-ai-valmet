@@ -66,6 +66,8 @@ VLM labelling of existing boxes: "VLM scan" (shift-click rescans), then rerun bu
 Target dropdown, click-to-set start, inspection round (all non-healthy assets, nearest next),
 follow cam that rides the path, WASD/arrow driving with sliding collision, R = route from here,
 proximity radius highlighting, XYZ overlay with teleport, rule-based copilot plus LLM block.
+Click any box in the scene (or a Nearby card) for AI analysis: mapped assets open the copilot with
+"Route here"; unmapped objects show their VLM evidence and an "Identify with VLM" button (current view).
 
 ## Rules
 - Never put API keys in code, the page, or git. Keys only via environment variables.
