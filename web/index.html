@@ -56,11 +56,11 @@
   #avpanel input[type=color] { width:40px; height:22px; padding:0; border:1px solid var(--line); border-radius:4px; background:none; }
   #avpanel input[type=text] { width:140px; background:#0f1216; color:var(--text); border:1px solid var(--line); border-radius:5px; padding:3px 5px; font:inherit; }
   .sw { display:flex; gap:4px; } .sw i { width:16px; height:16px; border-radius:50%; cursor:pointer; border:1px solid #0008; }
-  #nav { left:12px; bottom:58px; width:292px; padding:10px 12px; }
+  #nav { left:12px; bottom:58px; width:292px; padding:10px 12px; max-height:calc(100vh - 384px); min-height:220px; overflow-y:auto; }
   #nav h2 { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--mut); margin:0 0 6px; }
   #nav .f { display:grid; grid-template-columns:44px 1fr; gap:5px 8px; align-items:center; }
   #nav input, #nav select { width:100%; max-width:none; background:#0f1216; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:5px 7px; font:inherit; }
-  #chatlog { max-height:210px; overflow-y:auto; margin-bottom:6px; }
+  #chatlog { max-height:170px; overflow-y:auto; margin-bottom:6px; }
   #chatlog .q { color:var(--mut); margin-top:6px; }
   #chatlog .tw { overflow-x:auto; margin-top:6px; }
   #chatlog table { border-collapse:collapse; font-size:11px; white-space:nowrap; }
