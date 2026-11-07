@@ -9,7 +9,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-import navigator
+from pipeline import navigator
 
 
 class RouteError(ValueError):

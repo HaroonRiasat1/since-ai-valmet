@@ -2,7 +2,7 @@
 Lifts the viewer's "VLM detect" run (2D boxes per rendered frame) to 3D boxes and fuses them across
 views into an items file, so assets are found by the VLM instead of the placeholder blob detector.
 
-    python vlm_lift.py Equipment_Room.ply web/data/vlm_views items_vlm.json [run]
+    python pipeline/vlm_lift.py Equipment_Room.ply web/data/vlm_views data/items_vlm.json [run]
 
 Per detection: project the opaque splats with the frame's camera, take the front surface inside the
 inner half of the 2D box as the object's depth, keep the splats of the full 2D box within a depth band

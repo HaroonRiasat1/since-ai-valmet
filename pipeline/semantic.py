@@ -2,7 +2,7 @@ r"""Build the semantic layer: every extracted object joined to its Excel data an
 
 Run:    .venv\Scripts\python semantic.py [scan.ply]
 Input:  extraction/<scan>/objects.json from extract.py, review_labels.json if a review was done,
-        Since-AI/items_vlm.json (Haroon Riasat's vision-model detections) if present,
+        data/items_vlm.json (Haroon Riasat's vision-model detections) if present,
         plus the Excel builder pack
 Output: extraction/<scan>/semantic_layer.json
 
@@ -42,7 +42,7 @@ SIZE_LIMITS = {"tank": (0.15, 1.3), "process pump": (0.05, 0.8), "electric motor
 DEFAULT_LIMITS = 0.03, 2.2
 MIN_PAINT_SPLATS = 200      # a tank box uses its paint colour only with at least this many splats
 RANK = {"high": 3, "medium": 2, "low": 1}
-VLM_ITEMS = ROOT / "items_vlm.json"
+VLM_ITEMS = ROOT / "data" / "items_vlm.json"
 VLM_HIGH = 0.85             # vision-model confidence that counts as high, seen in 2 or more views
 VLM_CLASSES = {"CONTROL_VALVE": "control valve", "PROCESS_PUMP": "process pump", "ELECTRIC_MOTOR": "electric motor",
                "PRESSURE_TRANSMITTER": "pressure transmitter", "VIBRATION_SENSOR": "vibration sensor"}

@@ -3,7 +3,7 @@ Builds everything the three.js viewer needs from the .ply + Excel builder pack:
   web/data/room.splat.partN   splat converted to compact .splat format (32 B/splat), chunked
   web/data/scene.json         item boxes + mapped Excel metadata, nav path, copilot diagnosis
 
-python build_scene.py Equipment_Room.ply builder_pack.xlsx items.json web/
+python pipeline/build_scene.py Equipment_Room.ply builder_pack.xlsx data/semantic_layer.json web/
 python build_scene.py Equipment_Room.ply builder_pack.xlsx data/semantic_layer.json web/
 
 The second form uses the semantic layer's objects and asset mapping as they are, and adds the 60 x 60
@@ -12,7 +12,7 @@ cell grid. TARGET_TAG picks the faulty asset (default CV-003).
 import base64, json, os, sys
 import numpy as np, pandas as pd
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path[:0] = [HERE, os.path.join(HERE, "pipeline")]
+sys.path.insert(0, HERE)
 import navigator as nv
 
 ply, xlsx, items_path, web = sys.argv[1:5]
