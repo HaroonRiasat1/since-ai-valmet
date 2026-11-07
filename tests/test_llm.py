@@ -91,3 +91,17 @@ def test_stopped_server_is_a_provider_error_when_no_model_is_set(monkeypatch):
     respond(down, monkeypatch)
     with pytest.raises(llm.ProviderError, match="could not be reached"):
         llm.chat(LOCAL, [])
+
+
+def test_cloud_offers_its_tested_models_with_the_best_first(monkeypatch):
+    monkeypatch.setenv("FEATHERLESS_API_KEY", "k")
+    monkeypatch.delenv("FEATHERLESS_MODELS", raising=False)
+    report = llm.status(llm.providers()["featherless"])
+    assert report["available"] and report["models"][0] == "deepseek-ai/DeepSeek-V3.2" and len(report["models"]) == 3
+
+
+def test_answer_without_choices_is_a_provider_error(monkeypatch):
+    respond(lambda r: httpx.Response(200, json={"error": "busy"}), monkeypatch)
+    keyed = Provider("x", "X", "http://x/v1", default_model="m")
+    with pytest.raises(llm.ProviderError, match="no answer"):
+        llm.chat(keyed, [])

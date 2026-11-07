@@ -10,7 +10,6 @@ from pathlib import Path
 
 from backend.llm import Provider, chat
 
-VLM_MODEL = os.environ.get("VLM_MODEL", "Qwen/Qwen3-VL-32B-Instruct")
 CLASSES = ["CONTROL_VALVE", "PROCESS_PUMP", "ELECTRIC_MOTOR", "PRESSURE_TRANSMITTER", "VIBRATION_SENSOR",
            "OTHER_EQUIPMENT", "NOT_EQUIPMENT"]
 CROP_FIELDS = ["file", "box_id", "label", "asset_class", "confidence", "model", "at", "visual_evidence"]
@@ -41,7 +40,7 @@ clutter, and skip anything too blurry to identify."""
 def _ask(provider: Provider, model: str | None, image: str, prompt: str, max_tokens: int):
     """The cloud model picker lists text models, so the cloud uses the configured vision model."""
     message = [{"role": "user", "content": [{"type": "image_url", "image_url": {"url": image}}, {"type": "text", "text": prompt}]}]
-    result = chat(provider, message, model=VLM_MODEL if provider.needs_key else model, max_tokens=max_tokens)
+    result = chat(provider, message, model=os.environ.get("VLM_MODEL", "Qwen/Qwen3-VL-32B-Instruct") if provider.needs_key else model, max_tokens=max_tokens)
     return result["message"]["content"], result["model"]
 
 
