@@ -73,8 +73,9 @@ def semantic_items(layer):
     return out
 
 
-if SEMANTIC:
-    layer = items
+if SEMANTIC:   # objects dropped into data/objects/ join the extracted ones (format: data_format/README.md)
+    import added_objects
+    layer = added_objects.merge(items, added_objects.load(), set(pd.read_excel(xlsx, sheet_name="Asset_Master")["tag"]))
     items = semantic_items(layer)
 
 # ---------------------------------------------------------------- Excel
@@ -227,6 +228,8 @@ raw_path = max((p for p in paths if p), key=len, default=None)
 assert raw_path, f"no walkable path to {target_box['id']}"
 
 def mapping_of(it, cls):
+    if it["_how"] == "semantic" and it["_method"] == "manual":
+        return dict(mapping="manual (data/objects)", mapping_conf=0.9, matched=True)
     if it["_how"] == "semantic":
         matched = it["_method"] == "class_match"
         how = f"{it['_source']}: {it['_class']} matches {cls.lower().replace('_', ' ')}" if matched else \
@@ -257,7 +260,7 @@ for it in items:
                    doc=c["knowledge_doc_id"], telemetry=telemetry(tag, c["asset_class"]),
                    **mapping_of(it, c["asset_class"]))
     else:
-        rec.update(tag=None, label=it["_vlm"]["label"] if it["_vlm"] else "unmapped object", mapping="none", mapping_conf=0.0)
+        rec.update(tag=None, label=it["_vlm"]["label"] if it["_vlm"] else it.get("_class") or "unmapped object", mapping="none", mapping_conf=0.0)
     if it["_vlm"]:
         rec["vlm"] = {k: it["_vlm"][k] for k in ("label", "asset_class", "confidence", "visual_evidence", "model")}
     out_items.append(rec)

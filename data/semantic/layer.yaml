@@ -1538,6 +1538,24 @@ entities:
   rules:
   - matched = 0 means the object does not look like this class, so its position is
     unconfirmed.
+  - mapping 'manual (data/objects)' means a person placed the asset by hand. See data_format/README.md.
+  joins:
+  - name: asset
+    to: asset
+    keys:
+    - tag
+    - tag
+    verified:
+      match_pct: 100.0
+      checked_on: '2026-11-07'
+  - name: state
+    to: asset_state
+    keys:
+    - tag
+    - tag
+    verified:
+      match_pct: 100.0
+      checked_on: '2026-11-07'
   columns:
   - name: tag
     label: Asset tag

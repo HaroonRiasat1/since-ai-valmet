@@ -152,6 +152,10 @@ entities:
     synonyms: [position, 3d, where, mapping, placement, coordinates]
     rules:
       - "matched = 0 means the object does not look like this class, so its position is unconfirmed."
+      - "mapping 'manual (data/objects)' means a person placed the asset by hand. See data_format/README.md."
+    joins:
+      - {name: asset, to: asset, keys: [tag, tag]}
+      - {name: state, to: asset_state, keys: [tag, tag]}
 
 recipes:
   - name: priority_list
