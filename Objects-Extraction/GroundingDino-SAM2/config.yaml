@@ -1,0 +1,136 @@
+# Paths are relative to this file's directory.
+input_ply: "../../Equipment Room.ply"
+scene_id: equipment_room
+
+# box_threshold: minimum Grounding DINO class-token score for a mask to be lifted (stage 4).
+# floor_standing: strip flat floor splats and keep bases under the object during cleanup.
+# min_gaussians / min_height_m / min_top_m / max_size_m: physical sanity checks on final objects.
+classes:
+  - key: chair
+    display: Chair
+    prompt: chair
+    box_threshold: 0.35
+    floor_standing: true
+    min_gaussians: 500
+    min_height_m: 0.4
+  - key: washing_machine
+    display: Washing Machine
+    prompt: washing machine
+    box_threshold: 0.30
+    floor_standing: true
+    min_gaussians: 1000
+    min_height_m: 0.5
+  - key: valve
+    display: Valves
+    prompt: valve
+    box_threshold: 0.24
+    floor_standing: false
+    min_gaussians: 80
+    min_top_m: 0.15
+    max_size_m: 0.8
+  - key: ladder
+    display: Ladders
+    prompt: ladder
+    box_threshold: 0.26
+    floor_standing: true
+    min_gaussians: 500
+    min_height_m: 0.6
+  - key: door
+    display: Doors
+    prompt: door
+    box_threshold: 0.30
+    floor_standing: false
+    min_gaussians: 500
+    min_height_m: 1.2
+
+scene:
+  up_hint: [0.0, -1.0, 0.0]    # COLMAP-style capture: -Y is up
+  opacity_min: 0.3
+  hist_bin_m: 0.02
+  floor_ransac_iters: 3000
+  floor_ransac_thresh_m: 0.02
+  floor_max_tilt_deg: 15.0
+  floor_cell_m: 0.05
+  floor_close_m: 0.25
+  wall_margin_m: 0.35
+  voxel_m: 0.05
+  min_centers_per_voxel: 2
+  topdown_max_height_m: 1.55   # cull ceiling/pipes for the floor-plan render
+
+render:
+  width: 1280
+  height: 960
+  fov_y_deg: 74.0              # ~90 deg horizontal
+  znear: 0.15
+  antialias: true
+  grid_step_m: 0.25
+  yaws: 8
+  levels:
+    - name: eye
+      height_m: 1.6
+      pitch_deg: -25.0
+      positions: 16
+      clearance_m: 0.40
+    - name: low
+      height_m: 1.0
+      pitch_deg: -12.0
+      positions: 10
+      clearance_m: 0.35
+  validate:
+    max_alpha_low_frac: 0.02   # pixels with alpha < 0.5
+    near_depth_m: 0.5
+    max_near_frac: 0.05
+    min_median_depth_m: 1.0
+    min_sharpness: 150.0       # Laplacian variance at 512x384
+  depth_png_scale: 1000.0
+
+detection:
+  grounding_model: IDEA-Research/grounding-dino-base
+  sam2_checkpoint: checkpoints/sam2.1_hiera_large.pt
+  sam2_config: configs/sam2.1/sam2.1_hiera_l.yaml
+  device: auto                 # auto | mps | cpu | cuda
+  candidate_threshold: 0.22    # stage 3 keeps boxes above this; classes[].box_threshold filters in stage 4
+  default_box_threshold: 0.30
+  nms_iou: 0.5
+  cross_class_iou: 0.85
+  max_box_frac: 0.60
+  min_box_frac: 0.0004
+  sam_min_score: 0.5
+  min_mask_px: 200
+
+lift:
+  antialias: true              # must match render.antialias
+  mask_erode_px: 2
+  visible_weight_min: 0.5      # sum of alpha*T over pixels for a Gaussian to count as visible
+  in_mask_frac: 0.5            # share of a Gaussian's visible weight that must fall inside the mask
+  max_gaussian_scale_m: 0.5
+  max_channels_per_pass: 30
+
+instances:
+  min_proposal_gaussians: 30
+  min_covisible: 20
+  merge_affinity: 0.30
+  min_views: 2
+  core_vote_ratio: 0.5         # in-mask share of a Gaussian's visible views to seed the object
+  grow_vote_ratio: 0.2         # weaker Gaussians join only if 3D-connected to the core
+  grow_radius_scale: 2.0
+  grow_radius_min_m: 0.015
+  grow_radius_max_m: 0.05
+  grow_max_iters: 40
+  min_visible_px: 2500
+  min_visible_member_frac: 0.3
+  min_detect_ratio: 0.25       # detected in >= 25% of the views where it is clearly visible
+  dup_overlap: 0.30
+  dup_box_containment: 0.70
+  floor_band_m: 0.03
+  floor_normal_cos: 0.9
+  large_splat_frac: 0.5
+  dbscan_eps_scale: 3.0
+  dbscan_eps_min_m: 0.02
+  dbscan_eps_max_m: 0.10
+  dbscan_min_samples: 4
+  keep_component_frac: 0.2
+  link_dist_m: 0.10
+  sor_k: 8
+  sor_std: 3.0
+  min_gaussians: 80

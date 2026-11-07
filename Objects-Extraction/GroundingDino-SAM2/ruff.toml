@@ -1,0 +1,7 @@
+extend = "../../pyproject.toml"
+
+[lint.per-file-ignores]
+# These entry points put this folder on sys.path before importing splat_objects.
+"scripts/*.py" = ["E402"]
+"docs/build_figures.py" = ["E402"]
+"tests/test_attribution.py" = ["E402"]
