@@ -56,6 +56,13 @@
   #avpanel input[type=color] { width:40px; height:22px; padding:0; border:1px solid var(--line); border-radius:4px; background:none; }
   #avpanel input[type=text] { width:140px; background:#0f1216; color:var(--text); border:1px solid var(--line); border-radius:5px; padding:3px 5px; font:inherit; }
   .sw { display:flex; gap:4px; } .sw i { width:16px; height:16px; border-radius:50%; cursor:pointer; border:1px solid #0008; }
+  #nav { left:12px; bottom:58px; width:292px; padding:10px 12px; }
+  #nav h2 { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--mut); margin:0 0 6px; }
+  #nav .f { display:grid; grid-template-columns:44px 1fr; gap:5px 8px; align-items:center; }
+  #nav input, #nav select { width:100%; max-width:none; background:#0f1216; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:5px 7px; font:inherit; }
+  #nav .b { display:flex; gap:6px; margin-top:7px; flex-wrap:wrap; }
+  #navmsg { min-height:16px; margin-top:6px; }
+  #minimap { position:fixed; left:12px; top:118px; border:1px solid var(--line); border-radius:8px; background:#0f1216; display:none; }
   .axl { position:fixed; pointer-events:none; transform:translate(-50%,-50%); font:bold 12px ui-monospace,monospace; text-shadow:0 0 3px #000; }
 </style>
 <script type="importmap">
@@ -78,6 +85,8 @@
   <button id="reset">↺ Reset</button>
   <button id="follow" class="on" title="Camera mode (V)">First person</button>
   <button id="allbox">All boxes</button>
+  <button id="gridbtn" title="Show the navigation grid on the floor (G)">Grid</button>
+  <button id="mapbtn" class="on" title="2D map (M)">Map</button>
   <button id="coordsbtn">XYZ</button>
   <button id="avbtn">Avatar</button>
   <button id="vlmbtn" title="Render each box from a standing viewpoint and ask a vision-language model what it is">VLM scan</button>
@@ -97,6 +106,17 @@
   <div id="near"></div>
 </div>
 <div id="status" class="panel"></div>
+<div id="nav" class="panel">
+  <h2>Navigation</h2>
+  <form id="navform" class="f">
+    <label for="gridsel">Grid</label><select id="gridsel"></select>
+    <label for="from">From</label><input id="from" placeholder="here, a cell number or a tag" value="here">
+    <label for="to">To</label><input id="to" placeholder="a tag like CV-003 or a cell number">
+    <span></span><div class="b" style="margin-top:0"><button>Go</button><button type="button" id="stopbtn">Stop</button></div>
+  </form>
+  <div id="navmsg" class="mut"></div>
+</div>
+<canvas id="minimap" width="240" height="240" title="Yellow free, red blocked, purple route, white you"></canvas>
 <div id="coords" class="panel" style="display:none;bottom:52px;left:12px;padding:8px 12px;font:12px ui-monospace,Menlo,monospace;min-width:300px">
   <div><span class="mut">walker </span><span id="c-me"></span></div>
   <div><span class="mut">cursor </span><span id="c-cur">move the mouse over the floor</span></div>
@@ -200,6 +220,19 @@ function plan(startCell, it) {
   const g = goalNear(it); const raw = g && astar(startCell, g);
   return raw ? simplify(raw).map(([i, j]) => worldOf(i, j)) : null;
 }
+
+// ---------- backend routing. Static hosting has no backend, so the page falls back to the in-page planner.
+let backend = false, gridName = "fine";
+const CG = scene_.cellgrid;
+const toVec = (p) => new THREE.Vector3(...p);
+async function api(path, body) {
+  const r = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || j.detail?.[0]?.msg || j.detail || r.status);
+  return j;
+}
+const here = () => (manual ? mPos : posAt(s).p);
+const startBody = () => { const p = pts.length || manual ? here() : worldOf(...startCell); return { grid: gridName, position: [p.x, p.y, p.z] }; };
 
 // ---------- three setup
 const renderer = new THREE.WebGLRenderer({ canvas: $("c"), antialias:false });
@@ -344,10 +377,12 @@ let pts = [], cum = [0], pathLen = 0, stops = [], stopIdx = 0, pathLine = null;
 let startCell = cellOf(new THREE.Vector3(...scene_.path[0]));
 let s = 0, playing = false, finished = false, camMode = "fp", showAll = false, radius = 1.5, speed = 1.0;
 let focusTag = null;                                             // asset whose copilot is shown
+let mapDirty = true, showMap = true;
+const drawMap = () => { mapDirty = true; };
 
 function setRoute(legs) {                    // legs: [{ tag, pts:[Vector3...] }]
   pts = []; stops = [];
-  for (const L of legs) { const add = pts.length ? L.pts.slice(1) : L.pts; pts.push(...add); stops.push({ tag: L.tag, idx: pts.length - 1 }); }
+  for (const L of legs) { const add = pts.length ? L.pts.slice(1) : L.pts; pts.push(...add); if (L.tag) stops.push({ tag: L.tag, idx: pts.length - 1 }); }
   cum = [0]; for (let i = 1; i < pts.length; i++) cum.push(cum[i-1] + pts[i].distanceTo(pts[i-1]));
   pathLen = cum.at(-1); stops.forEach(st => st.d = cum[st.idx]);
   if (pathLine) world.remove(pathLine);
@@ -358,14 +393,30 @@ function setRoute(legs) {                    // legs: [{ tag, pts:[Vector3...] }
   s = 0; stopIdx = 0; playing = false; finished = false; focusTag = null; selBox = null;
   if (typeof manual !== "undefined") { manual = false; $("drive").style.display = "none"; }
   $("copilot").classList.remove("show"); $("play").textContent = "▶ Start";
-  renderMission(); snapCam();
+  renderMission(); snapCam(); drawMap();
 }
-function routeTo(tag) {
+async function routeTo(tag, position) {
+  if (backend) {
+    try {
+      const r = await api("api/route", { ...startBody(), ...(position ? { position } : {}), target: tag });
+      setRoute([{ tag, pts: r.points.map(toVec) }]); navNote(`${r.length.toFixed(1)} m to ${tag} on the ${gridName} grid`);
+    } catch (e) { navNote(String(e.message || e), true); }
+    return;
+  }
   const p = plan(startCell, byTag[tag]);
   if (!p) { $("mission").innerHTML = `<b>No walkable route to ${tag}</b><div class="mut">Try another start point.</div>`; return; }
   setRoute([{ tag, pts: p }]);
 }
-function routeRound() {                       // visit every non-healthy asset, nearest-next order
+const navNote = (text, bad) => { $("navmsg").textContent = text; $("navmsg").style.color = bad ? "#ff5d5d" : ""; };
+async function routeRound() {                 // visit every non-healthy asset, nearest-next order
+  if (backend) {
+    try {
+      const r = await api("api/route/round", startBody());
+      setRoute(r.legs.map(L => ({ tag: L.target, pts: L.points.map(toVec) })));
+      navNote(`${r.legs.length} stops on the ${gridName} grid`);
+    } catch (e) { navNote(String(e.message || e), true); }
+    return;
+  }
   const todo = mapped.filter(i => i.state !== "healthy").map(i => i.tag);
   const legs = []; let cur = startCell;
   while (todo.length) {
@@ -459,6 +510,7 @@ function card(it, d) {
     ${showXYZ ? `<div class="mut" style="font-family:ui-monospace,monospace">centre ${it.center.map(v => v.toFixed(2)).join(", ")} · size ${it.size.map(v => v.toFixed(2)).join(" × ")}</div>` : ""}</div>`;
 }
 function renderMission() {
+  if (!stops.length) { $("mission").innerHTML = `<div class="row"><b>Mission</b><span class="mut">${pathLen.toFixed(1)} m</span></div><div class="mut">Walking to a floor cell.</div>`; return; }
   const list = stops.map((st, k) => { const it = byTag[st.tag];
     return `<div class="stop ${k < stopIdx ? "done" : ""}"><i style="background:${stateCol(it)}"></i>${k+1}. <b>${st.tag}</b>
       <span class="mut">${human(it.state)} · ${it.health} · ${st.d.toFixed(1)} m</span></div>`; }).join("");
@@ -585,7 +637,7 @@ renderer.domElement.addEventListener("click", (ev) => {
   const hit = new THREE.Vector3(); if (!ray.ray.intersectPlane(floorPlane, hit)) return;
   const raw = world.worldToLocal(hit.clone()); const c = nearestWalk(...cellOf(raw)); if (!c) return;
   startCell = c; $("setstart").click();
-  stops.length > 1 ? routeRound() : routeTo($("target").value);
+  stops.length > 1 ? routeRound() : routeTo($("target").value, worldOf(...c).toArray());
 });
 
 // ---------- click an object (or a nearby card) for AI analysis. A drag is a look/orbit, not a click.
@@ -668,7 +720,7 @@ addEventListener("keydown", (e) => {
   }
   if (e.code === "KeyR" && manual) {             // plan from here to the selected target
     const c = nearestWalk(...cellOf(mPos)); if (c) { startCell = c; manual = false; $("drive").style.display = "none";
-      stops.length > 1 ? routeRound() : routeTo($("target").value); }
+      stops.length > 1 ? routeRound() : routeTo($("target").value, [mPos.x, mPos.y, mPos.z]); }
   }
 });
 addEventListener("keyup", (e) => keys.delete(e.code));
@@ -882,6 +934,88 @@ async function vlmDetect() {
 }
 $("detbtn").onclick = vlmDetect;
 
+// ---------- navigation panel: choose a grid, and route between tags, cell numbers or where you stand
+const parseSpot = (text) => { const v = text.trim(); if (!v || v.toLowerCase() === "here") return { here: true };
+  if (/^\d+$/.test(v)) return { cell: +v }; return { tag: v.toUpperCase() }; };
+fetch("api/grids").then(r => r.ok ? r.json() : Promise.reject()).then(list => {
+  backend = true;
+  $("gridsel").innerHTML = list.map(g => `<option value="${g.name}">${g.label}</option>`).join("");
+}).catch(() => { $("gridsel").innerHTML = `<option value="fine">Fine 5 cm (in page)</option>`; $("gridsel").disabled = true; navNote("No backend: routes run in the page."); });
+$("gridsel").onchange = (e) => { gridName = e.target.value; drawOverlay(); drawMap(); if (stops.length === 1) routeTo(stops[0].tag); };
+$("navform").onsubmit = async (e) => {
+  e.preventDefault();
+  if (!backend) { navNote("The backend is not running.", true); return; }
+  const from = parseSpot($("from").value), to = parseSpot($("to").value);
+  if (to.here) { navNote("Enter a tag or a cell number in To.", true); return; }
+  const body = { grid: from.cell || to.cell ? "cells" : gridName };
+  if (from.cell) body.start_cell = from.cell;
+  else if (from.tag) { const it = byTag[from.tag]; if (!it) { navNote(`Unknown tag ${from.tag}`, true); return; } const c = worldOf(...goalNear(it)); body.position = [c.x, c.y, c.z]; }
+  else { const p = here(); body.position = [p.x, p.y, p.z]; }
+  if (to.cell) body.target_cell = to.cell; else body.target = to.tag;
+  try {
+    const r = await api("api/route", body);
+    if (body.grid !== gridName) { gridName = body.grid; $("gridsel").value = gridName; drawOverlay(); }
+    setRoute([{ tag: r.target && byTag[r.target] ? r.target : null, pts: r.points.map(toVec) }]);
+    if (r.target && byTag[r.target]) $("target").value = r.target;
+    navNote(`${r.length.toFixed(1)} m on the ${gridName} grid`); $("play").click();
+  } catch (err) { navNote(String(err.message || err), true); }
+};
+$("stopbtn").onclick = () => { if (playing) $("play").click(); };
+
+// ---------- floor grid overlay and 2D map, for whichever grid is selected
+const decodeCells = () => CG ? b64(CG.sizes) : null, cellSizes = decodeCells();
+const cellId = (ix, iz) => (CG.z_up ? CG.cells - 1 - iz : iz) * CG.cells + ix + 1;
+function gridSpan() {
+  if (gridName === "cells" && CG) { const half = CG.step * CG.cells / 2; return { x0: CG.center_x - half, z0: CG.center_z - half, w: 2 * half, h: 2 * half }; }
+  return { x0: NG.origin[0], z0: NG.origin[1], w: GH * NG.cell, h: GW * NG.cell };
+}
+function paintGrid(ctx, W, numbers) {         // x runs across and z runs up, like the top view
+  const g = gridSpan(), H_ = W * g.h / g.w; ctx.canvas.height = H_; ctx.clearRect(0, 0, W, H_);
+  const fill = (x, z, dx, dz, c) => { ctx.fillStyle = c; ctx.fillRect((x - g.x0) / g.w * W, H_ - (z + dz - g.z0) / g.h * H_, dx / g.w * W + 0.6, dz / g.h * H_ + 0.6); };
+  if (gridName === "cells" && CG) {
+    const n = CG.cells, d = CG.step;
+    for (let ix = 0; ix < n; ix++) for (let iz = 0; iz < n; iz++)
+      fill(g.x0 + ix * d, g.z0 + iz * d, d, d, cellSizes[ix * n + iz] ? "rgba(235,205,70,.62)" : "rgba(200,40,35,.72)");
+    ctx.strokeStyle = "rgba(20,20,20,.55)"; ctx.lineWidth = W / 3200; ctx.beginPath();
+    for (let k = 0; k <= n; k++) { const v = k / n * W, u = k / n * H_; ctx.moveTo(v, 0); ctx.lineTo(v, H_); ctx.moveTo(0, u); ctx.lineTo(W, u); }
+    ctx.stroke();
+    if (numbers) { ctx.fillStyle = "#000"; ctx.font = `${W / n * 0.26}px sans-serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      for (let ix = 0; ix < n; ix++) for (let iz = 0; iz < n; iz++) { if (!cellSizes[ix * n + iz]) continue;
+        ctx.fillText(cellId(ix, iz), (ix + .5) / n * W, H_ - (iz + .5) / n * H_); } }
+  } else {
+    for (let i = 0; i < GH; i++) for (let j = 0; j < GW; j++) { const w = walk[i * GW + j];
+      if (w || clear[i * GW + j]) fill(NG.origin[0] + i * NG.cell, NG.origin[1] + j * NG.cell, NG.cell, NG.cell, w ? "rgba(235,205,70,.5)" : "rgba(255,150,60,.5)");
+      else fill(NG.origin[0] + i * NG.cell, NG.origin[1] + j * NG.cell, NG.cell, NG.cell, "rgba(200,40,35,.5)"); }
+  }
+}
+const overlayCanvas = document.createElement("canvas"); overlayCanvas.width = 4096;
+const overlayTex = new THREE.CanvasTexture(overlayCanvas); overlayTex.anisotropy = 8; overlayTex.colorSpace = THREE.SRGBColorSpace;
+const overlay = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: overlayTex, transparent: true, depthWrite: false, side: THREE.DoubleSide }));
+overlay.visible = false; overlay.renderOrder = 1000; overlay.material.depthTest = false; world.add(overlay);   // after the splats
+function drawOverlay() {
+  if (!overlay.visible) return;
+  paintGrid(overlayCanvas.getContext("2d", { willReadFrequently: false }), overlayCanvas.width, true);
+  const g = gridSpan(); overlay.geometry.dispose(); overlay.geometry = new THREE.PlaneGeometry(g.w, g.h);
+  overlay.position.set(g.x0 + g.w / 2, frame.floor * sgn - sgn * 0.012, g.z0 + g.h / 2);
+  overlay.rotation.set(Math.PI / 2, 0, 0); overlayTex.needsUpdate = true;
+}
+const mapCanvas = $("minimap"), mapBase = document.createElement("canvas"); mapBase.width = 240;
+function renderMap(p) {
+  if (!showMap) return;
+  if (mapDirty) { paintGrid(mapBase.getContext("2d"), 240, false); mapCanvas.height = mapBase.height; mapDirty = false; }
+  const ctx = mapCanvas.getContext("2d"), g = gridSpan(), W = 240, Hh = mapCanvas.height;
+  const mx = (v) => (v.x - g.x0) / g.w * W, my = (v) => Hh - (v.z - g.z0) / g.h * Hh;
+  ctx.fillStyle = "#0f1216"; ctx.fillRect(0, 0, W, Hh); ctx.drawImage(mapBase, 0, 0);
+  if (pts.length > 1) { ctx.strokeStyle = "#a855f7"; ctx.lineWidth = 2.5; ctx.beginPath(); pts.forEach((v, k) => k ? ctx.lineTo(mx(v), my(v)) : ctx.moveTo(mx(v), my(v))); ctx.stroke(); }
+  for (const st of stops.slice(stopIdx)) { const v = pts[st.idx]; ctx.fillStyle = "#22d3ee"; ctx.fillRect(mx(v) - 3, my(v) - 3, 6, 6); }
+  ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(mx(p), my(p), 4, 0, 7); ctx.fill(); ctx.strokeStyle = "#000"; ctx.lineWidth = 1; ctx.stroke();
+}
+$("gridbtn").onclick = () => { overlay.visible = !overlay.visible; $("gridbtn").classList.toggle("on", overlay.visible); drawOverlay(); };
+$("mapbtn").onclick = () => { showMap = !showMap; $("mapbtn").classList.toggle("on", showMap); mapCanvas.style.display = showMap ? "block" : "none"; };
+mapCanvas.style.display = "block";
+addEventListener("keydown", (e) => { if (["INPUT", "SELECT"].includes(e.target.tagName)) return;
+  if (e.code === "KeyG") $("gridbtn").click(); if (e.code === "KeyM") $("mapbtn").click(); });
+
 // ---------- loop
 const clock = new THREE.Clock(); let lastList = "";
 const labels = $("labels");
@@ -891,6 +1025,7 @@ renderer.setAnimationLoop(() => {
   if (playing) {
     s = Math.min(pathLen, s + dt * speed);
     const st = stops[stopIdx];
+    if (!st && s >= pathLen) { playing = false; finished = true; $("play").textContent = "✓ Done"; }
     if (st && s >= st.d - 1e-6) {             // reached a stop: pause and diagnose
       s = st.d; playing = false; focusTag = st.tag; selBox = null; stopIdx++; showCopilot(st.tag); renderMission();
       finished = stopIdx >= stops.length;
@@ -914,8 +1049,8 @@ renderer.setAnimationLoop(() => {
   const stopTags = new Set(stops.slice(stopIdx).map(x => x.tag));
   const near = [];
   for (const b of boxObjs) {
-    const d = distToBox(p, b.it), isT = stopTags.has(b.it.tag), inR = d <= radius;
-    const isSel = b === selBox;
+    const d = distToBox(p, b.it), isT = stopTags.has(b.it.tag), listed = showAll || (b.it.tag && b.it.matched !== false);
+    const inR = d <= radius && listed, isSel = b === selBox;      // by default only assets on a matching object
     b.grp.visible = showAll || inR || isT || isSel;
     b.fill.material.opacity = camMode === "fp" ? (inR && d > 0.4 ? 0.1 : 0) : inR ? 0.22 : 0.06;   // fills turn into walls up close
     b.edges.material.opacity = inR || isT || isSel ? 1 : 0.35;
@@ -951,6 +1086,7 @@ renderer.setAnimationLoop(() => {
       const v = toScene(tip).project(camera); const d = axLbl[k];
       d.style.display = v.z > 1 ? "none" : "block"; d.style.left = ((v.x + 1) / 2 * innerWidth) + "px"; d.style.top = ((1 - v.y) / 2 * innerHeight) + "px"; });
   }
+  renderMap(p);
   const nxt = stops[stopIdx];
   $("status").textContent = `${s.toFixed(1)} / ${pathLen.toFixed(1)} m` + (nxt ? ` · next stop ${nxt.tag} in ${(nxt.d - s).toFixed(1)} m` : " · route complete");
   renderer.render(scene, camera);
