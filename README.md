@@ -96,6 +96,11 @@ Times were measured with several requests running at once. Set `FEATHERLESS_MODE
 On a laptop with an RTX 5050: 1.4 to 1.9 s to load, about 124 fps in the `--gpu` window, and only 12 fps if the browser stays on the integrated Intel GPU. To use a normal browser window instead, set it to High performance in Settings > System > Display > Graphics. Route to CV-003: 32 ms on the fine grid, 2 ms on the
 cell grid. A round of 13 stops: 1.9 s and 0.2 s.
 
+## Adding objects
+
+Drop a JSON file into `data/objects/` and rebuild. The format, examples and how objects show in the page are in
+[data_format/README.md](data_format/README.md).
+
 ## Rebuilding the data
 
 Needs the scan and the builder pack, which are not in the repo.

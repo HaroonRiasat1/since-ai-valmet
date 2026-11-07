@@ -1,0 +1,6 @@
+{
+  "id": "fire_ext_01",
+  "class": "fire extinguisher",
+  "box": { "center": [0.5, 0.867, 1.0], "size": [0.25, 0.6, 0.25] },
+  "note": "red extinguisher on the wall by the door"
+}

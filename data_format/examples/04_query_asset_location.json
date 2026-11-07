@@ -1,0 +1,6 @@
+{
+  "entity": "asset_location",
+  "dimensions": ["tag", "object_id", "mapping", "mapping_conf", "matched", "state.condition_state"],
+  "filters": [{ "field": "matched", "op": "=", "value": 0 }],
+  "order_by": [{ "field": "tag", "dir": "asc" }]
+}

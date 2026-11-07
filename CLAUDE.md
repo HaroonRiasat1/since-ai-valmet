@@ -15,6 +15,7 @@ grounded AI diagnosis 20%, backend architecture 15%, demo clarity 10%.
   `web/data/scene.json` and splat chunks), `build_layer.py` (writes `data/semantic/layer.yaml` and `plant.sqlite`),
   `extract.py`, `semantic.py`, `refine_assets.py`, `export_assets.py`, `vlm_lift.py`, `view_splat.py`, `video_to_ply.py`.
 - `data/semantic_layer.json`: spatial layer, what is where in the scan.
+- `data/objects/*.json`: objects added by hand, merged at build time. Format: `data_format/README.md`.
 - `data/semantic/knowledge.yaml`: hand-written data knowledge. Edit this, never `layer.yaml`.
 - `tests/`: pytest. AI providers are stubbed.
 

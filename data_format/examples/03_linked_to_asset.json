@@ -1,0 +1,8 @@
+{
+  "id": "motor_m002",
+  "class": "electric motor",
+  "tag": "M-002",
+  "box": { "center": [1.4, 0.95, -3.1], "size": [0.4, 0.35, 0.3] },
+  "class_confidence": "high",
+  "note": "found on site: nameplate reads M-002"
+}

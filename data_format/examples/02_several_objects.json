@@ -1,0 +1,18 @@
+{
+  "objects": [
+    {
+      "id": "panel_a",
+      "class": "electrical cabinet",
+      "box": { "min": [-3.9, 0.10, -1.2], "max": [-3.5, 1.16, -0.4] },
+      "source": "vision model",
+      "class_confidence": "high",
+      "note": "grey cabinet with two doors"
+    },
+    {
+      "id": "drum_01",
+      "class": "drum",
+      "box": { "center": [2.9, 0.82, -2.6], "size": [0.45, 0.7, 0.45] },
+      "class_confidence": "low"
+    }
+  ]
+}
