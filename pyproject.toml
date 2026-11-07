@@ -1,16 +1,39 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "field-service-navigator"
-version = "0.1.0"
+version = "0.2.0"
 description = "Valmet x Since AI 2026: Gaussian-splat asset extraction, navigation and grounded AI diagnosis"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "fastapi>=0.115",
+    "httpx>=0.27",
     "numpy>=1.26",
+    "python-dotenv>=1.0",
+    "pyyaml>=6.0",
     "scipy>=1.11",
-    "matplotlib>=3.8",
-    "pandas>=2.1",
-    "openpyxl>=3.1",
+    "uvicorn>=0.30",
 ]
 
-[tool.uv]
-package = false
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+pipeline = ["matplotlib>=3.8", "openpyxl>=3.1", "pandas>=2.1"]
+extraction = ["glfw", "gsplat", "moderngl", "pillow", "pycolmap", "torch", "transformers"]
+
+[tool.setuptools]
+packages = ["backend", "pipeline"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 200
+target-version = "py311"
+extend-exclude = ["pipeline", "web"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["B905"]
