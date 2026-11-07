@@ -4,6 +4,7 @@ Clear navigation requests are resolved by code, because a small model tested on 
 tags and ignored "nearest". The model handles everything else through checked tools, and code computes every path.
 """
 import json
+import logging
 import math
 import re
 from dataclasses import asdict
@@ -13,6 +14,7 @@ from backend.llm import Provider, ProviderError, chat
 from backend.routing import RouteError, nearest_next
 from backend.semantic import SpecError, fit, get_layer
 
+log = logging.getLogger(__name__)
 MAX_TURNS = 6
 WALK_CHECKS = 8
 MODEL_ROWS = 15
@@ -234,6 +236,7 @@ def named_asset(scene, message: str) -> str | None:
 
 def result(turn: Turn, reply: str, mode: str, model: str | None, used: list[str]) -> dict:
     ids = [i for record in turn.records for i in copilot.evidence_ids(record)]
+    log.info("agent mode=%s model=%s tools=%s rows=%s", mode, model, used, turn.table["row_count"] if turn.table else None)
     return {"reply": reply, "mode": mode, "model": model, "tools": used, "action": turn.action, "table": turn.table,
             "evidence_ids": ids, "unverified_citations": copilot.unknown_citations(reply, ids)}
 

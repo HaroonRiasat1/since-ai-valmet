@@ -1,9 +1,10 @@
 """HTTP API and static web app. Run: uvicorn backend.app:app"""
+import logging
 from dataclasses import asdict
 from functools import lru_cache
 from typing import Literal
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -13,7 +14,9 @@ from backend.config import get_settings
 from backend.routing import RouteError, nearest_next
 from backend.scene import Scene
 
+log = logging.getLogger(__name__)
 Position = list[float]
+MAX_IMAGE = 12_000_000   # characters of base64, about 9 MB
 
 
 class RouteRequest(BaseModel):
@@ -53,7 +56,19 @@ class AgentRequest(BaseModel):
 
 class LabelRequest(BaseModel):
     box_id: str
-    image: str
+    image: str = Field(max_length=MAX_IMAGE)
+    provider: str = "lmstudio"
+    model: str | None = None
+
+
+class DetectRequest(BaseModel):
+    run: str
+    view_id: str
+    image: str = Field(max_length=MAX_IMAGE)
+    pose: list[float] = Field(min_length=16, max_length=16)
+    proj: list[float] = Field(min_length=16, max_length=16)
+    width: int | None = None
+    height: int | None = None
     provider: str = "lmstudio"
     model: str | None = None
 
@@ -84,6 +99,7 @@ async def route_error(_, error: RouteError):
 
 @app.exception_handler(llm.ProviderError)
 async def provider_error(_, error: llm.ProviderError):
+    log.warning("provider failed: %s", error)
     return JSONResponse(status_code=502, content={"error": str(error)})
 
 
@@ -154,9 +170,8 @@ def vlm_label(request: LabelRequest):
 
 
 @app.post("/api/vlm/detect")
-async def vlm_detect(request: Request):
-    body = await request.json()
-    return vision.detect(llm.get_provider(body.get("provider", "lmstudio")), get_settings().web_dir / "data", body)
+def vlm_detect(request: DetectRequest):
+    return vision.detect(llm.get_provider(request.provider), get_settings().web_dir / "data", request.model_dump())
 
 
 @app.get("/api/assets")

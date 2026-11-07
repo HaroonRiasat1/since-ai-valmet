@@ -69,8 +69,6 @@ def detect(provider: Provider, data_dir: Path, request: dict) -> dict:
     run, view, image = request.get("run", ""), request.get("view_id", ""), request.get("image", "")
     if not (SAFE_NAME.fullmatch(run) and SAFE_NAME.fullmatch(view)) or not image.startswith(JPEG_PREFIX):
         raise ValueError("need run, view_id and a JPEG data URL")
-    if len(request.get("pose", [])) != 16 or len(request.get("proj", [])) != 16:
-        raise ValueError("need 4x4 pose and proj")
     text, model = _ask(provider, request.get("model"), image, DETECT_PROMPT, 900)
     detections = clean_detections(_parse(text, r"\[.*\]", []))
     folder = data_dir / "vlm_views" / run
