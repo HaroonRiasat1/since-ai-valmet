@@ -1003,8 +1003,11 @@ async function vlmDetect() {
 $("detbtn").onclick = vlmDetect;
 
 // ---------- navigation panel: choose a grid, and route between tags, cell numbers or where you stand
-const parseSpot = (text) => { const v = text.trim(); if (!v || v.toLowerCase() === "here") return { here: true };
-  if (/^\d+$/.test(v)) return { cell: +v }; return { tag: v.toUpperCase() }; };
+const parseSpot = (text) => {           // a tag or cell number anywhere in the text, else the words themselves
+  const v = text.trim(); if (!v || /^(here|me)$/i.test(v)) return { here: true };
+  const t = v.match(/\b(CV|PT|VS|P|M)-?(\d{3})\b/i); if (t) return { tag: `${t[1].toUpperCase()}-${t[2]}` };
+  const n = v.match(/\b\d{1,5}\b/); if (n) return { cell: +n[0] };
+  return { text: v }; };
 fetch("api/grids").then(r => r.ok ? r.json() : Promise.reject()).then(list => {
   backend = true;
   $("gridsel").innerHTML = list.map(g => `<option value="${g.name}">${g.label}</option>`).join("");
@@ -1015,6 +1018,11 @@ $("navform").onsubmit = async (e) => {
   if (!backend) { navNote("The backend is not running.", true); return; }
   const from = parseSpot($("from").value), to = parseSpot($("to").value);
   if (to.here) { navNote("Enter a tag or a cell number in To.", true); return; }
+  if (from.text) { navNote("From takes here, a tag or a cell number.", true); return; }
+  if (to.text) {                         // words like "the worst pump": let the assistant choose
+    $("chatin").value = /^(go|take|walk|route|navigate|bring|lead|head)\b/i.test(to.text) ? to.text : `go to ${to.text}`;
+    $("chatform").requestSubmit(); navNote("Asked the assistant."); return;
+  }
   const body = { grid: from.cell || to.cell ? "cells" : gridName };
   if (from.cell) body.start_cell = from.cell;
   else if (from.tag) { const it = byTag[from.tag]; if (!it) { navNote(`Unknown tag ${from.tag}`, true); return; } const c = worldOf(...goalNear(it)); body.position = [c.x, c.y, c.z]; }
