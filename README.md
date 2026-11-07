@@ -114,6 +114,17 @@ python pipeline/build_layer.py builder_pack.xlsx
 `SKIP_SPLAT=1` skips rewriting the splat chunks. `build_layer.py` stops with an error if a join or a dashboard figure
 does not hold. Extraction itself (`extract.py`, `semantic.py`, `refine_assets.py`) needs the `extraction` extra and a GPU.
 
+### Scene vocabulary from rendered previews
+
+`pipeline/scene_catalog/` contains the copied VLM scene-analysis code. It reads previews, records visible object types and descriptions, and unifies them into parent/subtype classes and Grounding DINO phrases. It exports `per_image.json`, `class_catalog.json`, `grounding_prompts.json`, and `report.html`.
+
+```bash
+uv run --with 'opencv-python>=4.10,<6' --with 'requests>=2.31,<3' \
+  python -c "from pathlib import Path; from pipeline.scene_catalog.catalog import run_catalog; run_catalog(Path('renders/equipment_room/images'), Path('out/scene-catalog'), Path('.env'))"
+```
+
+Set `FEATHERLESS_API_KEY` in `.env`; the default vision model is `Qwen/Qwen3-VL-32B-Instruct` (override with `FEATHERLESS_VISION_MODEL`). Completed requests are cached. `catalog_fast.finish_saved_catalog(Path('out/scene-catalog'))` can finalize saved results without further model calls. Classes are model hypotheses, not unique physical-instance counts.
+
 ## Tests
 
 ```bash

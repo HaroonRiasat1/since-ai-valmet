@@ -24,7 +24,7 @@ pipeline = ["matplotlib>=3.8", "openpyxl>=3.1", "pandas>=2.1"]
 extraction = ["glfw", "gsplat", "moderngl", "pillow", "pycolmap", "torch", "transformers"]
 
 [tool.setuptools]
-packages = ["backend", "pipeline"]
+packages = ["backend", "pipeline", "pipeline.scene_catalog"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
