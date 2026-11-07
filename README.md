@@ -23,10 +23,10 @@ All plant data is the synthetic builder pack supplied for the challenge.
 ```bash
 uv sync --extra dev          # or: pip install -e ".[dev]"
 cp .env.example .env         # add FEATHERLESS_API_KEY, or run LM Studio with a chat model loaded
-uv run uvicorn backend.app:app --port 8000
+uv run python -m backend --gpu
 ```
 
-Open http://127.0.0.1:8000. For a local model, start the LM Studio server and load a chat model that supports tools.
+`--gpu` opens the app in its own window on the NVIDIA GPU (about 124 fps, against 12 on the integrated GPU). Use it on any laptop with two GPUs. Without it, the server starts alone: open http://127.0.0.1:8000. For a local model, start the LM Studio server and load a chat model that supports tools.
 
 With Docker: `docker build -t navigator . && docker run --env-file .env -p 8000:8000 navigator`.
 
@@ -87,7 +87,7 @@ Times were measured with several requests running at once. Set `FEATHERLESS_MODE
 
 ## Measured performance
 
-On a laptop with an RTX 5050: 1.4 to 1.9 s to load and about 144 fps on the NVIDIA GPU, but only 12 fps if the browser stays on the integrated Intel GPU. On Windows, set the browser to High performance in Settings > System > Display > Graphics. Route to CV-003: 32 ms on the fine grid, 2 ms on the
+On a laptop with an RTX 5050: 1.4 to 1.9 s to load, about 124 fps in the `--gpu` window, and only 12 fps if the browser stays on the integrated Intel GPU. To use a normal browser window instead, set it to High performance in Settings > System > Display > Graphics. Route to CV-003: 32 ms on the fine grid, 2 ms on the
 cell grid. A round of 13 stops: 1.9 s and 0.2 s.
 
 ## Rebuilding the data

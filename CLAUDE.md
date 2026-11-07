@@ -20,7 +20,7 @@ grounded AI diagnosis 20%, backend architecture 15%, demo clarity 10%.
 
 ## Run
     uv sync --extra dev && cp .env.example .env
-    uv run uvicorn backend.app:app --port 8000
+    uv run python -m backend --gpu    # --gpu opens a browser window on the NVIDIA GPU
     uv run pytest -q && uv run ruff check .
 Rebuild data (needs the .ply and the builder pack, not in the repo):
     SKIP_SPLAT=1 python pipeline/build_scene.py "Equipment Room.ply" pack.xlsx data/semantic_layer.json web
