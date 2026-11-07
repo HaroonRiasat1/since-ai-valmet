@@ -44,6 +44,7 @@
   code { font-size:11px; color:#9fc6ff; }
   svg text { fill:var(--mut); font-size:9px; }
   select { background:#1d242d; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:5px 6px; font:inherit; max-width:230px; }
+  select.on { background:#20354d; border-color:var(--acc); }
   #pick-hint { position:fixed; top:70px; left:50%; transform:translateX(-50%); padding:6px 12px; display:none; }
   .stop { display:flex; gap:6px; align-items:center; font-size:12px; padding:2px 0; }
   .stop i { width:8px; height:8px; border-radius:50%; display:inline-block; }
@@ -91,6 +92,8 @@
   <button id="reset">↺ Reset</button>
   <button id="follow" class="on" title="Camera mode (V)">First person</button>
   <button id="allbox">All boxes</button>
+  <select id="classsel" title="Show only the boxes of one class"></select>
+  <select id="sourcesel" title="Show only the boxes from one source"></select>
   <button id="gridbtn" title="Show the navigation grid on the floor (G)">Grid</button>
   <button id="mapbtn" class="on" title="2D map (M)">Map</button>
   <button id="coordsbtn">XYZ</button>
@@ -299,7 +302,7 @@ const boxObjs = items.map(it => {
   const edges = new THREE.LineSegments(new THREE.EdgesGeometry(g), new THREE.LineBasicMaterial({ color: stateCol(it), transparent:true, opacity:0.9 }));
   const fill = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: stateCol(it), transparent:true, opacity:0.12, depthWrite:false }));
   const grp = new THREE.Group(); grp.add(edges, fill); grp.position.set(...it.center); grp.visible = false; world.add(grp);
-  return { it, grp, edges, fill };
+  return { it, grp, edges, fill, cls: it.label || human(it.asset_class || "unknown"), src: it.source || "unknown" };   // mapped assets carry their Excel class, not a detector label
 });
 
 // ---------- avatar (scaled to the scan: ceiling is ~2.1 units above the floor)
@@ -714,6 +717,19 @@ $("reset").onclick = () => { manual = false; $("drive").style.display = "none"; 
 $("follow").onclick = () => setCamMode({ fp:"follow", follow:"free", free:"fp" }[camMode]);
 addEventListener("keydown", (e) => { if (e.code === "KeyV" && e.target.tagName !== "INPUT" && e.target.tagName !== "SELECT") $("follow").click(); });
 $("allbox").onclick = () => { showAll = !showAll; $("allbox").classList.toggle("on", showAll); };
+const filters = { cls: "", src: "" };
+const inFilter = (b, skip) => (skip === "cls" || !filters.cls || b.cls === filters.cls) && (skip === "src" || !filters.src || b.src === filters.src);
+function fillFilter(key, id, all) {                // counts follow the other filter
+  const counts = new Map();
+  for (const b of boxObjs) if (inFilter(b, key)) counts.set(b[key], (counts.get(b[key]) || 0) + 1);
+  const sel = $(id); sel.length = 0; sel.add(new Option(all, ""));
+  for (const v of [...new Set(boxObjs.map(b => b[key]))].sort()) sel.add(new Option(`${v} (${counts.get(v) || 0})`, v));
+  sel.value = filters[key]; sel.classList.toggle("on", !!filters[key]);
+}
+const fillFilters = () => { fillFilter("cls", "classsel", "All classes"); fillFilter("src", "sourcesel", "All sources"); };
+fillFilters();
+$("classsel").onchange = (e) => { filters.cls = e.target.value; fillFilters(); };
+$("sourcesel").onchange = (e) => { filters.src = e.target.value; fillFilters(); };
 $("rad").oninput = (e) => { radius = +e.target.value; $("radv").textContent = radius.toFixed(1) + " m"; ring.scale.setScalar(radius / 1.5); };
 $("spd").oninput = (e) => { speed = +e.target.value; $("spdv").textContent = speed.toFixed(1) + "×"; };
 
@@ -738,9 +754,9 @@ renderer.domElement.addEventListener("click", (ev) => {
 // from the current view (identity is never guessed, DOC-3D-MAPPING).
 let selBox = null, downAt = null;
 const boxRay = new THREE.Raycaster();
-function boxAt(ev) {                               // nearest box under the cursor, hidden ones included
+function boxAt(ev) {                               // nearest box under the cursor, hidden ones included; the filters limit it
   boxRay.setFromCamera(new THREE.Vector2(ev.clientX / innerWidth * 2 - 1, -(ev.clientY / innerHeight) * 2 + 1), camera);
-  const hit = boxRay.intersectObjects(boxObjs.map(b => b.fill), false)[0];
+  const hit = boxRay.intersectObjects(boxObjs.filter(b => inFilter(b)).map(b => b.fill), false)[0];
   return hit && boxObjs.find(b => b.fill === hit.object);
 }
 function analyze(b) {
@@ -1154,19 +1170,22 @@ renderer.setAnimationLoop(() => {
   figure.visible = camMode !== "fp";                              // never see your own body in first person
 
   const stopTags = new Set(stops.slice(stopIdx).map(x => x.tag));
-  const near = [];
+  const near = [], shown = [], filtering = !!(filters.cls || filters.src);
   for (const b of boxObjs) {
     const d = distToBox(p, b.it), isT = stopTags.has(b.it.tag), listed = showAll || (b.it.tag && b.it.matched !== false);
     const inR = d <= radius && listed, isSel = b === selBox;      // by default only assets on a matching object
-    b.grp.visible = showAll || inR || isT || isSel;
-    b.fill.material.opacity = camMode === "fp" ? (inR && d > 0.4 ? 0.1 : 0) : inR ? 0.22 : 0.06;   // fills turn into walls up close
-    b.edges.material.opacity = inR || isT || isSel ? 1 : 0.35;
+    const picked = filtering && inFilter(b), lit = filtering ? picked && d <= radius : inR;
+    b.grp.visible = filtering ? picked : showAll || inR || isT || isSel;
+    b.fill.material.opacity = camMode === "fp" ? (lit && d > 0.4 ? 0.1 : 0) : lit ? 0.22 : 0.06;   // fills turn into walls up close
+    b.edges.material.opacity = picked || inR || isT || isSel ? 1 : 0.35;
     b.edges.material.color.set(isSel ? 0xffffff : stateCol(b.it));
     if (inR) near.push({ it: b.it, d });
+    if (lit) shown.push({ it: b.it, d });
   }
-  near.sort((a, b) => a.d - b.d); nearTags = near.filter(n => n.it.tag).map(n => n.it.tag);
+  near.sort((a, b) => a.d - b.d); nearTags = near.filter(n => n.it.tag).map(n => n.it.tag);   // the assistant's context ignores the class filter
+  shown.sort((a, b) => a.d - b.d);
   labels.innerHTML = "";
-  for (const { it } of near) {
+  for (const { it } of filtering ? boxObjs.filter(b => inFilter(b)) : shown) {
     const top = new THREE.Vector3(...it.center); top.setComponent(UP, it.center[UP] - sgn*it.size[UP]/2);
     const v = toScene(top).project(camera); if (v.z > 1) continue;
     const el = document.createElement("div"); el.className = "lbl"; const c = stateCol(it);
@@ -1184,8 +1203,8 @@ renderer.setAnimationLoop(() => {
     const n = $("avname"); n.style.display = v.z > 1 || camMode === "fp" ? "none" : "block";
     n.style.left = ((v.x+1)/2*innerWidth) + "px"; n.style.top = ((1-v.y)/2*innerHeight) + "px";
   }
-  const key = near.map(n => n.it.id + n.d.toFixed(1)).join() + stopIdx;
-  if (key !== lastList) { lastList = key; $("near").innerHTML = near.map(n => card(n.it, n.d)).join("") || `<div class="mut">Nothing within ${radius.toFixed(1)} m.</div>`; $("ncount").textContent = `(${near.length})`; }
+  const key = shown.map(n => n.it.id + n.d.toFixed(1)).join() + stopIdx + filters.cls + "|" + filters.src;
+  if (key !== lastList) { lastList = key; $("near").innerHTML = shown.map(n => card(n.it, n.d)).join("") || `<div class="mut">${filtering ? "No matching box" : "Nothing"} within ${radius.toFixed(1)} m.</div>`; $("ncount").textContent = `(${shown.length})`; }
   if (showXYZ) {
     lastMe.copy(p); $("c-me").textContent = fmt3(p);
     const o = toScene(axOrigin);

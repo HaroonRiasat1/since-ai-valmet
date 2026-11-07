@@ -79,6 +79,30 @@ def test_merge_refuses_conflicts(objects, message):
         ao.merge(LAYER, [ao.normalise(o, "t") for o in objects], TAGS)
 
 
+def test_a_source_replaces_its_earlier_objects():
+    layer = {"objects": LAYER["objects"] + [{"id": "t1", "class": "x", "source": "tool"}, {"id": "t2", "class": "x", "source": "tool"}]}
+    added = [ao.normalise({"id": i, "class": "x", "source": "tool", "box": {"center": [0, 0, 0], "size": [1, 1, 1]}}, "t") for i in ("t1", "t3")]
+    assert [o["id"] for o in ao.merge(layer, added, TAGS)["objects"]] == ["cls_1", "cls_2", "t1", "t3"]
+
+
+def test_into_layer_writes_a_tools_objects_once(tmp_path):
+    layer_path = write(tmp_path, {"summary": {"objects": 2}, "objects": [dict(o, source="extraction") for o in LAYER["objects"]]}, "layer.json")
+    path = write(tmp_path, {"objects": [{"id": "v1", "class": "Valve", "source": "tool", "box": {"center": [0, 0, 0], "size": [1, 1, 1]}}]})
+    ao.into_layer([path], layer_path)
+    ao.into_layer([path], layer_path)
+    layer = json.loads(layer_path.read_text())
+    assert [o["id"] for o in layer["objects"]] == ["cls_1", "cls_2", "v1"]
+    assert layer["summary"] == {"objects": 3, "by_class": {"electric motor": 1, "tank": 1, "valve": 1}, "by_source": {"extraction": 2, "tool": 1}}
+
+
+@pytest.mark.parametrize("extra", [{}, {"source": "tool", "tag": "M-002"}])
+def test_into_layer_keeps_manual_and_linked_objects_out(tmp_path, extra):
+    layer_path = write(tmp_path, {"objects": []}, "layer.json")
+    path = write(tmp_path, {"id": "a", "class": "x", "box": {"center": [0, 0, 0], "size": [1, 1, 1]}, **extra})
+    with pytest.raises(ao.ObjectError, match="data/objects"):
+        ao.into_layer([path], layer_path)
+
+
 def test_query_example_runs_on_the_data_layer():
     from backend.semantic import get_layer
     spec = json.loads((ROOT / "data_format" / "examples" / "04_query_asset_location.json").read_text())

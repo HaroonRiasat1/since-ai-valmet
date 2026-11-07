@@ -4,15 +4,21 @@ Drop a .json file into data/objects/ (format: data_format/README.md), then check
 
     python pipeline/added_objects.py                 # every file in data/objects/
     python pipeline/added_objects.py my_file.json    # one file
+
+A tool's complete output can also be written into data/semantic_layer.json itself:
+
+    python pipeline/added_objects.py --into-layer data/objects/grounded_sam2_equipment_room.json
 """
 import copy
 import json
 import re
 import sys
+from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 FOLDER = ROOT / "data" / "objects"
+LAYER_FILE = ROOT / "data" / "semantic_layer.json"
 ID = re.compile(r"[A-Za-z0-9_-]{1,40}")
 CONFIDENCE = ("high", "medium", "low")
 KNOWN_KEYS = {"id", "class", "box", "tag", "source", "class_confidence", "note"}
@@ -92,8 +98,11 @@ def load(folder: Path = FOLDER) -> list[dict]:
 
 
 def merge(layer: dict, added: list[dict], known_tags) -> dict:
-    """The layer with the added objects in it. An added object with a tag takes that tag from the object that had it."""
+    """The layer with the added objects in it. Added objects replace every layer object from the same source, so a tool's
+    new output replaces its old one. An added object with a tag takes that tag from the object that had it."""
+    sources = {o["source"] for o in added}
     out = copy.deepcopy(layer)
+    out["objects"] = [o for o in out["objects"] if o.get("source") not in sources]
     ids = {o["id"] for o in out["objects"]}
     claimed = {}
     for obj in added:
@@ -114,9 +123,34 @@ def merge(layer: dict, added: list[dict], known_tags) -> dict:
     return out
 
 
-def main(paths):
+def into_layer(paths, layer_path: Path = LAYER_FILE) -> dict:
+    """Write a tool's objects into the spatial semantic layer file, replacing what that source put there before.
+
+    Objects added by hand or linked to an asset stay in data/objects/, where the build merges them and a link can be undone.
+    """
+    added = [o for path in paths for o in read_file(Path(path))]
+    for obj in added:
+        if obj["source"] == "manual" or obj["asset"]:
+            raise ObjectError(f"{obj['id']}: only unlinked objects from a named tool go into the layer. Keep it in data/objects/")
+    raw = layer_path.read_bytes()
+    layer = merge(json.loads(raw), added, set())
+    objects = layer["objects"]
+    layer.setdefault("summary", {}).update(objects=len(objects), by_class=dict(Counter(o["class"] for o in objects).most_common()),
+                                           by_source=dict(Counter(o.get("source") for o in objects).most_common()))
+    layer_path.write_text(json.dumps(layer, indent=1), encoding="utf8", newline="\r\n" if b"\r\n" in raw else "\n")
+    return layer
+
+
+def main(args):
     try:
-        found = [o for p in paths for o in read_file(Path(p))] if paths else load()
+        if args[:1] == ["--into-layer"]:
+            if not args[1:]:
+                sys.exit("Name the file: python pipeline/added_objects.py --into-layer data/objects/<file>.json")
+            summary = into_layer(args[1:])["summary"]
+            sources = ", ".join(f"{n} {source}" for source, n in summary["by_source"].items())
+            print(f"{LAYER_FILE.relative_to(ROOT)} now holds {summary['objects']} objects: {sources}")
+            return
+        found = [o for p in args for o in read_file(Path(p))] if args else load()
     except ObjectError as error:
         sys.exit(f"Problem: {error}")
     linked = sum(1 for o in found if o["asset"])

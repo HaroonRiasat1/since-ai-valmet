@@ -13,30 +13,48 @@
   "center_z": -0.13217818617820742
  },
  "summary": {
-  "objects": 168,
+  "objects": 304,
   "by_class": {
-   "pipe": 35,
+   "pipe": 54,
+   "box": 35,
    "control valve": 25,
-   "box": 16,
+   "green pipe label": 22,
+   "electrical cabinet": 16,
    "other": 14,
-   "electrical cabinet": 14,
+   "red bucket": 14,
    "tank": 13,
+   "ladder": 12,
+   "black plastic bag": 12,
+   "black flexible hose": 10,
    "process pump": 9,
    "bucket": 8,
    "pressure transmitter": 7,
-   "ladder": 6,
+   "handwheel valve": 7,
    "unknown": 5,
    "electric motor": 5,
+   "appliance": 5,
+   "insulated panel": 5,
    "crate": 4,
-   "cart": 3,
-   "chair": 2,
+   "cart": 4,
+   "chair": 4,
+   "pipe fitting": 3,
+   "pipe label": 3,
+   "door": 2,
+   "fan": 2,
    "cage": 1,
-   "pallet truck": 1
+   "pallet truck": 1,
+   "valve actuator": 1,
+   "washing machine": 1
   },
   "with_asset": 30,
   "class_matched": 23,
   "unplaced_assets": [],
-  "fault_target": "cls_044"
+  "fault_target": "cls_044",
+  "by_source": {
+   "grounded-sam-2": 136,
+   "extraction": 135,
+   "vision model": 33
+  }
  },
  "note": "All asset data is synthetic. Mapping to scene objects is procedural, not physically verified.",
  "objects": [
@@ -16307,6 +16325,5174 @@
     2640
    ],
    "approach_cell": 2396,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "appliance_00",
+   "source": "grounded-sam-2",
+   "class": "appliance",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Appliance_00: seen in 4 of 9 views, score 0.32, 739 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -3.2464,
+     0.3675,
+     -1.2062
+    ],
+    "size": [
+     0.1863,
+     0.3144,
+     0.1991
+    ],
+    "min": [
+     -3.3395,
+     0.2103,
+     -1.3057
+    ],
+    "max": [
+     -3.1532,
+     0.5247,
+     -1.1066
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "appliance_01",
+   "source": "grounded-sam-2",
+   "class": "appliance",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Appliance_01: seen in 3 of 6 views, score 0.31, 461 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -3.7626,
+     0.3774,
+     -1.2429
+    ],
+    "size": [
+     0.2897,
+     0.3089,
+     0.2585
+    ],
+    "min": [
+     -3.9074,
+     0.2229,
+     -1.3722
+    ],
+    "max": [
+     -3.6177,
+     0.5318,
+     -1.1137
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "appliance_02",
+   "source": "grounded-sam-2",
+   "class": "appliance",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Appliance_02: seen in 2 of 4 views, score 0.30, 126 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -4.6808,
+     0.5625,
+     -0.5547
+    ],
+    "size": [
+     0.2077,
+     0.741,
+     0.337
+    ],
+    "min": [
+     -4.7847,
+     0.192,
+     -0.7232
+    ],
+    "max": [
+     -4.577,
+     0.933,
+     -0.3862
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "appliance_03",
+   "source": "grounded-sam-2",
+   "class": "appliance",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Appliance_03: seen in 2 of 2 views, score 0.30, 421 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.5646,
+     -0.0951,
+     3.4762
+    ],
+    "size": [
+     0.2107,
+     0.2398,
+     0.0824
+    ],
+    "min": [
+     1.4592,
+     -0.215,
+     3.435
+    ],
+    "max": [
+     1.6699,
+     0.0248,
+     3.5174
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "appliance_04",
+   "source": "grounded-sam-2",
+   "class": "appliance",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Appliance_04: seen in 3 of 5 views, score 0.29, 580 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     2.4398,
+     0.771,
+     3.0934
+    ],
+    "size": [
+     0.3973,
+     0.3464,
+     0.2946
+    ],
+    "min": [
+     2.2412,
+     0.5978,
+     2.9461
+    ],
+    "max": [
+     2.6385,
+     0.9442,
+     3.2407
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_flexible_hose_00",
+   "source": "grounded-sam-2",
+   "class": "black flexible hose",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Black_flexible_hose_00: seen in 10 of 10 views, score 0.55, 3155 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -1.6876,
+     1.1392,
+     2.9485
+    ],
+    "size": [
+     0.5714,
+     0.132,
+     0.5519
+    ],
+    "min": [
+     -1.9733,
+     1.0732,
+     2.6725
+    ],
+    "max": [
+     -1.4019,
+     1.2052,
+     3.2244
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_flexible_hose_01",
+   "source": "grounded-sam-2",
+   "class": "black flexible hose",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Black_flexible_hose_01: seen in 18 of 30 views, score 0.49, 3016 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     0.8472,
+     0.7107,
+     -3.3586
+    ],
+    "size": [
+     0.982,
+     0.8989,
+     0.7793
+    ],
+    "min": [
+     0.3562,
+     0.2613,
+     -3.7483
+    ],
+    "max": [
+     1.3382,
+     1.1602,
+     -2.969
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_flexible_hose_02",
+   "source": "grounded-sam-2",
+   "class": "black flexible hose",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Black_flexible_hose_02: seen in 5 of 13 views, score 0.43, 1598 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.1341,
+     0.3675,
+     -0.1102
+    ],
+    "size": [
+     0.4135,
+     0.5131,
+     0.5132
+    ],
+    "min": [
+     2.9273,
+     0.111,
+     -0.3668
+    ],
+    "max": [
+     3.3408,
+     0.6241,
+     0.1464
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_flexible_hose_03",
+   "source": "grounded-sam-2",
+   "class": "black flexible hose",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Black_flexible_hose_03: seen in 2 of 3 views, score 0.43, 988 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -2.7005,
+     0.0013,
+     2.8265
+    ],
+    "size": [
+     0.9207,
+     0.6341,
+     0.4545
+    ],
+    "min": [
+     -3.1608,
+     -0.3158,
+     2.5992
+    ],
+    "max": [
+     -2.2401,
+     0.3183,
+     3.0537
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_flexible_hose_04",
+   "source": "grounded-sam-2",
+   "class": "black flexible hose",
+   "class_confidence": "high",
+   "note": "Grounded-SAM-2 Black_flexible_hose_04: seen in 21 of 26 views, score 0.42, 2401 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -2.6475,
+     0.6142,
+     -2.2826
+    ],
+    "size": [
+     0.2847,
+     1.0196,
+     0.3307
+    ],
+    "min": [
+     -2.7898,
+     0.1044,
+     -2.4479
+    ],
+    "max": [
+     -2.5051,
+     1.124,
+     -2.1172
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_flexible_hose_05",
+   "source": "grounded-sam-2",
+   "class": "black flexible hose",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Black_flexible_hose_05: seen in 28 of 39 views, score 0.41, 4663 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     0.1587,
+     0.7399,
+     0.8796
+    ],
+    "size": [
+     1.8884,
+     0.9079,
+     1.5236
+    ],
+    "min": [
+     -0.7855,
+     0.2859,
+     0.1178
+    ],
+    "max": [
+     1.1029,
+     1.1938,
+     1.6414
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_flexible_hose_06",
+   "source": "grounded-sam-2",
+   "class": "black flexible hose",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Black_flexible_hose_06: seen in 3 of 3 views, score 0.36, 240 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     2.0228,
+     1.061,
+     1.7319
+    ],
+    "size": [
+     0.2276,
+     0.1936,
+     0.241
+    ],
+    "min": [
+     1.909,
+     0.9642,
+     1.6114
+    ],
+    "max": [
+     2.1366,
+     1.1578,
+     1.8524
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_flexible_hose_07",
+   "source": "grounded-sam-2",
+   "class": "black flexible hose",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Black_flexible_hose_07: seen in 3 of 5 views, score 0.32, 379 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.3975,
+     0.2195,
+     -3.0416
+    ],
+    "size": [
+     0.3777,
+     0.3459,
+     0.2672
+    ],
+    "min": [
+     1.2086,
+     0.0465,
+     -3.1752
+    ],
+    "max": [
+     1.5863,
+     0.3924,
+     -2.908
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_flexible_hose_08",
+   "source": "grounded-sam-2",
+   "class": "black flexible hose",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Black_flexible_hose_08: seen in 2 of 3 views, score 0.29, 174 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.2993,
+     1.0502,
+     -2.2447
+    ],
+    "size": [
+     0.494,
+     0.17,
+     0.1203
+    ],
+    "min": [
+     1.0523,
+     0.9652,
+     -2.3048
+    ],
+    "max": [
+     1.5463,
+     1.1352,
+     -2.1845
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_flexible_hose_09",
+   "source": "grounded-sam-2",
+   "class": "black flexible hose",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Black_flexible_hose_09: seen in 2 of 5 views, score 0.28, 433 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -0.7243,
+     0.4529,
+     1.6694
+    ],
+    "size": [
+     0.1096,
+     0.1348,
+     0.3727
+    ],
+    "min": [
+     -0.7791,
+     0.3855,
+     1.4831
+    ],
+    "max": [
+     -0.6695,
+     0.5203,
+     1.8558
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_plastic_bag_00",
+   "source": "grounded-sam-2",
+   "class": "black plastic bag",
+   "class_confidence": "high",
+   "note": "Grounded-SAM-2 Black_plastic_bag_00: seen in 36 of 43 views, score 0.55, 1663 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.1928,
+     0.9101,
+     0.5603
+    ],
+    "size": [
+     0.3671,
+     0.5443,
+     0.4875
+    ],
+    "min": [
+     3.0093,
+     0.6379,
+     0.3165
+    ],
+    "max": [
+     3.3764,
+     1.1822,
+     0.804
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_plastic_bag_01",
+   "source": "grounded-sam-2",
+   "class": "black plastic bag",
+   "class_confidence": "high",
+   "note": "Grounded-SAM-2 Black_plastic_bag_01: seen in 31 of 33 views, score 0.52, 3993 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.3798,
+     1.0364,
+     0.5627
+    ],
+    "size": [
+     0.6305,
+     0.2949,
+     0.7154
+    ],
+    "min": [
+     1.0645,
+     0.8889,
+     0.205
+    ],
+    "max": [
+     1.695,
+     1.1838,
+     0.9204
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_plastic_bag_02",
+   "source": "grounded-sam-2",
+   "class": "black plastic bag",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Black_plastic_bag_02: seen in 2 of 2 views, score 0.48, 373 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -3.8341,
+     0.4229,
+     3.1617
+    ],
+    "size": [
+     0.2518,
+     0.1422,
+     0.339
+    ],
+    "min": [
+     -3.96,
+     0.3518,
+     2.9922
+    ],
+    "max": [
+     -3.7082,
+     0.494,
+     3.3312
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_plastic_bag_03",
+   "source": "grounded-sam-2",
+   "class": "black plastic bag",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Black_plastic_bag_03: seen in 4 of 4 views, score 0.43, 391 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -4.5111,
+     1.0219,
+     2.2311
+    ],
+    "size": [
+     0.4073,
+     0.332,
+     0.2554
+    ],
+    "min": [
+     -4.7147,
+     0.8559,
+     2.1034
+    ],
+    "max": [
+     -4.3074,
+     1.1879,
+     2.3588
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_plastic_bag_04",
+   "source": "grounded-sam-2",
+   "class": "black plastic bag",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Black_plastic_bag_04: seen in 18 of 20 views, score 0.41, 1863 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     2.7553,
+     0.9106,
+     -3.0911
+    ],
+    "size": [
+     0.5142,
+     0.3552,
+     0.3047
+    ],
+    "min": [
+     2.4982,
+     0.733,
+     -3.2434
+    ],
+    "max": [
+     3.0124,
+     1.0882,
+     -2.9387
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_plastic_bag_05",
+   "source": "grounded-sam-2",
+   "class": "black plastic bag",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Black_plastic_bag_05: seen in 12 of 23 views, score 0.39, 1950 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -1.2744,
+     0.0639,
+     -0.5572
+    ],
+    "size": [
+     0.1826,
+     0.5194,
+     0.1418
+    ],
+    "min": [
+     -1.3657,
+     -0.1958,
+     -0.6281
+    ],
+    "max": [
+     -1.1831,
+     0.3236,
+     -0.4863
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_plastic_bag_06",
+   "source": "grounded-sam-2",
+   "class": "black plastic bag",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Black_plastic_bag_06: seen in 9 of 27 views, score 0.38, 512 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.0535,
+     0.8445,
+     -2.3255
+    ],
+    "size": [
+     0.2635,
+     0.2858,
+     0.3168
+    ],
+    "min": [
+     2.9218,
+     0.7016,
+     -2.4839
+    ],
+    "max": [
+     3.1853,
+     0.9874,
+     -2.1671
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_plastic_bag_07",
+   "source": "grounded-sam-2",
+   "class": "black plastic bag",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Black_plastic_bag_07: seen in 15 of 20 views, score 0.38, 517 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -1.4901,
+     0.9916,
+     -3.545
+    ],
+    "size": [
+     0.4602,
+     0.3863,
+     0.3842
+    ],
+    "min": [
+     -1.7202,
+     0.7984,
+     -3.7371
+    ],
+    "max": [
+     -1.26,
+     1.1847,
+     -3.3529
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_plastic_bag_08",
+   "source": "grounded-sam-2",
+   "class": "black plastic bag",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Black_plastic_bag_08: seen in 4 of 4 views, score 0.38, 775 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -3.5868,
+     0.7752,
+     2.8906
+    ],
+    "size": [
+     0.2752,
+     0.3659,
+     0.5205
+    ],
+    "min": [
+     -3.7244,
+     0.5923,
+     2.6304
+    ],
+    "max": [
+     -3.4492,
+     0.9582,
+     3.1509
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_plastic_bag_09",
+   "source": "grounded-sam-2",
+   "class": "black plastic bag",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Black_plastic_bag_09: seen in 7 of 8 views, score 0.36, 1260 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -2.5288,
+     -0.2727,
+     0.992
+    ],
+    "size": [
+     0.3698,
+     0.1175,
+     0.3695
+    ],
+    "min": [
+     -2.7137,
+     -0.3314,
+     0.8072
+    ],
+    "max": [
+     -2.3439,
+     -0.2139,
+     1.1767
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_plastic_bag_10",
+   "source": "grounded-sam-2",
+   "class": "black plastic bag",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Black_plastic_bag_10: seen in 5 of 8 views, score 0.34, 530 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.6296,
+     1.0459,
+     -2.5754
+    ],
+    "size": [
+     0.5567,
+     0.2735,
+     0.6984
+    ],
+    "min": [
+     3.3513,
+     0.9091,
+     -2.9246
+    ],
+    "max": [
+     3.908,
+     1.1826,
+     -2.2262
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "black_plastic_bag_11",
+   "source": "grounded-sam-2",
+   "class": "black plastic bag",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Black_plastic_bag_11: seen in 3 of 11 views, score 0.31, 470 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.662,
+     0.7821,
+     -3.092
+    ],
+    "size": [
+     0.3131,
+     0.2389,
+     0.404
+    ],
+    "min": [
+     3.5054,
+     0.6627,
+     -3.294
+    ],
+    "max": [
+     3.8185,
+     0.9016,
+     -2.89
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "box_00",
+   "source": "grounded-sam-2",
+   "class": "box",
+   "class_confidence": "high",
+   "note": "Grounded-SAM-2 Box_00: seen in 37 of 37 views, score 0.45, 2774 splats. Overlaps obj_052 (box) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.8923,
+     0.9683,
+     -3.0328
+    ],
+    "size": [
+     0.4452,
+     0.3492,
+     0.6218
+    ],
+    "min": [
+     1.6697,
+     0.7937,
+     -3.3437
+    ],
+    "max": [
+     2.1149,
+     1.1429,
+     -2.7219
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "box_01",
+   "source": "grounded-sam-2",
+   "class": "box",
+   "class_confidence": "high",
+   "note": "Grounded-SAM-2 Box_01: seen in 29 of 31 views, score 0.44, 1411 splats. Overlaps obj_082 (box) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.5424,
+     0.9878,
+     -1.9619
+    ],
+    "size": [
+     0.5501,
+     0.2984,
+     0.4072
+    ],
+    "min": [
+     3.2674,
+     0.8386,
+     -2.1655
+    ],
+    "max": [
+     3.8175,
+     1.137,
+     -1.7583
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "box_02",
+   "source": "grounded-sam-2",
+   "class": "box",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Box_02: seen in 19 of 21 views, score 0.36, 1009 splats. Overlaps cls_121 (box) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -1.2098,
+     0.7984,
+     -0.7105
+    ],
+    "size": [
+     0.2362,
+     0.2776,
+     0.37
+    ],
+    "min": [
+     -1.3279,
+     0.6596,
+     -0.8955
+    ],
+    "max": [
+     -1.0917,
+     0.9372,
+     -0.5255
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "box_03",
+   "source": "grounded-sam-2",
+   "class": "box",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Box_03: seen in 9 of 11 views, score 0.35, 3193 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -0.657,
+     0.752,
+     2.1368
+    ],
+    "size": [
+     0.3899,
+     0.78,
+     0.5543
+    ],
+    "min": [
+     -0.8519,
+     0.362,
+     1.8597
+    ],
+    "max": [
+     -0.462,
+     1.142,
+     2.414
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "box_04",
+   "source": "grounded-sam-2",
+   "class": "box",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Box_04: seen in 17 of 20 views, score 0.34, 618 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.4736,
+     0.8158,
+     -3.3959
+    ],
+    "size": [
+     0.4583,
+     0.23,
+     0.2974
+    ],
+    "min": [
+     3.2444,
+     0.7008,
+     -3.5446
+    ],
+    "max": [
+     3.7027,
+     0.9308,
+     -3.2472
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "box_05",
+   "source": "grounded-sam-2",
+   "class": "box",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Box_05: seen in 2 of 3 views, score 0.34, 942 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.4133,
+     0.9989,
+     3.2374
+    ],
+    "size": [
+     1.0077,
+     0.4347,
+     0.4885
+    ],
+    "min": [
+     0.9095,
+     0.7815,
+     2.9931
+    ],
+    "max": [
+     1.9172,
+     1.2162,
+     3.4816
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "box_06",
+   "source": "grounded-sam-2",
+   "class": "box",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Box_06: seen in 13 of 18 views, score 0.33, 1485 splats. Overlaps cls_173 (box) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     4.104,
+     0.7362,
+     -0.8243
+    ],
+    "size": [
+     0.1941,
+     0.3943,
+     0.5897
+    ],
+    "min": [
+     4.007,
+     0.539,
+     -1.1192
+    ],
+    "max": [
+     4.2011,
+     0.9333,
+     -0.5295
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "box_07",
+   "source": "grounded-sam-2",
+   "class": "box",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Box_07: seen in 2 of 6 views, score 0.33, 950 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -3.5669,
+     0.901,
+     2.7637
+    ],
+    "size": [
+     0.5268,
+     0.5796,
+     0.352
+    ],
+    "min": [
+     -3.8303,
+     0.6112,
+     2.5877
+    ],
+    "max": [
+     -3.3035,
+     1.1908,
+     2.9397
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "box_08",
+   "source": "grounded-sam-2",
+   "class": "box",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Box_08: seen in 18 of 19 views, score 0.32, 968 splats. Overlaps obj_066 (box) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     2.8322,
+     1.0212,
+     2.7681
+    ],
+    "size": [
+     0.3648,
+     0.3269,
+     0.4505
+    ],
+    "min": [
+     2.6498,
+     0.8577,
+     2.5428
+    ],
+    "max": [
+     3.0146,
+     1.1846,
+     2.9933
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "box_09",
+   "source": "grounded-sam-2",
+   "class": "box",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Box_09: seen in 2 of 7 views, score 0.32, 413 splats. Overlaps cls_096 (box) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     2.4745,
+     0.6861,
+     3.0769
+    ],
+    "size": [
+     0.33,
+     0.1437,
+     0.3014
+    ],
+    "min": [
+     2.3095,
+     0.6142,
+     2.9262
+    ],
+    "max": [
+     2.6395,
+     0.7579,
+     3.2276
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "box_10",
+   "source": "grounded-sam-2",
+   "class": "box",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Box_10: seen in 5 of 6 views, score 0.32, 873 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -4.5517,
+     0.9627,
+     0.9778
+    ],
+    "size": [
+     0.2267,
+     0.4299,
+     0.313
+    ],
+    "min": [
+     -4.665,
+     0.7478,
+     0.8213
+    ],
+    "max": [
+     -4.4383,
+     1.1777,
+     1.1343
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "box_11",
+   "source": "grounded-sam-2",
+   "class": "box",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Box_11: seen in 2 of 2 views, score 0.32, 697 splats. Overlaps obj_057 (box) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -4.7149,
+     0.2868,
+     0.992
+    ],
+    "size": [
+     0.119,
+     0.3388,
+     0.2958
+    ],
+    "min": [
+     -4.7744,
+     0.1174,
+     0.8441
+    ],
+    "max": [
+     -4.6554,
+     0.4562,
+     1.1399
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "box_12",
+   "source": "grounded-sam-2",
+   "class": "box",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Box_12: seen in 2 of 7 views, score 0.32, 284 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     2.1822,
+     0.4453,
+     -3.2502
+    ],
+    "size": [
+     0.1229,
+     0.0944,
+     0.1066
+    ],
+    "min": [
+     2.1208,
+     0.3981,
+     -3.3035
+    ],
+    "max": [
+     2.2437,
+     0.4925,
+     -3.1969
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "box_13",
+   "source": "grounded-sam-2",
+   "class": "box",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Box_13: seen in 9 of 11 views, score 0.32, 720 splats. Overlaps obj_066 (box) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     2.8662,
+     0.8296,
+     3.0232
+    ],
+    "size": [
+     0.3141,
+     0.2155,
+     0.3329
+    ],
+    "min": [
+     2.7092,
+     0.7218,
+     2.8568
+    ],
+    "max": [
+     3.0233,
+     0.9373,
+     3.1897
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "box_14",
+   "source": "grounded-sam-2",
+   "class": "box",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Box_14: seen in 7 of 20 views, score 0.30, 852 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -1.7005,
+     0.3687,
+     -0.6588
+    ],
+    "size": [
+     0.5376,
+     0.2658,
+     0.348
+    ],
+    "min": [
+     -1.9693,
+     0.2358,
+     -0.8328
+    ],
+    "max": [
+     -1.4317,
+     0.5016,
+     -0.4848
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "box_15",
+   "source": "grounded-sam-2",
+   "class": "box",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Box_15: seen in 3 of 9 views, score 0.29, 234 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -1.4663,
+     -0.4254,
+     -0.4588
+    ],
+    "size": [
+     0.1649,
+     0.2309,
+     0.1355
+    ],
+    "min": [
+     -1.5487,
+     -0.5408,
+     -0.5266
+    ],
+    "max": [
+     -1.3838,
+     -0.3099,
+     -0.3911
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "box_16",
+   "source": "grounded-sam-2",
+   "class": "box",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Box_16: seen in 2 of 2 views, score 0.29, 939 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -4.2957,
+     0.7823,
+     2.8811
+    ],
+    "size": [
+     0.494,
+     0.2681,
+     0.1303
+    ],
+    "min": [
+     -4.5427,
+     0.6483,
+     2.816
+    ],
+    "max": [
+     -4.0487,
+     0.9164,
+     2.9463
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "box_17",
+   "source": "grounded-sam-2",
+   "class": "box",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Box_17: seen in 2 of 3 views, score 0.29, 514 splats. Overlaps obj_057 (box) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -4.699,
+     0.6227,
+     0.9886
+    ],
+    "size": [
+     0.1336,
+     0.3127,
+     0.2852
+    ],
+    "min": [
+     -4.7658,
+     0.4663,
+     0.846
+    ],
+    "max": [
+     -4.6322,
+     0.779,
+     1.1312
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "box_18",
+   "source": "grounded-sam-2",
+   "class": "box",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Box_18: seen in 2 of 5 views, score 0.27, 126 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -1.5585,
+     -0.4122,
+     -0.5095
+    ],
+    "size": [
+     0.104,
+     0.2323,
+     0.1401
+    ],
+    "min": [
+     -1.6105,
+     -0.5283,
+     -0.5796
+    ],
+    "max": [
+     -1.5065,
+     -0.296,
+     -0.4395
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "cart_00",
+   "source": "grounded-sam-2",
+   "class": "cart",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Cart_00: seen in 12 of 33 views, score 0.34, 13384 splats. Overlaps obj_011 (cart) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     2.8262,
+     0.6887,
+     -2.3951
+    ],
+    "size": [
+     1.0401,
+     0.799,
+     0.9428
+    ],
+    "min": [
+     2.3061,
+     0.2892,
+     -2.8665
+    ],
+    "max": [
+     3.3462,
+     1.0882,
+     -1.9237
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "chair_00",
+   "source": "grounded-sam-2",
+   "class": "chair",
+   "class_confidence": "high",
+   "note": "Grounded-SAM-2 Chair_00: seen in 42 of 43 views, score 0.68, 6077 splats. Overlaps obj_027 (chair) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.2154,
+     0.7013,
+     -1.8257
+    ],
+    "size": [
+     0.5586,
+     0.8729,
+     0.5493
+    ],
+    "min": [
+     0.9361,
+     0.2649,
+     -2.1004
+    ],
+    "max": [
+     1.4947,
+     1.1378,
+     -1.5511
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "chair_01",
+   "source": "grounded-sam-2",
+   "class": "chair",
+   "class_confidence": "high",
+   "note": "Grounded-SAM-2 Chair_01: seen in 30 of 37 views, score 0.51, 3116 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     0.8795,
+     0.8356,
+     1.0444
+    ],
+    "size": [
+     0.4109,
+     0.7062,
+     0.5263
+    ],
+    "min": [
+     0.674,
+     0.4825,
+     0.7812
+    ],
+    "max": [
+     1.0849,
+     1.1887,
+     1.3075
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "door_00",
+   "source": "grounded-sam-2",
+   "class": "door",
+   "class_confidence": "high",
+   "note": "Grounded-SAM-2 Door_00: seen in 33 of 41 views, score 0.51, 4790 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -0.8911,
+     0.1759,
+     -3.7193
+    ],
+    "size": [
+     0.8721,
+     1.6668,
+     0.1912
+    ],
+    "min": [
+     -1.3272,
+     -0.6575,
+     -3.8149
+    ],
+    "max": [
+     -0.4551,
+     1.0093,
+     -3.6237
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "door_01",
+   "source": "grounded-sam-2",
+   "class": "door",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Door_01: seen in 21 of 37 views, score 0.40, 2114 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -0.0559,
+     0.1906,
+     -4.1967
+    ],
+    "size": [
+     1.339,
+     1.8021,
+     1.3305
+    ],
+    "min": [
+     -0.7254,
+     -0.7104,
+     -4.862
+    ],
+    "max": [
+     0.6136,
+     1.0917,
+     -3.5315
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "electrical_cabinet_00",
+   "source": "grounded-sam-2",
+   "class": "electrical cabinet",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Electrical_cabinet_00: seen in 7 of 7 views, score 0.42, 7142 splats. Overlaps obj_017 (electrical cabinet, linked to VS-002) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -4.6966,
+     0.21,
+     0.2747
+    ],
+    "size": [
+     0.1434,
+     1.2629,
+     0.6263
+    ],
+    "min": [
+     -4.7683,
+     -0.4215,
+     -0.0384
+    ],
+    "max": [
+     -4.6249,
+     0.8414,
+     0.5879
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "electrical_cabinet_01",
+   "source": "grounded-sam-2",
+   "class": "electrical cabinet",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Electrical_cabinet_01: seen in 4 of 10 views, score 0.38, 1010 splats. Overlaps obj_077 (electrical cabinet) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -4.7562,
+     0.5829,
+     -0.6935
+    ],
+    "size": [
+     0.2774,
+     0.8407,
+     0.4549
+    ],
+    "min": [
+     -4.8949,
+     0.1625,
+     -0.9209
+    ],
+    "max": [
+     -4.6175,
+     1.0032,
+     -0.466
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "fan_00",
+   "source": "grounded-sam-2",
+   "class": "fan",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Fan_00: seen in 18 of 24 views, score 0.42, 3304 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.8472,
+     0.9338,
+     -1.3356
+    ],
+    "size": [
+     0.2857,
+     0.3945,
+     0.437
+    ],
+    "min": [
+     3.7043,
+     0.7365,
+     -1.5541
+    ],
+    "max": [
+     3.99,
+     1.131,
+     -1.1171
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "fan_01",
+   "source": "grounded-sam-2",
+   "class": "fan",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Fan_01: seen in 4 of 4 views, score 0.35, 336 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -0.5246,
+     -0.6683,
+     -3.601
+    ],
+    "size": [
+     0.12,
+     0.1142,
+     0.2588
+    ],
+    "min": [
+     -0.5846,
+     -0.7254,
+     -3.7304
+    ],
+    "max": [
+     -0.4646,
+     -0.6112,
+     -3.4716
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_00",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Green_pipe_label_00: seen in 4 of 4 views, score 0.50, 172 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -2.6776,
+     -0.0011,
+     2.6128
+    ],
+    "size": [
+     0.1248,
+     0.0458,
+     0.036
+    ],
+    "min": [
+     -2.74,
+     -0.024,
+     2.5948
+    ],
+    "max": [
+     -2.6152,
+     0.0218,
+     2.6308
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_01",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "high",
+   "note": "Grounded-SAM-2 Green_pipe_label_01: seen in 29 of 29 views, score 0.46, 463 splats. Overlaps cls_076 (pipe) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -1.5853,
+     -0.2708,
+     -3.4473
+    ],
+    "size": [
+     0.1538,
+     0.1932,
+     0.101
+    ],
+    "min": [
+     -1.6622,
+     -0.3674,
+     -3.4978
+    ],
+    "max": [
+     -1.5084,
+     -0.1742,
+     -3.3968
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_02",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Green_pipe_label_02: seen in 3 of 3 views, score 0.45, 162 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -3.7081,
+     -0.2179,
+     3.2092
+    ],
+    "size": [
+     0.0647,
+     0.1869,
+     0.1067
+    ],
+    "min": [
+     -3.7404,
+     -0.3113,
+     3.1558
+    ],
+    "max": [
+     -3.6757,
+     -0.1244,
+     3.2625
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_03",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Green_pipe_label_03: seen in 19 of 19 views, score 0.43, 438 splats. Overlaps obj_091 (pipe) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.9773,
+     -0.3423,
+     -0.3624
+    ],
+    "size": [
+     0.1742,
+     0.1872,
+     0.1559
+    ],
+    "min": [
+     3.8902,
+     -0.4359,
+     -0.4403
+    ],
+    "max": [
+     4.0644,
+     -0.2487,
+     -0.2844
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_04",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Green_pipe_label_04: seen in 10 of 11 views, score 0.42, 248 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -3.3449,
+     -0.2344,
+     -2.9162
+    ],
+    "size": [
+     0.5513,
+     0.1142,
+     0.3482
+    ],
+    "min": [
+     -3.6206,
+     -0.2915,
+     -3.0903
+    ],
+    "max": [
+     -3.0693,
+     -0.1773,
+     -2.7421
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_05",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Green_pipe_label_05: seen in 3 of 6 views, score 0.41, 486 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     2.4274,
+     -0.2375,
+     3.3356
+    ],
+    "size": [
+     0.7839,
+     0.3711,
+     0.3074
+    ],
+    "min": [
+     2.0354,
+     -0.4231,
+     3.1819
+    ],
+    "max": [
+     2.8193,
+     -0.052,
+     3.4893
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_06",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Green_pipe_label_06: seen in 16 of 17 views, score 0.37, 625 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -3.2351,
+     -0.2293,
+     -0.4576
+    ],
+    "size": [
+     0.196,
+     0.1925,
+     0.2273
+    ],
+    "min": [
+     -3.3331,
+     -0.3255,
+     -0.5712
+    ],
+    "max": [
+     -3.1371,
+     -0.133,
+     -0.3439
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_07",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Green_pipe_label_07: seen in 14 of 14 views, score 0.37, 705 splats. Overlaps obj_009 (pipe) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     2.1582,
+     0.0197,
+     1.5947
+    ],
+    "size": [
+     0.1187,
+     0.1658,
+     0.2487
+    ],
+    "min": [
+     2.0988,
+     -0.0632,
+     1.4704
+    ],
+    "max": [
+     2.2175,
+     0.1026,
+     1.7191
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_08",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Green_pipe_label_08: seen in 5 of 7 views, score 0.36, 217 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.8284,
+     -0.3423,
+     0.3835
+    ],
+    "size": [
+     0.1572,
+     0.2007,
+     0.1833
+    ],
+    "min": [
+     3.7498,
+     -0.4427,
+     0.2918
+    ],
+    "max": [
+     3.907,
+     -0.242,
+     0.4751
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_09",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Green_pipe_label_09: seen in 14 of 15 views, score 0.36, 389 splats. Overlaps obj_086 (pipe) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.9544,
+     -0.415,
+     -2.4906
+    ],
+    "size": [
+     0.1226,
+     0.1881,
+     0.1107
+    ],
+    "min": [
+     3.8931,
+     -0.509,
+     -2.546
+    ],
+    "max": [
+     4.0157,
+     -0.3209,
+     -2.4353
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_10",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Green_pipe_label_10: seen in 3 of 4 views, score 0.35, 375 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -2.6663,
+     -0.3045,
+     -0.0565
+    ],
+    "size": [
+     0.0694,
+     0.1999,
+     0.0727
+    ],
+    "min": [
+     -2.701,
+     -0.4045,
+     -0.0928
+    ],
+    "max": [
+     -2.6316,
+     -0.2046,
+     -0.0201
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_11",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Green_pipe_label_11: seen in 2 of 2 views, score 0.35, 162 splats. Overlaps cls_223 (pipe) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -3.2692,
+     -0.2177,
+     3.2066
+    ],
+    "size": [
+     0.0674,
+     0.2201,
+     0.1071
+    ],
+    "min": [
+     -3.3029,
+     -0.3278,
+     3.153
+    ],
+    "max": [
+     -3.2355,
+     -0.1077,
+     3.2601
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_12",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Green_pipe_label_12: seen in 7 of 8 views, score 0.35, 428 splats. Overlaps cls_091 (pipe) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -1.5884,
+     -0.239,
+     -0.0175
+    ],
+    "size": [
+     0.0942,
+     0.1921,
+     0.0908
+    ],
+    "min": [
+     -1.6355,
+     -0.3351,
+     -0.0629
+    ],
+    "max": [
+     -1.5413,
+     -0.143,
+     0.0279
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_13",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Green_pipe_label_13: seen in 2 of 4 views, score 0.33, 274 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -2.4787,
+     -0.2306,
+     -0.0388
+    ],
+    "size": [
+     0.0816,
+     0.1881,
+     0.1034
+    ],
+    "min": [
+     -2.5195,
+     -0.3246,
+     -0.0905
+    ],
+    "max": [
+     -2.4379,
+     -0.1365,
+     0.0129
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_14",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Green_pipe_label_14: seen in 19 of 19 views, score 0.33, 354 splats. Overlaps obj_078 (pipe) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.6062,
+     -0.4548,
+     -3.4224
+    ],
+    "size": [
+     0.0997,
+     0.1829,
+     0.0896
+    ],
+    "min": [
+     1.5564,
+     -0.5463,
+     -3.4672
+    ],
+    "max": [
+     1.6561,
+     -0.3634,
+     -3.3776
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_15",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Green_pipe_label_15: seen in 3 of 5 views, score 0.33, 173 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.5865,
+     0.0619,
+     -2.0869
+    ],
+    "size": [
+     0.0602,
+     0.1141,
+     0.0771
+    ],
+    "min": [
+     1.5564,
+     0.0048,
+     -2.1254
+    ],
+    "max": [
+     1.6166,
+     0.1189,
+     -2.0483
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_16",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Green_pipe_label_16: seen in 2 of 3 views, score 0.33, 121 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -2.9356,
+     -0.691,
+     -1.2759
+    ],
+    "size": [
+     0.2057,
+     0.065,
+     0.2103
+    ],
+    "min": [
+     -3.0384,
+     -0.7235,
+     -1.3811
+    ],
+    "max": [
+     -2.8327,
+     -0.6585,
+     -1.1708
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_17",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Green_pipe_label_17: seen in 18 of 18 views, score 0.32, 313 splats. Overlaps obj_080 (pipe) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.8361,
+     -0.4582,
+     -3.425
+    ],
+    "size": [
+     0.0967,
+     0.1747,
+     0.0733
+    ],
+    "min": [
+     1.7878,
+     -0.5456,
+     -3.4617
+    ],
+    "max": [
+     1.8845,
+     -0.3709,
+     -3.3884
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_18",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Green_pipe_label_18: seen in 12 of 16 views, score 0.31, 494 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.1974,
+     -0.5385,
+     -3.4101
+    ],
+    "size": [
+     0.1226,
+     0.2214,
+     0.1617
+    ],
+    "min": [
+     1.1361,
+     -0.6492,
+     -3.4909
+    ],
+    "max": [
+     1.2587,
+     -0.4278,
+     -3.3292
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_19",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Green_pipe_label_19: seen in 13 of 17 views, score 0.31, 614 splats. Overlaps obj_050 (pipe) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     0.6954,
+     -0.4696,
+     -3.4139
+    ],
+    "size": [
+     0.1744,
+     0.194,
+     0.0846
+    ],
+    "min": [
+     0.6082,
+     -0.5666,
+     -3.4562
+    ],
+    "max": [
+     0.7826,
+     -0.3726,
+     -3.3716
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_20",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Green_pipe_label_20: seen in 8 of 9 views, score 0.31, 303 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.9707,
+     -0.4374,
+     -2.9369
+    ],
+    "size": [
+     0.0939,
+     0.2008,
+     0.0906
+    ],
+    "min": [
+     3.9237,
+     -0.5378,
+     -2.9822
+    ],
+    "max": [
+     4.0176,
+     -0.337,
+     -2.8916
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "green_pipe_label_21",
+   "source": "grounded-sam-2",
+   "class": "green pipe label",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Green_pipe_label_21: seen in 6 of 7 views, score 0.29, 238 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.9304,
+     -0.574,
+     -1.979
+    ],
+    "size": [
+     0.1062,
+     0.1457,
+     0.1067
+    ],
+    "min": [
+     3.8773,
+     -0.6469,
+     -2.0323
+    ],
+    "max": [
+     3.9835,
+     -0.5012,
+     -1.9256
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "handwheel_valve_00",
+   "source": "grounded-sam-2",
+   "class": "handwheel valve",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Handwheel_valve_00: seen in 10 of 18 views, score 0.30, 597 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -1.5806,
+     0.6181,
+     -3.3232
+    ],
+    "size": [
+     0.1541,
+     0.2854,
+     0.3017
+    ],
+    "min": [
+     -1.6576,
+     0.4754,
+     -3.474
+    ],
+    "max": [
+     -1.5035,
+     0.7608,
+     -3.1723
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "handwheel_valve_01",
+   "source": "grounded-sam-2",
+   "class": "handwheel valve",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Handwheel_valve_01: seen in 3 of 3 views, score 0.28, 96 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.1127,
+     0.3709,
+     3.1536
+    ],
+    "size": [
+     0.3394,
+     0.3261,
+     0.2512
+    ],
+    "min": [
+     2.943,
+     0.2078,
+     3.028
+    ],
+    "max": [
+     3.2824,
+     0.5339,
+     3.2792
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "handwheel_valve_02",
+   "source": "grounded-sam-2",
+   "class": "handwheel valve",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Handwheel_valve_02: seen in 4 of 13 views, score 0.27, 944 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.2015,
+     -0.0554,
+     -3.3696
+    ],
+    "size": [
+     0.1748,
+     0.2044,
+     0.284
+    ],
+    "min": [
+     1.1141,
+     -0.1576,
+     -3.5116
+    ],
+    "max": [
+     1.2889,
+     0.0468,
+     -3.2276
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "handwheel_valve_03",
+   "source": "grounded-sam-2",
+   "class": "handwheel valve",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Handwheel_valve_03: seen in 3 of 9 views, score 0.26, 1393 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -3.2229,
+     0.7,
+     -1.6164
+    ],
+    "size": [
+     0.2003,
+     0.2211,
+     0.5925
+    ],
+    "min": [
+     -3.323,
+     0.5894,
+     -1.9127
+    ],
+    "max": [
+     -3.1227,
+     0.8105,
+     -1.3202
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "handwheel_valve_04",
+   "source": "grounded-sam-2",
+   "class": "handwheel valve",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Handwheel_valve_04: seen in 5 of 14 views, score 0.25, 852 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     2.1742,
+     -0.0742,
+     -3.3411
+    ],
+    "size": [
+     0.2157,
+     0.1737,
+     0.2526
+    ],
+    "min": [
+     2.0664,
+     -0.161,
+     -3.4674
+    ],
+    "max": [
+     2.2821,
+     0.0127,
+     -3.2148
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "handwheel_valve_05",
+   "source": "grounded-sam-2",
+   "class": "handwheel valve",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Handwheel_valve_05: seen in 3 of 3 views, score 0.25, 403 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     2.7203,
+     -0.0925,
+     -3.3898
+    ],
+    "size": [
+     0.1245,
+     0.1372,
+     0.1352
+    ],
+    "min": [
+     2.6581,
+     -0.1611,
+     -3.4574
+    ],
+    "max": [
+     2.7826,
+     -0.0239,
+     -3.3222
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "handwheel_valve_06",
+   "source": "grounded-sam-2",
+   "class": "handwheel valve",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Handwheel_valve_06: seen in 2 of 3 views, score 0.25, 480 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.9596,
+     0.1776,
+     -2.2622
+    ],
+    "size": [
+     0.1361,
+     0.1465,
+     0.2781
+    ],
+    "min": [
+     3.8916,
+     0.1043,
+     -2.4012
+    ],
+    "max": [
+     4.0277,
+     0.2508,
+     -2.1231
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "insulated_panel_00",
+   "source": "grounded-sam-2",
+   "class": "insulated panel",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Insulated_panel_00: seen in 4 of 11 views, score 0.40, 3692 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.8371,
+     0.7615,
+     2.1212
+    ],
+    "size": [
+     0.8198,
+     0.9953,
+     0.7563
+    ],
+    "min": [
+     1.4272,
+     0.2638,
+     1.743
+    ],
+    "max": [
+     2.247,
+     1.2591,
+     2.4993
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "insulated_panel_01",
+   "source": "grounded-sam-2",
+   "class": "insulated panel",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Insulated_panel_01: seen in 8 of 16 views, score 0.37, 5892 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -2.5158,
+     0.4203,
+     0.9968
+    ],
+    "size": [
+     0.6441,
+     1.2563,
+     0.6256
+    ],
+    "min": [
+     -2.8379,
+     -0.2079,
+     0.684
+    ],
+    "max": [
+     -2.1938,
+     1.0484,
+     1.3096
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "insulated_panel_02",
+   "source": "grounded-sam-2",
+   "class": "insulated panel",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Insulated_panel_02: seen in 15 of 32 views, score 0.36, 3897 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     4.0097,
+     -0.077,
+     -1.3643
+    ],
+    "size": [
+     0.4389,
+     1.007,
+     0.5949
+    ],
+    "min": [
+     3.7903,
+     -0.5805,
+     -1.6618
+    ],
+    "max": [
+     4.2292,
+     0.4265,
+     -1.0669
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "insulated_panel_03",
+   "source": "grounded-sam-2",
+   "class": "insulated panel",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Insulated_panel_03: seen in 12 of 30 views, score 0.36, 4318 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.2085,
+     0.863,
+     1.4756
+    ],
+    "size": [
+     0.3361,
+     0.5944,
+     0.4398
+    ],
+    "min": [
+     3.0404,
+     0.5658,
+     1.2557
+    ],
+    "max": [
+     3.3765,
+     1.1602,
+     1.6955
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "insulated_panel_04",
+   "source": "grounded-sam-2",
+   "class": "insulated panel",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Insulated_panel_04: seen in 17 of 31 views, score 0.36, 2492 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.4198,
+     -0.1419,
+     -3.4891
+    ],
+    "size": [
+     0.7338,
+     0.8513,
+     0.351
+    ],
+    "min": [
+     3.0529,
+     -0.5676,
+     -3.6646
+    ],
+    "max": [
+     3.7867,
+     0.2837,
+     -3.3136
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "ladder_00",
+   "source": "grounded-sam-2",
+   "class": "ladder",
+   "class_confidence": "high",
+   "note": "Grounded-SAM-2 Ladder_00: seen in 36 of 36 views, score 0.44, 10396 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.6268,
+     0.2346,
+     1.4328
+    ],
+    "size": [
+     0.8778,
+     1.6828,
+     0.5042
+    ],
+    "min": [
+     3.1879,
+     -0.6068,
+     1.1807
+    ],
+    "max": [
+     4.0657,
+     1.076,
+     1.6849
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "ladder_01",
+   "source": "grounded-sam-2",
+   "class": "ladder",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Ladder_01: seen in 24 of 34 views, score 0.41, 9075 splats. Overlaps obj_013 (ladder) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.5473,
+     0.3507,
+     0.3859
+    ],
+    "size": [
+     0.5287,
+     1.3577,
+     0.4026
+    ],
+    "min": [
+     3.2829,
+     -0.3282,
+     0.1846
+    ],
+    "max": [
+     3.8116,
+     1.0295,
+     0.5872
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "ladder_02",
+   "source": "grounded-sam-2",
+   "class": "ladder",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Ladder_02: seen in 2 of 5 views, score 0.40, 844 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -1.1265,
+     0.3185,
+     1.2873
+    ],
+    "size": [
+     0.0373,
+     1.3407,
+     0.0507
+    ],
+    "min": [
+     -1.1452,
+     -0.3518,
+     1.262
+    ],
+    "max": [
+     -1.1079,
+     0.9889,
+     1.3127
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "ladder_03",
+   "source": "grounded-sam-2",
+   "class": "ladder",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Ladder_03: seen in 16 of 21 views, score 0.40, 6913 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.5899,
+     0.478,
+     0.8881
+    ],
+    "size": [
+     0.5405,
+     1.1146,
+     0.3433
+    ],
+    "min": [
+     3.3196,
+     -0.0793,
+     0.7164
+    ],
+    "max": [
+     3.8601,
+     1.0353,
+     1.0597
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "ladder_04",
+   "source": "grounded-sam-2",
+   "class": "ladder",
+   "class_confidence": "high",
+   "note": "Grounded-SAM-2 Ladder_04: seen in 29 of 37 views, score 0.37, 6368 splats. Overlaps obj_013 (ladder) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.712,
+     0.4104,
+     -0.1211
+    ],
+    "size": [
+     0.62,
+     1.1383,
+     0.3959
+    ],
+    "min": [
+     3.402,
+     -0.1587,
+     -0.319
+    ],
+    "max": [
+     4.022,
+     0.9796,
+     0.0769
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "ladder_05",
+   "source": "grounded-sam-2",
+   "class": "ladder",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Ladder_05: seen in 3 of 7 views, score 0.28, 532 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.6101,
+     0.3302,
+     -2.1258
+    ],
+    "size": [
+     0.0925,
+     0.6423,
+     0.1371
+    ],
+    "min": [
+     1.5639,
+     0.0091,
+     -2.1943
+    ],
+    "max": [
+     1.6564,
+     0.6514,
+     -2.0572
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_00",
+   "source": "grounded-sam-2",
+   "class": "pipe",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Pipe_00: seen in 7 of 8 views, score 0.36, 959 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -0.2848,
+     1.1295,
+     2.9813
+    ],
+    "size": [
+     2.0958,
+     0.24,
+     0.4659
+    ],
+    "min": [
+     -1.3327,
+     1.0095,
+     2.7483
+    ],
+    "max": [
+     0.7631,
+     1.2495,
+     3.2142
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_01",
+   "source": "grounded-sam-2",
+   "class": "pipe",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Pipe_01: seen in 27 of 43 views, score 0.34, 8384 splats. Overlaps obj_035 (pipe) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.5116,
+     0.0986,
+     0.7767
+    ],
+    "size": [
+     0.5377,
+     1.985,
+     1.6527
+    ],
+    "min": [
+     1.2428,
+     -0.8939,
+     -0.0496
+    ],
+    "max": [
+     1.7805,
+     1.0911,
+     1.6031
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_02",
+   "source": "grounded-sam-2",
+   "class": "pipe",
+   "class_confidence": "high",
+   "note": "Grounded-SAM-2 Pipe_02: seen in 31 of 32 views, score 0.33, 15886 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.2405,
+     0.5311,
+     2.6552
+    ],
+    "size": [
+     5.1339,
+     0.814,
+     1.5256
+    ],
+    "min": [
+     -1.3265,
+     0.1241,
+     1.8924
+    ],
+    "max": [
+     3.8074,
+     0.9381,
+     3.418
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_03",
+   "source": "grounded-sam-2",
+   "class": "pipe",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Pipe_03: seen in 8 of 24 views, score 0.33, 6041 splats. Overlaps obj_019 (pipe) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -3.5141,
+     0.0566,
+     -0.5186
+    ],
+    "size": [
+     0.7715,
+     1.408,
+     0.5149
+    ],
+    "min": [
+     -3.8999,
+     -0.6474,
+     -0.776
+    ],
+    "max": [
+     -3.1284,
+     0.7606,
+     -0.2611
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_04",
+   "source": "grounded-sam-2",
+   "class": "pipe",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Pipe_04: seen in 2 of 2 views, score 0.33, 221 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -3.2643,
+     -0.1379,
+     3.193
+    ],
+    "size": [
+     0.0693,
+     0.7912,
+     0.1357
+    ],
+    "min": [
+     -3.299,
+     -0.5335,
+     3.1252
+    ],
+    "max": [
+     -3.2297,
+     0.2577,
+     3.2609
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_05",
+   "source": "grounded-sam-2",
+   "class": "pipe",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Pipe_05: seen in 16 of 38 views, score 0.32, 2327 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -3.1616,
+     0.1962,
+     -2.8308
+    ],
+    "size": [
+     0.2433,
+     1.866,
+     0.2205
+    ],
+    "min": [
+     -3.2833,
+     -0.7368,
+     -2.9411
+    ],
+    "max": [
+     -3.04,
+     1.1292,
+     -2.7206
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_06",
+   "source": "grounded-sam-2",
+   "class": "pipe",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Pipe_06: seen in 9 of 22 views, score 0.32, 1164 splats. Overlaps obj_080 (pipe) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.8339,
+     -0.3644,
+     -3.42
+    ],
+    "size": [
+     0.0956,
+     1.0622,
+     0.1331
+    ],
+    "min": [
+     1.7861,
+     -0.8955,
+     -3.4866
+    ],
+    "max": [
+     1.8817,
+     0.1667,
+     -3.3535
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_07",
+   "source": "grounded-sam-2",
+   "class": "pipe",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Pipe_07: seen in 2 of 3 views, score 0.31, 253 splats. Overlaps cls_272 (pipe) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -3.117,
+     -0.2113,
+     3.2027
+    ],
+    "size": [
+     0.0573,
+     0.6516,
+     0.1295
+    ],
+    "min": [
+     -3.1457,
+     -0.5371,
+     3.1379
+    ],
+    "max": [
+     -3.0884,
+     0.1145,
+     3.2674
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_08",
+   "source": "grounded-sam-2",
+   "class": "pipe",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Pipe_08: seen in 9 of 26 views, score 0.31, 1318 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.7145,
+     -0.3896,
+     -3.4299
+    ],
+    "size": [
+     0.3195,
+     1.2253,
+     0.1231
+    ],
+    "min": [
+     1.5547,
+     -1.0022,
+     -3.4914
+    ],
+    "max": [
+     1.8742,
+     0.2231,
+     -3.3683
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_09",
+   "source": "grounded-sam-2",
+   "class": "pipe",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Pipe_09: seen in 16 of 35 views, score 0.31, 2538 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -1.5822,
+     -0.0512,
+     -3.5078
+    ],
+    "size": [
+     0.1764,
+     1.7468,
+     0.2498
+    ],
+    "min": [
+     -1.6704,
+     -0.9246,
+     -3.6327
+    ],
+    "max": [
+     -1.494,
+     0.8222,
+     -3.3829
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_10",
+   "source": "grounded-sam-2",
+   "class": "pipe",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Pipe_10: seen in 2 of 6 views, score 0.30, 470 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.983,
+     0.4861,
+     -1.7497
+    ],
+    "size": [
+     0.4282,
+     1.1925,
+     0.0583
+    ],
+    "min": [
+     3.7689,
+     -0.1102,
+     -1.7789
+    ],
+    "max": [
+     4.1971,
+     1.0823,
+     -1.7206
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_11",
+   "source": "grounded-sam-2",
+   "class": "pipe",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Pipe_11: seen in 15 of 29 views, score 0.30, 2598 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.994,
+     0.0884,
+     -0.6704
+    ],
+    "size": [
+     0.3834,
+     1.8796,
+     0.8288
+    ],
+    "min": [
+     3.8023,
+     -0.8514,
+     -1.0848
+    ],
+    "max": [
+     4.1857,
+     1.0282,
+     -0.256
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_12",
+   "source": "grounded-sam-2",
+   "class": "pipe",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Pipe_12: seen in 9 of 30 views, score 0.30, 2363 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.8812,
+     -0.3415,
+     -2.5754
+    ],
+    "size": [
+     0.3176,
+     1.1586,
+     0.3294
+    ],
+    "min": [
+     3.7224,
+     -0.9208,
+     -2.7401
+    ],
+    "max": [
+     4.04,
+     0.2378,
+     -2.4107
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_13",
+   "source": "grounded-sam-2",
+   "class": "pipe",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Pipe_13: seen in 17 of 35 views, score 0.30, 2890 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -0.8498,
+     0.0225,
+     0.1578
+    ],
+    "size": [
+     0.0869,
+     1.6861,
+     0.0741
+    ],
+    "min": [
+     -0.8933,
+     -0.8206,
+     0.1207
+    ],
+    "max": [
+     -0.8064,
+     0.8655,
+     0.1948
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_14",
+   "source": "grounded-sam-2",
+   "class": "pipe",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Pipe_14: seen in 6 of 19 views, score 0.30, 1083 splats. Overlaps obj_075 (pipe) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     2.4583,
+     -0.3779,
+     -3.4223
+    ],
+    "size": [
+     0.1532,
+     1.182,
+     0.0718
+    ],
+    "min": [
+     2.3817,
+     -0.9689,
+     -3.4582
+    ],
+    "max": [
+     2.5349,
+     0.2131,
+     -3.3864
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_15",
+   "source": "grounded-sam-2",
+   "class": "pipe",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Pipe_15: seen in 11 of 32 views, score 0.29, 2772 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     0.5989,
+     -0.3604,
+     -3.3908
+    ],
+    "size": [
+     0.3467,
+     1.2071,
+     0.2364
+    ],
+    "min": [
+     0.4256,
+     -0.9639,
+     -3.509
+    ],
+    "max": [
+     0.7723,
+     0.2432,
+     -3.2726
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_16",
+   "source": "grounded-sam-2",
+   "class": "pipe",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Pipe_16: seen in 11 of 20 views, score 0.29, 1760 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -1.0674,
+     -0.3797,
+     0.1221
+    ],
+    "size": [
+     0.0923,
+     0.913,
+     0.1204
+    ],
+    "min": [
+     -1.1135,
+     -0.8362,
+     0.0619
+    ],
+    "max": [
+     -1.0212,
+     0.0768,
+     0.1823
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_17",
+   "source": "grounded-sam-2",
+   "class": "pipe",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Pipe_17: seen in 3 of 11 views, score 0.29, 705 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     0.5352,
+     0.539,
+     -3.4657
+    ],
+    "size": [
+     0.0546,
+     1.2056,
+     0.365
+    ],
+    "min": [
+     0.5079,
+     -0.0638,
+     -3.6482
+    ],
+    "max": [
+     0.5625,
+     1.1418,
+     -3.2832
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_18",
+   "source": "grounded-sam-2",
+   "class": "pipe",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Pipe_18: seen in 6 of 12 views, score 0.28, 1449 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -1.2498,
+     -0.3684,
+     0.1276
+    ],
+    "size": [
+     0.0973,
+     0.9239,
+     0.1065
+    ],
+    "min": [
+     -1.2984,
+     -0.8304,
+     0.0744
+    ],
+    "max": [
+     -1.2011,
+     0.0935,
+     0.1809
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_fitting_00",
+   "source": "grounded-sam-2",
+   "class": "pipe fitting",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Pipe_fitting_00: seen in 2 of 2 views, score 0.34, 1236 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -4.6886,
+     -0.2918,
+     2.8047
+    ],
+    "size": [
+     0.2803,
+     0.5823,
+     0.2962
+    ],
+    "min": [
+     -4.8287,
+     -0.5829,
+     2.6566
+    ],
+    "max": [
+     -4.5484,
+     -0.0006,
+     2.9528
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_fitting_01",
+   "source": "grounded-sam-2",
+   "class": "pipe fitting",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Pipe_fitting_01: seen in 4 of 5 views, score 0.31, 1414 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -4.7474,
+     0.6421,
+     0.7054
+    ],
+    "size": [
+     0.1818,
+     1.0521,
+     0.1895
+    ],
+    "min": [
+     -4.8383,
+     0.1161,
+     0.6106
+    ],
+    "max": [
+     -4.6565,
+     1.1682,
+     0.8001
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_fitting_02",
+   "source": "grounded-sam-2",
+   "class": "pipe fitting",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Pipe_fitting_02: seen in 2 of 8 views, score 0.29, 440 splats. Overlaps obj_037 (pipe) in the scan layer.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     0.9975,
+     0.204,
+     -3.4221
+    ],
+    "size": [
+     0.2647,
+     0.1482,
+     0.1344
+    ],
+    "min": [
+     0.8652,
+     0.1299,
+     -3.4893
+    ],
+    "max": [
+     1.1299,
+     0.2781,
+     -3.3549
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_label_00",
+   "source": "grounded-sam-2",
+   "class": "pipe label",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Pipe_label_00: seen in 2 of 2 views, score 0.36, 178 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.0542,
+     -0.0129,
+     2.2975
+    ],
+    "size": [
+     0.1188,
+     0.1328,
+     0.0406
+    ],
+    "min": [
+     0.9948,
+     -0.0793,
+     2.2772
+    ],
+    "max": [
+     1.1136,
+     0.0535,
+     2.3178
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_label_01",
+   "source": "grounded-sam-2",
+   "class": "pipe label",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Pipe_label_01: seen in 4 of 4 views, score 0.34, 103 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -3.2607,
+     -0.2987,
+     -0.4645
+    ],
+    "size": [
+     0.2255,
+     0.0567,
+     0.2343
+    ],
+    "min": [
+     -3.3735,
+     -0.3271,
+     -0.5816
+    ],
+    "max": [
+     -3.148,
+     -0.2704,
+     -0.3473
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "pipe_label_02",
+   "source": "grounded-sam-2",
+   "class": "pipe label",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Pipe_label_02: seen in 4 of 4 views, score 0.32, 136 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -2.678,
+     0.0624,
+     2.6114
+    ],
+    "size": [
+     0.0878,
+     0.0709,
+     0.0314
+    ],
+    "min": [
+     -2.7219,
+     0.027,
+     2.5957
+    ],
+    "max": [
+     -2.6341,
+     0.0979,
+     2.6271
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "red_bucket_00",
+   "source": "grounded-sam-2",
+   "class": "red bucket",
+   "class_confidence": "high",
+   "note": "Grounded-SAM-2 Red_bucket_00: seen in 34 of 34 views, score 0.64, 647 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -1.3842,
+     1.053,
+     -3.3108
+    ],
+    "size": [
+     0.3167,
+     0.2685,
+     0.2973
+    ],
+    "min": [
+     -1.5426,
+     0.9187,
+     -3.4594
+    ],
+    "max": [
+     -1.2259,
+     1.1872,
+     -3.1621
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "red_bucket_01",
+   "source": "grounded-sam-2",
+   "class": "red bucket",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Red_bucket_01: seen in 7 of 9 views, score 0.50, 973 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -1.4661,
+     0.0306,
+     2.8763
+    ],
+    "size": [
+     0.1575,
+     0.2503,
+     0.1984
+    ],
+    "min": [
+     -1.5448,
+     -0.0945,
+     2.7771
+    ],
+    "max": [
+     -1.3873,
+     0.1558,
+     2.9755
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "red_bucket_02",
+   "source": "grounded-sam-2",
+   "class": "red bucket",
+   "class_confidence": "high",
+   "note": "Grounded-SAM-2 Red_bucket_02: seen in 47 of 48 views, score 0.48, 8065 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     0.255,
+     0.3206,
+     1.9558
+    ],
+    "size": [
+     0.6561,
+     1.1633,
+     0.6351
+    ],
+    "min": [
+     -0.073,
+     -0.261,
+     1.6382
+    ],
+    "max": [
+     0.5831,
+     0.9023,
+     2.2733
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "red_bucket_03",
+   "source": "grounded-sam-2",
+   "class": "red bucket",
+   "class_confidence": "high",
+   "note": "Grounded-SAM-2 Red_bucket_03: seen in 37 of 38 views, score 0.47, 8092 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.0277,
+     0.2972,
+     1.8888
+    ],
+    "size": [
+     0.6381,
+     1.2194,
+     0.8269
+    ],
+    "min": [
+     0.7087,
+     -0.3125,
+     1.4754
+    ],
+    "max": [
+     1.3468,
+     0.9069,
+     2.3023
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "red_bucket_04",
+   "source": "grounded-sam-2",
+   "class": "red bucket",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Red_bucket_04: seen in 16 of 18 views, score 0.42, 213 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.158,
+     0.9724,
+     -3.0693
+    ],
+    "size": [
+     0.7615,
+     0.3969,
+     0.3833
+    ],
+    "min": [
+     2.7772,
+     0.7739,
+     -3.2609
+    ],
+    "max": [
+     3.5387,
+     1.1708,
+     -2.8776
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "red_bucket_05",
+   "source": "grounded-sam-2",
+   "class": "red bucket",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Red_bucket_05: seen in 11 of 13 views, score 0.41, 3804 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -2.6639,
+     0.4311,
+     2.8208
+    ],
+    "size": [
+     0.7313,
+     1.3552,
+     0.4748
+    ],
+    "min": [
+     -3.0295,
+     -0.2465,
+     2.5834
+    ],
+    "max": [
+     -2.2982,
+     1.1087,
+     3.0582
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "red_bucket_06",
+   "source": "grounded-sam-2",
+   "class": "red bucket",
+   "class_confidence": "high",
+   "note": "Grounded-SAM-2 Red_bucket_06: seen in 32 of 34 views, score 0.39, 1463 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -0.4629,
+     1.0697,
+     -0.4109
+    ],
+    "size": [
+     0.2943,
+     0.2701,
+     0.3702
+    ],
+    "min": [
+     -0.6101,
+     0.9347,
+     -0.596
+    ],
+    "max": [
+     -0.3158,
+     1.2048,
+     -0.2258
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "red_bucket_07",
+   "source": "grounded-sam-2",
+   "class": "red bucket",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Red_bucket_07: seen in 19 of 25 views, score 0.38, 923 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -1.3739,
+     1.0369,
+     -0.989
+    ],
+    "size": [
+     0.256,
+     0.3001,
+     0.2508
+    ],
+    "min": [
+     -1.5019,
+     0.8868,
+     -1.1144
+    ],
+    "max": [
+     -1.2459,
+     1.1869,
+     -0.8636
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "red_bucket_08",
+   "source": "grounded-sam-2",
+   "class": "red bucket",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Red_bucket_08: seen in 2 of 2 views, score 0.35, 229 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -1.5674,
+     1.0785,
+     0.211
+    ],
+    "size": [
+     0.223,
+     0.1758,
+     0.1158
+    ],
+    "min": [
+     -1.6789,
+     0.9906,
+     0.1531
+    ],
+    "max": [
+     -1.4559,
+     1.1664,
+     0.2689
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "red_bucket_09",
+   "source": "grounded-sam-2",
+   "class": "red bucket",
+   "class_confidence": "high",
+   "note": "Grounded-SAM-2 Red_bucket_09: seen in 27 of 34 views, score 0.34, 4577 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.4125,
+     0.8345,
+     2.6419
+    ],
+    "size": [
+     0.7484,
+     0.5264,
+     1.0878
+    ],
+    "min": [
+     3.0383,
+     0.5713,
+     2.098
+    ],
+    "max": [
+     3.7867,
+     1.0977,
+     3.1858
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "red_bucket_10",
+   "source": "grounded-sam-2",
+   "class": "red bucket",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Red_bucket_10: seen in 2 of 2 views, score 0.34, 149 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -4.6703,
+     0.6738,
+     -0.9975
+    ],
+    "size": [
+     0.2019,
+     0.0947,
+     0.2648
+    ],
+    "min": [
+     -4.7712,
+     0.6265,
+     -1.1299
+    ],
+    "max": [
+     -4.5693,
+     0.7212,
+     -0.8651
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "red_bucket_11",
+   "source": "grounded-sam-2",
+   "class": "red bucket",
+   "class_confidence": "medium",
+   "note": "Grounded-SAM-2 Red_bucket_11: seen in 9 of 9 views, score 0.33, 765 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     3.4491,
+     0.9882,
+     1.9299
+    ],
+    "size": [
+     0.3302,
+     0.3525,
+     0.2817
+    ],
+    "min": [
+     3.284,
+     0.8119,
+     1.789
+    ],
+    "max": [
+     3.6142,
+     1.1644,
+     2.0707
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "red_bucket_12",
+   "source": "grounded-sam-2",
+   "class": "red bucket",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Red_bucket_12: seen in 4 of 5 views, score 0.33, 1178 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -4.3126,
+     0.4567,
+     2.9346
+    ],
+    "size": [
+     0.5369,
+     0.3284,
+     0.4139
+    ],
+    "min": [
+     -4.5811,
+     0.2925,
+     2.7277
+    ],
+    "max": [
+     -4.0442,
+     0.6209,
+     3.1416
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "red_bucket_13",
+   "source": "grounded-sam-2",
+   "class": "red bucket",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Red_bucket_13: seen in 9 of 28 views, score 0.31, 2683 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     1.2435,
+     1.0732,
+     -2.7659
+    ],
+    "size": [
+     0.7741,
+     0.1685,
+     0.4949
+    ],
+    "min": [
+     0.8565,
+     0.9889,
+     -3.0133
+    ],
+    "max": [
+     1.6306,
+     1.1574,
+     -2.5184
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "valve_actuator_00",
+   "source": "grounded-sam-2",
+   "class": "valve actuator",
+   "class_confidence": "low",
+   "note": "Grounded-SAM-2 Valve_actuator_00: seen in 2 of 2 views, score 0.25, 188 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -4.6217,
+     0.3649,
+     0.0532
+    ],
+    "size": [
+     0.1152,
+     0.1673,
+     0.1001
+    ],
+    "min": [
+     -4.6793,
+     0.2813,
+     0.0032
+    ],
+    "max": [
+     -4.5641,
+     0.4486,
+     0.1033
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
+   "asset_id": null,
+   "mapping_method": null,
+   "is_fault_target": false,
+   "asset": null
+  },
+  {
+   "id": "washing_machine_00",
+   "source": "grounded-sam-2",
+   "class": "washing machine",
+   "class_confidence": "high",
+   "note": "Grounded-SAM-2 Washing_machine_00: seen in 30 of 39 views, score 0.58, 7391 splats.",
+   "seen_in_frames": 0,
+   "splats": 0,
+   "ply": null,
+   "box": {
+    "center": [
+     -0.8375,
+     0.5899,
+     -0.5681
+    ],
+    "size": [
+     0.557,
+     0.8736,
+     0.7329
+    ],
+    "min": [
+     -1.116,
+     0.1531,
+     -0.9346
+    ],
+    "max": [
+     -0.559,
+     1.0267,
+     -0.2017
+    ]
+   },
+   "floor_cells": [],
+   "approach_cell": null,
    "asset_id": null,
    "mapping_method": null,
    "is_fault_target": false,
