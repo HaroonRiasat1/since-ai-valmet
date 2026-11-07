@@ -5,12 +5,12 @@
   Valmet × Since AI 2026 · Industrial Metaverse challenge
 </p>
 
-## Demo video
+## How it works, in 45 seconds
 
 <p align="center">
-  <a href="docs/media/demo.mp4"><img src="docs/media/demo_preview.gif" alt="Demo: from Gaussian splats to an intelligent digital twin" width="820"></a><br/>
-  <sub>Silent preview at 2× speed. ▶ <a href="docs/media/demo.mp4"><b>Watch the full 45-second video with narration</b></a> (MP4, 720p).<br/>
-  A conceptual walk-through of the pipeline: scan → space → extraction → understanding → BIM → layers → navigation → AI agent. The app itself runs on the real scan.</sub>
+  <a href="docs/media/how_it_works.mp4"><img src="docs/media/how_it_works_preview.gif" alt="How it works: from Gaussian splats to an intelligent digital twin" width="820"></a><br/>
+  <sub>Silent preview at 2× speed. ▶ <a href="docs/media/how_it_works.mp4"><b>Watch the full 45-second overview with narration</b></a> (MP4, 720p).<br/>
+  An animated overview of how the whole system works, stage by stage: scan → space → extraction → understanding → BIM → layers → navigation → AI agent. It explains the method on an illustrative room; it is not a recording of the app.</sub>
 </p>
 
 <details>
@@ -30,7 +30,7 @@
 </details>
 
 <p align="center">
-  <a href="#demo-video">Demo</a> ·
+  <a href="#how-it-works-in-45-seconds">How it works</a> ·
   <a href="#the-flow">The flow</a> ·
   <a href="#what-you-can-do">What you can do</a> ·
   <a href="#architecture">Architecture</a> ·
@@ -128,7 +128,7 @@ Since-AI/
 ├── tests/                   ✅  102 tests, AI providers stubbed
 ├── docs/                    📚  architecture, navigation, agent, pipeline, API
 │   ├── diagrams/                HTML/CSS diagrams + render.py → PNG
-│   └── media/                   demo video, rendered diagrams, charts
+│   └── media/                   overview video, rendered diagrams, charts
 ├── start.sh · stop.sh       ▶️  start and stop the app
 └── Dockerfile · pyproject.toml
 ```
@@ -169,7 +169,7 @@ docker build -t navigator . && docker run --env-file .env -p 8000:8000 navigator
 ```
 
 For a local model, start the LM Studio server with a tool-capable chat model and pick it under **AI provider** in the
-page. The committed `web/data/` and `data/semantic/` are enough to run the demo; rebuilding needs the scan and the
+page. The committed `web/data/` and `data/semantic/` are enough to run the app; rebuilding needs the scan and the
 builder pack ([data pipeline](docs/data-pipeline.md)).
 </details>
 
@@ -208,4 +208,4 @@ uv run pytest -q && uv run ruff check .    # tests use a stub instead of any AI 
 - The model comparison is one run of eight questions: it shows a large gap, not a precise ranking.
 - A correct-looking query can still answer the wrong question. The checks catch invented figures, not a wrong filter,
   which is why the page always shows the table and the query.
-- The demo video is a conceptual animation (procedural room); the app runs on the real scan.
+- The overview video is an animation of how the system works on an illustrative room; the app itself runs on the real scan.
