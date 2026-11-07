@@ -1,4 +1,8 @@
-"""Chat agent for any OpenAI-compatible model. The model picks the destination, code computes every path."""
+"""Chat agent for any OpenAI-compatible model.
+
+Clear navigation requests are resolved by code, because a small model tested on the real scene invented
+tags and ignored "nearest". The model handles everything else through checked tools, and code computes every path.
+"""
 import json
 import math
 import re
@@ -22,23 +26,25 @@ Use tools for every fact about assets. Never invent tags, distances or readings.
 
 Choosing a destination:
 - An exact tag means that asset.
-- "nearest" or no qualifier means the shortest walking distance from search_assets.
-- "worst" or "faulty" means the lowest health. Say which rule you used.
+- Use only tags returned by search_assets, copied exactly.
+- "nearest" or no qualifier means the first row of search_assets.
+- "worst" or "faulty" means the first row of search_assets with order=health. Say which rule you used.
 - Prefer assets with matched=true. If you pick matched=false, say its position is unconfirmed.
 - Only route_to and inspection_round move the technician. Call them only when asked to go somewhere.
 
 Diagnosing:
-- Call get_evidence and use only that evidence. Cite record IDs in backticks.
+- Call get_evidence and use only that evidence. Cite the IDs from its allowed_citations in backticks.
 - Separate observation from hypothesis, state a confidence, and recommend verification and escalation only.
 - Remind about permits and lockout-tagout. Never instruct autonomous physical action.
 
 Reply in at most 120 words."""
 
 TOOLS = [
-    {"type": "function", "function": {"name": "search_assets", "description": "List assets, nearest walk first, with health and state.", "parameters": {
+    {"type": "function", "function": {"name": "search_assets", "description": "List assets with health and state, nearest walk first or lowest health first.", "parameters": {
         "type": "object", "properties": {
             "asset_class": {"type": "string", "enum": sorted(CLASS_WORDS.values())},
-            "unhealthy_only": {"type": "boolean"}}}}},
+            "unhealthy_only": {"type": "boolean"},
+            "order": {"type": "string", "enum": ["walk", "health"]}}}}},
     {"type": "function", "function": {"name": "route_to", "description": "Compute a collision-free path from the technician to an asset and start it.", "parameters": {
         "type": "object", "properties": {"tag": {"type": "string"}}, "required": ["tag"]}}},
     {"type": "function", "function": {"name": "inspection_round", "description": "Route through every non-healthy asset, nearest next.", "parameters": {"type": "object", "properties": {}}}},
@@ -61,14 +67,15 @@ class Turn:
         except RouteError:
             return None
 
-    def search_assets(self, asset_class=None, unhealthy_only=False):
+    def search_assets(self, asset_class=None, unhealthy_only=False, order="walk"):
         found = [a for a in self.scene.assets() if (not asset_class or a["asset_class"] == asset_class)
                  and (not unhealthy_only or a["state"] != "healthy")]
         # ponytail: walking distance only for the closest by straight line, since each route costs up to 150 ms on the fine grid
-        found.sort(key=lambda a: math.dist(a["center"], self.position))
+        found.sort(key=(lambda a: a["health"]) if order == "health" else (lambda a: math.dist(a["center"], self.position)))
         rows = [{"tag": a["tag"], "asset_class": a["asset_class"], "state": a["state"], "health": a["health"], "issue": a.get("issue"),
                  "matched": a.get("matched", False), "walk": self.walk(a)} for a in found[:WALK_CHECKS]]
-        return sorted([r for r in rows if r["walk"] is not None], key=lambda r: r["walk"])
+        rows = [r for r in rows if r["walk"] is not None]
+        return rows if order == "health" else sorted(rows, key=lambda r: r["walk"])
 
     def route_to(self, tag):
         route = self.grid.route(self.position, self.scene.item(tag))
@@ -86,7 +93,7 @@ class Turn:
             raise RouteError(f"unknown asset {tag}")
         record = copilot.evidence(self.scene, tag, [])
         self.records.append(record)
-        return record
+        return {**record, "allowed_citations": copilot.evidence_ids(record)}
 
     def call(self, name, arguments):
         """Run one tool call. Failures go back to the model so it can correct itself."""
@@ -118,15 +125,21 @@ def rule_based(turn: Turn, message: str) -> str | None:
     worst = bool(WORST_WORDS.search(message))
     if not asset_class and not worst:
         return None
-    rows = turn.search_assets(asset_class, unhealthy_only=worst)
+    rows = turn.search_assets(asset_class, unhealthy_only=worst, order="health" if worst else "walk")
     choices = [r for r in rows if r["matched"]] or rows
     if not choices:
         return "No reachable asset fits that request."
-    pick = min(choices, key=lambda r: r["health"]) if worst else choices[0]
+    pick = choices[0]
     length = turn.route_to(pick["tag"])["length"]
     rule = f"lowest health ({pick['health']})" if worst else "nearest walk"
     note = "" if pick["matched"] else " Its position is unconfirmed."
     return f"Routing to {pick['tag']}, {length:.1f} m. Chosen by {rule}.{note}"
+
+
+def named_asset(scene, message: str) -> str | None:
+    tag = TAG.search(message)
+    wanted = f"{tag.group(1).upper()}-{tag.group(2)}" if tag else None
+    return wanted if wanted in scene.copilot else None
 
 
 def result(turn: Turn, reply: str, mode: str, model: str | None, used: list[str]) -> dict:
@@ -137,8 +150,19 @@ def result(turn: Turn, reply: str, mode: str, model: str | None, used: list[str]
 
 def respond(scene, grid, position, message: str, provider: Provider | None = None, model: str | None = None, history: list[dict] | None = None) -> dict:
     turn = Turn(scene, grid, position)
+    planned = rule_based(turn, message)
+    if planned:
+        return result(turn, planned, "rules", None, [])
     if provider is None or not provider.configured:
-        return offline(turn, message, "No AI provider is ready.")
+        return offline(turn, "No AI provider is ready.")
+    tag = named_asset(scene, message)
+    if tag:   # a question about one asset gets the grounded diagnosis, which cites its records
+        try:
+            found = copilot.diagnose(scene, provider, tag, message, model=model)
+        except ProviderError as error:
+            return offline(turn, str(error))
+        turn.records.append(copilot.evidence(scene, tag, []))
+        return result(turn, found["answer"], "agent", found["model"], ["diagnose"])
     messages = [{"role": "system", "content": SYSTEM}, *(history or []),
                 {"role": "user", "content": f"{message}\n\n(Technician position: {[round(v, 2) for v in position]})"}]
     used = []
@@ -155,16 +179,9 @@ def respond(scene, grid, position, message: str, provider: Provider | None = Non
                 output = turn.call(call["function"]["name"], call["function"].get("arguments"))
                 messages.append({"role": "tool", "tool_call_id": call.get("id", ""), "content": json.dumps(output, default=str)})
     except ProviderError as error:
-        return offline(turn, message, str(error))
-    if not used:   # models without tool support answer in text, so navigation still has to work
-        planned = rule_based(turn, message)
-        if planned:
-            return result(turn, planned, "rules", model, [])
+        return offline(turn, str(error))
     return result(turn, reply["content"] or "I could not finish that request.", "agent", model, used)
 
 
-def offline(turn: Turn, message: str, why: str) -> dict:
-    planned = rule_based(turn, message)
-    if planned:
-        return result(turn, planned, "rules", None, [])
+def offline(turn: Turn, why: str) -> dict:
     return result(turn, f"{why} Without a model I can only navigate, for example: go to CV-003, go to the nearest pump, go to the worst valve.", "rules", None, [])

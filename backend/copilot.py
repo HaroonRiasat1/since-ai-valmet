@@ -50,7 +50,8 @@ def unknown_citations(answer: str, known: list[str]) -> list[str]:
 def diagnose(scene, provider: Provider, tag: str, question: str = "", nearby: list[str] | None = None, model: str | None = None) -> dict:
     record = evidence(scene, tag, nearby or [])
     ask = f"Technician's question: {question}" if question else "The technician has just arrived. Give the diagnosis."
-    user = f"Evidence JSON for {tag}:\n```json\n{json.dumps(record, default=str)}\n```\n\n{ask}"
+    allowed = ", ".join(evidence_ids(record))
+    user = f"Evidence JSON for {tag}:\n```json\n{json.dumps(record, default=str)}\n```\n\nCite these IDs in backticks next to each observation: {allowed}\n\n{ask}"
     result = chat(provider, [{"role": "system", "content": SYSTEM}, {"role": "user", "content": user}], model=model)
     answer = result["message"]["content"]
     ids = evidence_ids(record)
