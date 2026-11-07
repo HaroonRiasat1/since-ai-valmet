@@ -1,0 +1,1577 @@
+{
+ "cls_001": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_002": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_003": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_004": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_005": {
+  "label": "chair",
+  "confidence": "high",
+  "note": "office chair"
+ },
+ "cls_006": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_007": {
+  "label": "control valve",
+  "confidence": "medium",
+  "note": "orange actuators on pipes"
+ },
+ "cls_008": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_009": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_010": {
+  "label": "electrical cabinet",
+  "confidence": "medium",
+  "note": "switch control panel"
+ },
+ "cls_011": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_012": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "insulated pipe section"
+ },
+ "cls_013": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_014": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "insulated pipe bend"
+ },
+ "cls_015": {
+  "label": "control valve",
+  "confidence": "medium",
+  "note": "orange actuators on valves"
+ },
+ "cls_016": {
+  "label": "tank",
+  "confidence": "low",
+  "note": "blue vessel partial"
+ },
+ "cls_017": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_018": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_019": {
+  "label": "other",
+  "confidence": "low",
+  "note": "perforated board"
+ },
+ "cls_020": {
+  "label": "process pump",
+  "confidence": "medium",
+  "note": "inline pumps dark blue/red"
+ },
+ "cls_021": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_022": {
+  "label": "tank",
+  "confidence": "low",
+  "note": "red vessels distant"
+ },
+ "cls_023": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_024": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "pipework"
+ },
+ "cls_025": {
+  "label": "ladder",
+  "confidence": "medium",
+  "note": "step stool"
+ },
+ "cls_026": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_027": {
+  "label": "electrical cabinet",
+  "confidence": "medium",
+  "note": "drives on panel"
+ },
+ "cls_028": {
+  "label": "ladder",
+  "confidence": "high",
+  "note": "aluminium ladder"
+ },
+ "cls_029": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "red pipe"
+ },
+ "cls_030": {
+  "label": "crate",
+  "confidence": "medium",
+  "note": "red crate"
+ },
+ "cls_031": {
+  "label": "tank",
+  "confidence": "high",
+  "note": "red tank"
+ },
+ "cls_032": {
+  "label": "tank",
+  "confidence": "high",
+  "note": "red tank"
+ },
+ "cls_033": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_034": {
+  "label": "pipe",
+  "confidence": "medium",
+  "note": "insulated pipe elbow"
+ },
+ "cls_035": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_036": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_037": {
+  "label": "tank",
+  "confidence": "high",
+  "note": "blue tank"
+ },
+ "cls_038": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_039": {
+  "label": "other",
+  "confidence": "medium",
+  "note": "radiator heater"
+ },
+ "cls_040": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "pipe end"
+ },
+ "cls_041": {
+  "label": "ladder",
+  "confidence": "high",
+  "note": "step ladder"
+ },
+ "cls_042": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_043": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_044": {
+  "label": "process pump",
+  "confidence": "high",
+  "note": "red circulation pump"
+ },
+ "cls_045": {
+  "label": "ladder",
+  "confidence": "high",
+  "note": "step ladder"
+ },
+ "cls_046": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_047": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "pipework"
+ },
+ "cls_048": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_049": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_050": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_051": {
+  "label": "ladder",
+  "confidence": "high",
+  "note": "step ladder"
+ },
+ "cls_052": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_053": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_054": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_055": {
+  "label": "control valve",
+  "confidence": "high",
+  "note": "blue flanged valve"
+ },
+ "cls_056": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_057": {
+  "label": "tank",
+  "confidence": "medium",
+  "note": "red vessel with label"
+ },
+ "cls_058": {
+  "label": "crate",
+  "confidence": "low",
+  "note": "red crate"
+ },
+ "cls_059": {
+  "label": "other",
+  "confidence": "medium",
+  "note": "cable coil"
+ },
+ "cls_060": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_061": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_062": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_063": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_064": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_065": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "pipe with support"
+ },
+ "cls_066": {
+  "label": "crate",
+  "confidence": "low",
+  "note": "red crate"
+ },
+ "cls_067": {
+  "label": "pipe",
+  "confidence": "medium",
+  "note": "pipe with strainer"
+ },
+ "cls_068": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_069": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_070": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_071": {
+  "label": "electrical cabinet",
+  "confidence": "medium",
+  "note": "junction box on wall"
+ },
+ "cls_072": {
+  "label": "ladder",
+  "confidence": "medium",
+  "note": "aluminium ladder"
+ },
+ "cls_073": {
+  "label": "box",
+  "confidence": "high",
+  "note": "cardboard box"
+ },
+ "cls_074": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_075": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_076": {
+  "label": "pipe",
+  "confidence": "medium",
+  "note": "insulated pipe"
+ },
+ "cls_077": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "insulated pipe"
+ },
+ "cls_078": {
+  "label": "control valve",
+  "confidence": "medium",
+  "note": "orange actuators"
+ },
+ "cls_079": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_080": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_081": {
+  "label": "control valve",
+  "confidence": "medium",
+  "note": "black valve with wheel"
+ },
+ "cls_082": {
+  "label": "electrical cabinet",
+  "confidence": "medium",
+  "note": "green control panel"
+ },
+ "cls_083": {
+  "label": "process pump",
+  "confidence": "medium",
+  "note": "black pump on pipe"
+ },
+ "cls_084": {
+  "label": "box",
+  "confidence": "medium",
+  "note": "carton box"
+ },
+ "cls_085": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_086": {
+  "label": "box",
+  "confidence": "medium",
+  "note": "carton box"
+ },
+ "cls_087": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_088": {
+  "label": "other",
+  "confidence": "low",
+  "note": "cable bundle"
+ },
+ "cls_089": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_090": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "insulated pipe"
+ },
+ "cls_091": {
+  "label": "pipe",
+  "confidence": "medium",
+  "note": "insulated pipe"
+ },
+ "cls_092": {
+  "label": "electrical cabinet",
+  "confidence": "low",
+  "note": "white wall box"
+ },
+ "cls_093": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "pipe bend"
+ },
+ "cls_094": {
+  "label": "process pump",
+  "confidence": "medium",
+  "note": "red pump on pipe"
+ },
+ "cls_095": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_096": {
+  "label": "box",
+  "confidence": "low",
+  "note": "white box"
+ },
+ "cls_097": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_098": {
+  "label": "pipe",
+  "confidence": "medium",
+  "note": "pipe with strainer"
+ },
+ "cls_099": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_100": {
+  "label": "box",
+  "confidence": "low",
+  "note": "carton"
+ },
+ "cls_101": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_102": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_103": {
+  "label": "pipe",
+  "confidence": "medium",
+  "note": "pipe bend"
+ },
+ "cls_104": {
+  "label": "other",
+  "confidence": "medium",
+  "note": "blue hose loop"
+ },
+ "cls_105": {
+  "label": "control valve",
+  "confidence": "low",
+  "note": "brass valve on pipe"
+ },
+ "cls_106": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_107": {
+  "label": "other",
+  "confidence": "medium",
+  "note": "plastic canister"
+ },
+ "cls_108": {
+  "label": "electrical cabinet",
+  "confidence": "medium",
+  "note": "meter panel"
+ },
+ "cls_109": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_110": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_111": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_112": {
+  "label": "pipe",
+  "confidence": "medium",
+  "note": "pipework"
+ },
+ "cls_113": {
+  "label": "control valve",
+  "confidence": "high",
+  "note": "blue valve orange actuator"
+ },
+ "cls_114": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_115": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_116": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_117": {
+  "label": "electrical cabinet",
+  "confidence": "low",
+  "note": "beige cabinet"
+ },
+ "cls_118": {
+  "label": "control valve",
+  "confidence": "low",
+  "note": "valve on pipe"
+ },
+ "cls_119": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "purple pipe"
+ },
+ "cls_120": {
+  "label": "pipe",
+  "confidence": "medium",
+  "note": "pipework"
+ },
+ "cls_121": {
+  "label": "box",
+  "confidence": "high",
+  "note": "open cardboard box"
+ },
+ "cls_122": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_123": {
+  "label": "control valve",
+  "confidence": "medium",
+  "note": "blue valves on pipe"
+ },
+ "cls_124": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_125": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_126": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_127": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_128": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_129": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_130": {
+  "label": "box",
+  "confidence": "high",
+  "note": "stacked boxes"
+ },
+ "cls_131": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_132": {
+  "label": "electrical cabinet",
+  "confidence": "high",
+  "note": "white cabinet"
+ },
+ "cls_133": {
+  "label": "control valve",
+  "confidence": "medium",
+  "note": "blue valve on pipe"
+ },
+ "cls_134": {
+  "label": "other",
+  "confidence": "low",
+  "note": "heater unit"
+ },
+ "cls_135": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_136": {
+  "label": "bucket",
+  "confidence": "medium",
+  "note": "bin with liner"
+ },
+ "cls_137": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_138": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_139": {
+  "label": "other",
+  "confidence": "medium",
+  "note": "cable coil"
+ },
+ "cls_140": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "pipe"
+ },
+ "cls_141": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_142": {
+  "label": "cart",
+  "confidence": "medium",
+  "note": "hand truck, traced instead of the pump behind"
+ },
+ "cls_143": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_144": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_145": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_146": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_147": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_148": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_149": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_150": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_151": {
+  "label": "cart",
+  "confidence": "medium",
+  "note": "yellow wheeled cart"
+ },
+ "cls_152": {
+  "label": "electrical cabinet",
+  "confidence": "high",
+  "note": "white cabinet"
+ },
+ "cls_153": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_154": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_155": {
+  "label": "box",
+  "confidence": "medium",
+  "note": "Valmet box"
+ },
+ "cls_156": {
+  "label": "box",
+  "confidence": "high",
+  "note": "cardboard box"
+ },
+ "cls_157": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_158": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_159": {
+  "label": "pipe",
+  "confidence": "medium",
+  "note": "insulated pipe"
+ },
+ "cls_160": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "pipe with valves"
+ },
+ "cls_161": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_162": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_163": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_164": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_165": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_166": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "insulated pipe"
+ },
+ "cls_167": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_168": {
+  "label": "other",
+  "confidence": "medium",
+  "note": "power strip"
+ },
+ "cls_169": {
+  "label": "ladder",
+  "confidence": "medium",
+  "note": "ladder"
+ },
+ "cls_170": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_171": {
+  "label": "tank",
+  "confidence": "medium",
+  "note": "red tank"
+ },
+ "cls_172": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_173": {
+  "label": "box",
+  "confidence": "medium",
+  "note": "carton"
+ },
+ "cls_174": {
+  "label": "bucket",
+  "confidence": "low",
+  "note": "bin"
+ },
+ "cls_175": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_176": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_177": {
+  "label": "cart",
+  "confidence": "medium",
+  "note": "yellow wheeled cart"
+ },
+ "cls_178": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_179": {
+  "label": "ladder",
+  "confidence": "medium",
+  "note": "ladder"
+ },
+ "cls_180": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_181": {
+  "label": "pipe",
+  "confidence": "medium",
+  "note": "pipe bend"
+ },
+ "cls_182": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_183": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_184": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_185": {
+  "label": "control valve",
+  "confidence": "medium",
+  "note": "valve handwheel"
+ },
+ "cls_186": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_187": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_188": {
+  "label": "other",
+  "confidence": "low",
+  "note": "flexible duct"
+ },
+ "cls_189": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_190": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_191": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_192": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_193": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_194": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_195": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_196": {
+  "label": "crate",
+  "confidence": "medium",
+  "note": "red crate"
+ },
+ "cls_197": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_198": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_199": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_200": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_201": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_202": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_203": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "pipework"
+ },
+ "cls_204": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_205": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "marked pipe"
+ },
+ "cls_206": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_207": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_208": {
+  "label": "bucket",
+  "confidence": "high",
+  "note": "bucket"
+ },
+ "cls_209": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_210": {
+  "label": "pressure transmitter",
+  "confidence": "high",
+  "note": "dial gauge"
+ },
+ "cls_211": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_212": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_213": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_214": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "pipe end"
+ },
+ "cls_215": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_216": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_217": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_218": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_219": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_220": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_221": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_222": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_223": {
+  "label": "pipe",
+  "confidence": "medium",
+  "note": "insulated pipes"
+ },
+ "cls_224": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_225": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_226": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_227": {
+  "label": "pipe",
+  "confidence": "medium",
+  "note": "pipe bend"
+ },
+ "cls_228": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_229": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_230": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_231": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_232": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_233": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_234": {
+  "label": "box",
+  "confidence": "low",
+  "note": "box"
+ },
+ "cls_235": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_236": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "pipe"
+ },
+ "cls_237": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_238": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_239": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_240": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_241": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_242": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_243": {
+  "label": "electrical cabinet",
+  "confidence": "medium",
+  "note": "white cabinet"
+ },
+ "cls_244": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_245": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_246": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_247": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "pipe elbow"
+ },
+ "cls_248": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_249": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_250": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_251": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_252": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_253": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_254": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_255": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_256": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_257": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_258": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_259": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_260": {
+  "label": "electrical cabinet",
+  "confidence": "low",
+  "note": "meter panel"
+ },
+ "cls_261": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_262": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_263": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_264": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_265": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_266": {
+  "label": "box",
+  "confidence": "low",
+  "note": "box"
+ },
+ "cls_267": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_268": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_269": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_270": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_271": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_272": {
+  "label": "pipe",
+  "confidence": "low",
+  "note": "marked pipe"
+ },
+ "cls_273": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_274": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_275": {
+  "label": "electrical cabinet",
+  "confidence": "high",
+  "note": "white cabinet"
+ },
+ "cls_276": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_277": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_278": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_279": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_280": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_281": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_282": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_283": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_284": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_285": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_286": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_287": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_288": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_289": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_290": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_291": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_292": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_293": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_294": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_295": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_296": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_297": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_298": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_299": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_300": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_301": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_302": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_303": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_304": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_305": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_306": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_307": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_308": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_309": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_310": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_311": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_312": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_313": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_314": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ },
+ "cls_315": {
+  "label": "reject",
+  "confidence": "medium",
+  "note": "fragment or unclear"
+ }
+}

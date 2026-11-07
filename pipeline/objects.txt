@@ -1,0 +1,27 @@
+# Objects to find in the scan. One per line. Lines starting with # are ignored.
+# Format: class | text prompt for the detector
+# Text prompts stay short and visual: detectors match what things look like, not asset names.
+
+# Classes in the Excel pack
+control valve | valve
+process pump | water pump
+electric motor | electric motor
+pressure transmitter | pressure gauge
+vibration sensor | small sensor box
+
+# Equipment in the room with no Excel class
+tank | red tank
+tank | blue tank
+electrical cabinet | electrical cabinet
+pipe | insulated pipe
+
+# Movable items, these add to extraction density
+ladder | ladder
+cart | metal cart
+cage | wire cage
+pallet truck | pallet truck
+vacuum cleaner | vacuum cleaner
+chair | office chair
+box | cardboard box
+crate | plastic crate
+bucket | bucket

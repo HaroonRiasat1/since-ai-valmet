@@ -5,3 +5,11 @@ __pycache__/
 .env
 out/
 *.ply
+extraction/
+assets/
+assets_hq/
+*.mp4
+*.xlsx
+*_work/
+*_cells.csv
+*_path.csv

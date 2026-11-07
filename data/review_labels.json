@@ -1,0 +1,747 @@
+{
+"obj_001": {
+"label": "tank",
+"confidence": "high",
+"note": "blue vessel"
+},
+"obj_002": {
+"label": "cage",
+"confidence": "medium",
+"note": "wire cage trolley"
+},
+"obj_003": {
+"label": "other",
+"confidence": "low",
+"note": "white appliance on stand"
+},
+"obj_004": {
+"label": "pipe",
+"confidence": "high",
+"note": "insulated pipes"
+},
+"obj_005": {
+"label": "unknown",
+"confidence": "low",
+"note": "white covered box on base"
+},
+"obj_006": {
+"label": "tank",
+"confidence": "low",
+"note": "blue vessel bottom"
+},
+"obj_007": {
+"label": "cart",
+"confidence": "medium",
+"note": "shelf trolley with boxes"
+},
+"obj_008": {
+"label": "unknown",
+"confidence": "low",
+"note": "perforated wooden board"
+},
+"obj_009": {
+"label": "pipe",
+"confidence": "high",
+"note": "insulated elbow"
+},
+"obj_010": {
+"label": "tank",
+"confidence": "medium",
+"note": "blue vessel"
+},
+"obj_011": {
+"label": "cart",
+"confidence": "medium",
+"note": "trolley with yellow wheels"
+},
+"obj_012": {
+"label": "reject",
+"confidence": "low",
+"note": "grey panel fragment"
+},
+"obj_013": {
+"label": "ladder",
+"confidence": "high",
+"note": "stepladder"
+},
+"obj_014": {
+"label": "cart",
+"confidence": "medium",
+"note": "hand truck"
+},
+"obj_015": {
+"label": "cage",
+"confidence": "high",
+"note": "wire cage"
+},
+"obj_016": {
+"label": "reject",
+"confidence": "low",
+"note": "blurry"
+},
+"obj_017": {
+"label": "electrical cabinet",
+"confidence": "high",
+"note": "switchgear cabinet"
+},
+"obj_018": {
+"label": "bucket",
+"confidence": "medium",
+"note": "red bucket with cable"
+},
+"obj_019": {
+"label": "pipe",
+"confidence": "high",
+"note": "insulated pipe"
+},
+"obj_020": {
+"label": "ladder",
+"confidence": "medium",
+"note": "steel ladder"
+},
+"obj_021": {
+"label": "bucket",
+"confidence": "medium",
+"note": "black bin"
+},
+"obj_022": {
+"label": "reject",
+"confidence": "low",
+"note": "tiny distant"
+},
+"obj_023": {
+"label": "pipe",
+"confidence": "low",
+"note": "pipe along wall"
+},
+"obj_024": {
+"label": "pipe",
+"confidence": "low",
+"note": "pipe with small valve"
+},
+"obj_025": {
+"label": "pipe",
+"confidence": "high",
+"note": "insulated pipe"
+},
+"obj_026": {
+"label": "reject",
+"confidence": "low",
+"note": "blurry"
+},
+"obj_027": {
+"label": "chair",
+"confidence": "high",
+"note": "office chair"
+},
+"obj_028": {
+"label": "reject",
+"confidence": "low",
+"note": "blurry"
+},
+"obj_029": {
+"label": "reject",
+"confidence": "low",
+"note": "blurry"
+},
+"obj_030": {
+"label": "reject",
+"confidence": "low",
+"note": "grey panel"
+},
+"obj_031": {
+"label": "pipe",
+"confidence": "medium",
+"note": "pipes beside red tank"
+},
+"obj_032": {
+"label": "tank",
+"confidence": "medium",
+"note": "red vessel"
+},
+"obj_033": {
+"label": "unknown",
+"confidence": "low",
+"note": "grey metal box"
+},
+"obj_034": {
+"label": "process pump",
+"confidence": "medium",
+"note": "red circulation pump"
+},
+"obj_035": {
+"label": "pipe",
+"confidence": "medium",
+"note": "insulated pipes"
+},
+"obj_036": {
+"label": "reject",
+"confidence": "low",
+"note": "wall column"
+},
+"obj_037": {
+"label": "pipe",
+"confidence": "high",
+"note": "insulated elbow"
+},
+"obj_038": {
+"label": "tank",
+"confidence": "medium",
+"note": "red vessel"
+},
+"obj_039": {
+"label": "pipe",
+"confidence": "high",
+"note": "insulated pipe"
+},
+"obj_040": {
+"label": "tank",
+"confidence": "medium",
+"note": "red vessel"
+},
+"obj_041": {
+"label": "pipe",
+"confidence": "low",
+"note": "pipe with fittings"
+},
+"obj_042": {
+"label": "tank",
+"confidence": "medium",
+"note": "red tank"
+},
+"obj_043": {
+"label": "pipe",
+"confidence": "medium",
+"note": "insulated pipes"
+},
+"obj_044": {
+"label": "reject",
+"confidence": "low",
+"note": "blurry red"
+},
+"obj_045": {
+"label": "unknown",
+"confidence": "low",
+"note": "cloth over cabinet"
+},
+"obj_046": {
+"label": "other",
+"confidence": "low",
+"note": "small wall units with pipes"
+},
+"obj_047": {
+"label": "reject",
+"confidence": "low",
+"note": "blurry"
+},
+"obj_048": {
+"label": "reject",
+"confidence": "low",
+"note": "unclear"
+},
+"obj_049": {
+"label": "pipe",
+"confidence": "low",
+"note": "pipework"
+},
+"obj_050": {
+"label": "pipe",
+"confidence": "high",
+"note": "insulated pipes"
+},
+"obj_051": {
+"label": "process pump",
+"confidence": "low",
+"note": "purple pump blurry"
+},
+"obj_052": {
+"label": "box",
+"confidence": "high",
+"note": "cardboard box"
+},
+"obj_053": {
+"label": "unknown",
+"confidence": "low",
+"note": "grey box blurry"
+},
+"obj_054": {
+"label": "pipe",
+"confidence": "low",
+"note": "pipework"
+},
+"obj_055": {
+"label": "reject",
+"confidence": "low",
+"note": "blurry"
+},
+"obj_056": {
+"label": "reject",
+"confidence": "low",
+"note": "tiny wall items"
+},
+"obj_057": {
+"label": "box",
+"confidence": "medium",
+"note": "stacked cardboard boxes"
+},
+"obj_058": {
+"label": "pipe",
+"confidence": "low",
+"note": "purple pipe"
+},
+"obj_059": {
+"label": "box",
+"confidence": "low",
+"note": "white box"
+},
+"obj_060": {
+"label": "pallet truck",
+"confidence": "high",
+"note": "pallet jack"
+},
+"obj_061": {
+"label": "reject",
+"confidence": "low",
+"note": "blurry"
+},
+"obj_062": {
+"label": "control valve",
+"confidence": "low",
+"note": "valve on pipe"
+},
+"obj_063": {
+"label": "reject",
+"confidence": "low",
+"note": "pink cloth"
+},
+"obj_064": {
+"label": "box",
+"confidence": "low",
+"note": "white box"
+},
+"obj_065": {
+"label": "reject",
+"confidence": "low",
+"note": "beige panel"
+},
+"obj_066": {
+"label": "box",
+"confidence": "high",
+"note": "cardboard box"
+},
+"obj_067": {
+"label": "bucket",
+"confidence": "medium",
+"note": "black bin"
+},
+"obj_068": {
+"label": "reject",
+"confidence": "low",
+"note": "pipe and wall"
+},
+"obj_069": {
+"label": "other",
+"confidence": "medium",
+"note": "cable coil"
+},
+"obj_070": {
+"label": "unknown",
+"confidence": "low",
+"note": "black bag"
+},
+"obj_071": {
+"label": "crate",
+"confidence": "medium",
+"note": "red crate with cables"
+},
+"obj_072": {
+"label": "electrical cabinet",
+"confidence": "low",
+"note": "cabinet blurry"
+},
+"obj_073": {
+"label": "electrical cabinet",
+"confidence": "medium",
+"note": "green control box"
+},
+"obj_074": {
+"label": "reject",
+"confidence": "low",
+"note": "tiny"
+},
+"obj_075": {
+"label": "pipe",
+"confidence": "high",
+"note": "insulated pipes"
+},
+"obj_076": {
+"label": "control valve",
+"confidence": "low",
+"note": "valve on pipe"
+},
+"obj_077": {
+"label": "electrical cabinet",
+"confidence": "high",
+"note": "white cabinet"
+},
+"obj_078": {
+"label": "pipe",
+"confidence": "high",
+"note": "insulated pipes"
+},
+"obj_079": {
+"label": "pressure transmitter",
+"confidence": "medium",
+"note": "dial gauge"
+},
+"obj_080": {
+"label": "pipe",
+"confidence": "high",
+"note": "insulated pipes"
+},
+"obj_081": {
+"label": "electrical cabinet",
+"confidence": "low",
+"note": "white cabinet"
+},
+"obj_082": {
+"label": "box",
+"confidence": "high",
+"note": "cardboard box"
+},
+"obj_083": {
+"label": "reject",
+"confidence": "low",
+"note": "wall"
+},
+"obj_084": {
+"label": "reject",
+"confidence": "low",
+"note": "wall"
+},
+"obj_085": {
+"label": "crate",
+"confidence": "low",
+"note": "red crate with device"
+},
+"obj_086": {
+"label": "pipe",
+"confidence": "medium",
+"note": "pipes with blue valve"
+},
+"obj_087": {
+"label": "reject",
+"confidence": "low",
+"note": "blurry"
+},
+"obj_088": {
+"label": "electrical cabinet",
+"confidence": "medium",
+"note": "green box with gauge"
+},
+"obj_089": {
+"label": "control valve",
+"confidence": "medium",
+"note": "flanged valve"
+},
+"obj_090": {
+"label": "reject",
+"confidence": "low",
+"note": "wall"
+},
+"obj_091": {
+"label": "pipe",
+"confidence": "high",
+"note": "insulated pipe"
+},
+"obj_092": {
+"label": "other",
+"confidence": "medium",
+"note": "cable coil"
+},
+"obj_093": {
+"label": "chair",
+"confidence": "high",
+"note": "green chair"
+},
+"obj_094": {
+"label": "unknown",
+"confidence": "low",
+"note": "tubes near red crates"
+},
+"obj_095": {
+"label": "other",
+"confidence": "low",
+"note": "cables on floor"
+},
+"obj_096": {
+"label": "reject",
+"confidence": "low",
+"note": "ceiling"
+},
+"obj_097": {
+"label": "reject",
+"confidence": "low",
+"note": "wall"
+},
+"obj_098": {
+"label": "pressure transmitter",
+"confidence": "medium",
+"note": "gauge on pipe"
+},
+"obj_099": {
+"label": "reject",
+"confidence": "low",
+"note": "blurry"
+},
+"obj_100": {
+"label": "control valve",
+"confidence": "low",
+"note": "blue valve blurry"
+},
+"obj_101": {
+"label": "unknown",
+"confidence": "low",
+"note": "black object"
+},
+"obj_102": {
+"label": "unknown",
+"confidence": "low",
+"note": "cream object"
+},
+"obj_103": {
+"label": "reject",
+"confidence": "low",
+"note": "blurry"
+},
+"obj_104": {
+"label": "crate",
+"confidence": "low",
+"note": "red crate"
+},
+"obj_105": {
+"label": "ladder",
+"confidence": "medium",
+"note": "caged ladder"
+},
+"obj_106": {
+"label": "pipe",
+"confidence": "high",
+"note": "insulated pipes"
+},
+"obj_107": {
+"label": "other",
+"confidence": "low",
+"note": "flexible duct"
+},
+"obj_108": {
+"label": "reject",
+"confidence": "low",
+"note": "blurry"
+},
+"obj_109": {
+"label": "reject",
+"confidence": "low",
+"note": "wall"
+},
+"obj_110": {
+"label": "electrical cabinet",
+"confidence": "medium",
+"note": "cabinet"
+},
+"obj_111": {
+"label": "electrical cabinet",
+"confidence": "low",
+"note": "white panel"
+},
+"obj_112": {
+"label": "reject",
+"confidence": "low",
+"note": "tiny"
+},
+"obj_113": {
+"label": "reject",
+"confidence": "low",
+"note": "blurry"
+},
+"obj_114": {
+"label": "unknown",
+"confidence": "low",
+"note": "black blurry object"
+},
+"obj_115": {
+"label": "electrical cabinet",
+"confidence": "low",
+"note": "white panel"
+},
+"obj_116": {
+"label": "tank",
+"confidence": "medium",
+"note": "red vessel"
+},
+"obj_117": {
+"label": "reject",
+"confidence": "low",
+"note": "blurry"
+},
+"obj_118": {
+"label": "reject",
+"confidence": "low",
+"note": "wall"
+},
+"obj_119": {
+"label": "reject",
+"confidence": "low",
+"note": "wall"
+},
+"obj_120": {
+"label": "bucket",
+"confidence": "low",
+"note": "black bucket"
+},
+"obj_121": {
+"label": "bucket",
+"confidence": "low",
+"note": "white bucket"
+},
+"obj_122": {
+"label": "box",
+"confidence": "medium",
+"note": "white box"
+},
+"obj_123": {
+"label": "pipe",
+"confidence": "high",
+"note": "insulated pipes"
+},
+"obj_124": {
+"label": "reject",
+"confidence": "low",
+"note": "orange plastic"
+},
+"obj_125": {
+"label": "reject",
+"confidence": "low",
+"note": "dark"
+},
+"obj_126": {
+"label": "electrical cabinet",
+"confidence": "medium",
+"note": "cabinet"
+},
+"obj_127": {
+"label": "reject",
+"confidence": "low",
+"note": "wall"
+},
+"obj_128": {
+"label": "other",
+"confidence": "medium",
+"note": "radiator"
+},
+"obj_129": {
+"label": "pressure transmitter",
+"confidence": "medium",
+"note": "dial gauge"
+},
+"obj_130": {
+"label": "reject",
+"confidence": "low",
+"note": "blurry"
+},
+"obj_131": {
+"label": "pressure transmitter",
+"confidence": "medium",
+"note": "dial gauge"
+},
+"obj_132": {
+"label": "bucket",
+"confidence": "medium",
+"note": "black bin"
+},
+"obj_133": {
+"label": "reject",
+"confidence": "low",
+"note": "pink cloth"
+},
+"obj_134": {
+"label": "electrical cabinet",
+"confidence": "low",
+"note": "cabinet with cables"
+},
+"obj_135": {
+"label": "box",
+"confidence": "low",
+"note": "white box"
+},
+"obj_136": {
+"label": "reject",
+"confidence": "low",
+"note": "unclear"
+},
+"obj_137": {
+"label": "reject",
+"confidence": "low",
+"note": "tiny"
+},
+"obj_138": {
+"label": "reject",
+"confidence": "low",
+"note": "blurry"
+},
+"obj_139": {
+"label": "reject",
+"confidence": "low",
+"note": "tiny"
+},
+"obj_140": {
+"label": "reject",
+"confidence": "low",
+"note": "unclear"
+},
+"obj_141": {
+"label": "reject",
+"confidence": "low",
+"note": "tiny"
+},
+"obj_142": {
+"label": "reject",
+"confidence": "low",
+"note": "blurry"
+},
+"obj_143": {
+"label": "reject",
+"confidence": "low",
+"note": "wall strip"
+},
+"obj_144": {
+"label": "unknown",
+"confidence": "low",
+"note": "white bag"
+},
+"obj_145": {
+"label": "reject",
+"confidence": "low",
+"note": "unclear"
+},
+"obj_146": {
+"label": "other",
+"confidence": "medium",
+"note": "cable coil"
+},
+"obj_147": {
+"label": "box",
+"confidence": "low",
+"note": "cardboard"
+},
+"obj_148": {
+"label": "reject",
+"confidence": "low",
+"note": "dark tiny"
+},
+"obj_149": {
+"label": "reject",
+"confidence": "low",
+"note": "unclear"
+}
+}
