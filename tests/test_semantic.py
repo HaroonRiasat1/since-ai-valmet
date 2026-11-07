@@ -17,8 +17,8 @@ def test_every_declared_column_exists_in_the_data(layer):
 
 
 def test_row_counts_match_the_pack(layer):
-    expected = {"asset": 30, "asset_state": 30, "telemetry": 4320, "event": 1000, "work_order": 300, "service_case": 50,
-                "knowledge_doc": 8, "data_quality_issue": 120, "asset_location": 30}
+    expected = {"asset": 40, "asset_state": 40, "telemetry": 4320, "event": 1000, "work_order": 300, "service_case": 50,
+                "knowledge_doc": 11, "data_quality_issue": 120, "asset_location": 40}
     for name, count in expected.items():
         spec = {"entity": name, "measures": ["count"]}
         if name == "telemetry":

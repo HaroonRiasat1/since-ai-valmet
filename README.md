@@ -10,6 +10,8 @@ All plant data is the synthetic builder pack supplied for the challenge.
 
 - **Extraction:** 168 objects found in the scan, with 30 assets mapped to them. 23 of the 30 sit on an object that
   matches their class. The other 7 are shown as unconfirmed, never as fact.
+- **BIM export (optional):** stages 8–12 of the extraction pipeline write **IFC4** and a **GLB overlay** under
+  `web/data/bim/` (toggle **BIM** in the viewer). See `Objects-Extraction/GroundingDino-SAM2/docs/bim-export.md`.
 - **Navigation:** two selectable grids (5 cm occupancy and a numbered 60×60 grid), From and To by tag or cell number,
   a floor overlay and a 2D map.
 - **Assistant:** "go to the valve" routes from the current position. "What should we fix first?" queries the plant

@@ -986,7 +986,8 @@
       },
       "class_confidence": "medium",
       "source": "grounded-sam-2",
-      "note": "Grounded-SAM-2 Electrical_cabinet_00: seen in 7 of 7 views, score 0.42, 7142 splats. Overlaps obj_017 (electrical cabinet, linked to VS-002) in the scan layer."
+      "note": "Grounded-SAM-2 Electrical_cabinet_00: seen in 7 of 7 views, score 0.42, 7142 splats. Overlaps obj_017 (electrical cabinet, linked to VS-002) in the scan layer.",
+      "tag": "EC-001"
     },
     {
       "id": "electrical_cabinet_01",
@@ -1005,7 +1006,8 @@
       },
       "class_confidence": "low",
       "source": "grounded-sam-2",
-      "note": "Grounded-SAM-2 Electrical_cabinet_01: seen in 4 of 10 views, score 0.38, 1010 splats. Overlaps obj_077 (electrical cabinet) in the scan layer."
+      "note": "Grounded-SAM-2 Electrical_cabinet_01: seen in 4 of 10 views, score 0.38, 1010 splats. Overlaps obj_077 (electrical cabinet) in the scan layer.",
+      "tag": "EC-002"
     },
     {
       "id": "fan_00",
@@ -1480,7 +1482,8 @@
       },
       "class_confidence": "medium",
       "source": "grounded-sam-2",
-      "note": "Grounded-SAM-2 Handwheel_valve_00: seen in 10 of 18 views, score 0.30, 597 splats."
+      "note": "Grounded-SAM-2 Handwheel_valve_00: seen in 10 of 18 views, score 0.30, 597 splats.",
+      "tag": "HV-001"
     },
     {
       "id": "handwheel_valve_01",
@@ -1499,7 +1502,8 @@
       },
       "class_confidence": "low",
       "source": "grounded-sam-2",
-      "note": "Grounded-SAM-2 Handwheel_valve_01: seen in 3 of 3 views, score 0.28, 96 splats."
+      "note": "Grounded-SAM-2 Handwheel_valve_01: seen in 3 of 3 views, score 0.28, 96 splats.",
+      "tag": "HV-002"
     },
     {
       "id": "handwheel_valve_02",
@@ -1518,7 +1522,8 @@
       },
       "class_confidence": "low",
       "source": "grounded-sam-2",
-      "note": "Grounded-SAM-2 Handwheel_valve_02: seen in 4 of 13 views, score 0.27, 944 splats."
+      "note": "Grounded-SAM-2 Handwheel_valve_02: seen in 4 of 13 views, score 0.27, 944 splats.",
+      "tag": "HV-003"
     },
     {
       "id": "handwheel_valve_03",
@@ -1537,7 +1542,8 @@
       },
       "class_confidence": "low",
       "source": "grounded-sam-2",
-      "note": "Grounded-SAM-2 Handwheel_valve_03: seen in 3 of 9 views, score 0.26, 1393 splats."
+      "note": "Grounded-SAM-2 Handwheel_valve_03: seen in 3 of 9 views, score 0.26, 1393 splats.",
+      "tag": "HV-004"
     },
     {
       "id": "handwheel_valve_04",
@@ -1556,7 +1562,8 @@
       },
       "class_confidence": "low",
       "source": "grounded-sam-2",
-      "note": "Grounded-SAM-2 Handwheel_valve_04: seen in 5 of 14 views, score 0.25, 852 splats."
+      "note": "Grounded-SAM-2 Handwheel_valve_04: seen in 5 of 14 views, score 0.25, 852 splats.",
+      "tag": "HV-005"
     },
     {
       "id": "handwheel_valve_05",
@@ -1575,7 +1582,8 @@
       },
       "class_confidence": "low",
       "source": "grounded-sam-2",
-      "note": "Grounded-SAM-2 Handwheel_valve_05: seen in 3 of 3 views, score 0.25, 403 splats."
+      "note": "Grounded-SAM-2 Handwheel_valve_05: seen in 3 of 3 views, score 0.25, 403 splats.",
+      "tag": "HV-006"
     },
     {
       "id": "handwheel_valve_06",
@@ -1594,7 +1602,8 @@
       },
       "class_confidence": "low",
       "source": "grounded-sam-2",
-      "note": "Grounded-SAM-2 Handwheel_valve_06: seen in 2 of 3 views, score 0.25, 480 splats."
+      "note": "Grounded-SAM-2 Handwheel_valve_06: seen in 2 of 3 views, score 0.25, 480 splats.",
+      "tag": "HV-007"
     },
     {
       "id": "insulated_panel_00",
@@ -2563,7 +2572,8 @@
       },
       "class_confidence": "low",
       "source": "grounded-sam-2",
-      "note": "Grounded-SAM-2 Valve_actuator_00: seen in 2 of 2 views, score 0.25, 188 splats."
+      "note": "Grounded-SAM-2 Valve_actuator_00: seen in 2 of 2 views, score 0.25, 188 splats.",
+      "tag": "VA-001"
     },
     {
       "id": "washing_machine_00",

@@ -29,3 +29,6 @@ A DeepSeek model summarizes the equipment's condition and likely issues from the
 
 ### 5. Assisted Field Navigation
 Guides the field technician through the room to the equipment, using the navigation, semantic layer and AI summary together.
+
+### 6. Scan-to-BIM (IFC4) overlay
+Pipeline stages 8–12 in Grounding DINO + SAM 2 export an **IFC4** model and a semi-transparent **GLB** in scan coordinates. The web viewer’s **BIM** toggle lines walls and equipment up with the splat and existing semantic boxes. See [`Objects-Extraction/GroundingDino-SAM2/docs/bim-export.md`](Objects-Extraction/GroundingDino-SAM2/docs/bim-export.md).

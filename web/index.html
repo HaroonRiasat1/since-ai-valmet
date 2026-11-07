@@ -33,8 +33,8 @@
   #load { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:10px; z-index:9; background:var(--bg); }
   #bar { width:320px; height:6px; background:#222a33; border-radius:4px; overflow:hidden; }
   #bar i { display:block; height:100%; width:0; background:var(--acc); }
-  .lbl { position:fixed; pointer-events:none; transform:translate(-50%,-100%); font-size:11px; padding:2px 7px;
-         border-radius:5px; background:rgba(12,15,20,.85); border:1px solid; white-space:nowrap; }
+  .lbl { position:fixed; pointer-events:none; transform:translate(-50%,-100%); font-size:11px; font-weight:600;
+         padding:2px 7px; border-radius:5px; background:rgba(10,12,16,.94); border:1px solid; white-space:nowrap; }
   #copilot { display:none; }
   #copilot.show { display:block; }
   #copilot .card { border-color:#5a3434; background:#1b1416; }
@@ -46,9 +46,6 @@
   select { background:#1d242d; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:5px 6px; font:inherit; max-width:230px; }
   select.on { background:#20354d; border-color:var(--acc); }
   #pick-hint { position:fixed; top:70px; left:50%; transform:translateX(-50%); padding:6px 12px; display:none; }
-  .stop { display:flex; gap:6px; align-items:center; font-size:12px; padding:2px 0; }
-  .stop i { width:8px; height:8px; border-radius:50%; display:inline-block; }
-  .stop.done { opacity:.45; }
   #coords input { background:#0f1216; color:var(--text); border:1px solid var(--line); border-radius:5px; padding:3px 5px; font:inherit; }
   #avpanel { left:12px; padding:10px 12px; width:260px; display:none; }
   #avpanel .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin:6px 0 8px; }
@@ -61,12 +58,6 @@
   #nav h2 { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--mut); margin:0 0 6px; }
   #nav .f { display:grid; grid-template-columns:44px 1fr; gap:5px 8px; align-items:center; }
   #nav input, #nav select { width:100%; max-width:none; background:#0f1216; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:5px 7px; font:inherit; }
-  #chatlog { max-height:170px; overflow-y:auto; margin-bottom:6px; }
-  #chatlog .q { color:var(--mut); margin-top:6px; }
-  #chatlog .tw { overflow-x:auto; margin-top:6px; }
-  #chatlog table { border-collapse:collapse; font-size:11px; white-space:nowrap; }
-  #chatlog th, #chatlog td { border:1px solid var(--line); padding:2px 5px; text-align:left; }
-  #chatform { display:flex; gap:6px; }
   #nav .b { display:flex; gap:6px; margin-top:7px; flex-wrap:wrap; }
   #navmsg { min-height:16px; margin-top:6px; }
   #minimap { position:fixed; left:12px; top:118px; border:1px solid var(--line); border-radius:8px; background:#0f1216; display:none; }
@@ -92,12 +83,15 @@
   <button id="reset">↺ Reset</button>
   <button id="follow" class="on" title="Camera mode (V)">First person</button>
   <button id="allbox">All boxes</button>
+  <button id="healthbtn" class="on" title="Blinking centre lights on degrading assets (H)">Health lights</button>
+  <button id="bimbtn" style="display:none" title="IFC overlay (scan coordinates)">BIM</button>
   <select id="classsel" title="Show only the boxes of one class"></select>
   <select id="sourcesel" title="Show only the boxes from one source"></select>
   <button id="gridbtn" title="Show the navigation grid on the floor (G)">Grid</button>
   <button id="mapbtn" class="on" title="2D map (M)">Map</button>
   <button id="coordsbtn">XYZ</button>
   <button id="avbtn">Avatar</button>
+  <button id="restorebtn" style="display:none" title="Reload and bring back objects removed this session">Restore removed</button>
   <label>radius <input id="rad" type="range" min="0.5" max="3" step="0.1" value="1.5"><span id="radv">1.5 m</span></label>
   <label>speed <input id="spd" type="range" min="0.3" max="3" step="0.1" value="1"><span id="spdv">1.0×</span></label>
 </div>
@@ -107,7 +101,6 @@
 <div id="keyhint" class="mut" style="position:fixed;bottom:52px;left:12px">Tip: press W/A/S/D or arrow keys to walk yourself</div>
 
 <div id="side" class="panel">
-  <div id="mission" class="card"></div>
   <div id="copilot"></div>
   <h2>Nearby assets <span id="ncount" class="mut"></span></h2>
   <div id="near"></div>
@@ -118,19 +111,10 @@
   <form id="navform" class="f">
     <label for="gridsel">Grid</label><select id="gridsel"></select>
     <label for="from">From</label><input id="from" placeholder="here, a cell number or a tag" value="here">
-    <label for="to">To</label><input id="to" placeholder="a tag like CV-003 or a cell number">
+    <label for="to">To</label><select id="to" title="Mapped assets with health and telemetry"></select>
     <span></span><div class="b" style="margin-top:0"><button>Go</button><button type="button" id="stopbtn">Stop</button></div>
   </form>
   <div id="navmsg" class="mut"></div>
-  <h2 style="margin-top:10px">Assistant</h2>
-  <div id="chatlog" aria-live="polite"></div>
-  <form id="chatform"><input id="chatin" aria-label="Message" placeholder="go to the nearest valve" maxlength="500" autocomplete="off"><button>Send</button></form>
-  <h2 style="margin-top:10px">AI provider</h2>
-  <div class="f">
-    <label for="prov">Use</label><select id="prov"></select>
-    <label for="modelsel">Model</label><select id="modelsel"></select>
-  </div>
-  <div id="provmsg" class="mut" style="margin-top:6px"></div>
 </div>
 <canvas id="minimap" width="240" height="240" title="Yellow free, red blocked, purple route, white you"></canvas>
 <div id="coords" class="panel" style="display:none;bottom:52px;left:12px;padding:8px 12px;font:12px ui-monospace,Menlo,monospace;min-width:300px">
@@ -159,19 +143,74 @@
 <script type="module">
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { SparkRenderer, SplatMesh } from "@sparkjsdev/spark";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { SparkRenderer, SplatMesh, SplatEdit, SplatEditSdf, SplatEditSdfType, SplatEditRgbaBlendMode } from "@sparkjsdev/spark";
 
 const $ = (id) => document.getElementById(id);
 const COL = { healthy:"#3ecf8e", watch:"#f5b942", degraded:"#ff8a3d", attention_required:"#ff5d5d", none:"#7d8794" };
 const stateCol = (it) => it.tag ? (COL[it.state] || "#5aa9ff") : COL.none;
 const human = (s) => String(s).replace(/_/g, " ").toLowerCase();
+const itemCls = (it) => it.label || human(it.asset_class || "unknown");
+const CLASS_COL = {
+  "control valve": "#3d8fd9", "process pump": "#2db86a", "electric motor": "#d4a017",
+  "pressure transmitter": "#9b5de5", "vibration sensor": "#e07b39",
+  "electrical cabinet": "#c9a227", "handwheel valve": "#2a9d8f", "valve_actuator": "#d9488f",
+  "valve actuator": "#d9488f", "valve": "#4a8fd4", "pump": "#2db86a", "motor": "#d4a017",
+  "pipe": "#2e5fb8", "door": "#c47b3a", "fan": "#e89b1f", "tank": "#7b4fd4",
+  "ladder": "#8b93a8", "chair": "#6f8f5a", "box": "#1fa8b8", "cart": "#6faa14",
+  "washing machine": "#5c6bc0", "black plastic bag": "#3d4a6b",
+};
+const classCol = (cls) => {
+  const k = String(cls || "unknown").toLowerCase().trim();
+  if (CLASS_COL[k]) return CLASS_COL[k];
+  let h = 5381;
+  for (let i = 0; i < k.length; i++) h = ((h << 5) + h) ^ k.charCodeAt(i);
+  return "#" + new THREE.Color().setHSL((Math.abs(h) % 360) / 360, 0.82, 0.48).getHexString();
+};
+const BOX_FILL_LIT = 0.1, BOX_FILL_DIM = 0.04, BOX_EDGE_DIM = 0.92, BOX_EDGE_HI = 1;
+const BOX_EDGE_UNIT = new THREE.CylinderGeometry(1, 1, 1, 8);
+const BOX_EDGE_Q = new THREE.Quaternion(), BOX_EDGE_A = new THREE.Vector3(), BOX_EDGE_B = new THREE.Vector3();
+const BOX_EDGE_UP = new THREE.Vector3(0, 1, 0);
+const BOX_CORNERS = (hx, hy, hz) => [
+  [-hx, -hy, -hz], [hx, -hy, -hz], [-hx, hy, -hz], [hx, hy, -hz],
+  [-hx, -hy, hz], [hx, -hy, hz], [-hx, hy, hz], [hx, hy, hz],
+];
+const BOX_PAIRS = [[0, 1], [2, 3], [4, 5], [6, 7], [0, 2], [1, 3], [4, 6], [5, 7], [0, 4], [1, 5], [2, 6], [3, 7]];
+function edgeRadius(size) {
+  const m = Math.min(...size);
+  return Math.min(0.006, Math.max(0.0015, m * 0.011));
+}
+function thickWireBox(hx, hy, hz, radius, colorHex) {
+  const grp = new THREE.Group();
+  const mat = new THREE.MeshBasicMaterial({ color: colorHex, transparent: true, opacity: 1, toneMapped: false });
+  grp.userData.edgeMat = mat;
+  const corners = BOX_CORNERS(hx, hy, hz);
+  const r = Math.max(radius, 0.00125);
+  for (const [a, b] of BOX_PAIRS) {
+    BOX_EDGE_A.set(...corners[a]); BOX_EDGE_B.set(...corners[b]);
+    const len = BOX_EDGE_A.distanceTo(BOX_EDGE_B);
+    if (len < 1e-5) continue;
+    const mesh = new THREE.Mesh(BOX_EDGE_UNIT, mat);
+    const mid = BOX_EDGE_A.clone().add(BOX_EDGE_B).multiplyScalar(0.5);
+    BOX_EDGE_Q.setFromUnitVectors(BOX_EDGE_UP, BOX_EDGE_B.clone().sub(BOX_EDGE_A).normalize());
+    mesh.position.copy(mid); mesh.quaternion.copy(BOX_EDGE_Q); mesh.scale.set(r, len, r);
+    grp.add(mesh);
+  }
+  grp.renderOrder = 3;
+  return grp;
+}
+function setEdgeColor(grp, hex) { grp.userData.edgeMat?.color.set(hex); }
+function setEdgeOpacity(grp, op) { if (grp.userData.edgeMat) grp.userData.edgeMat.opacity = op; }
 
 // ---------- data
 const scene_ = await (await fetch("data/scene.json")).json();
 const { items, copilot, frame, navgrid: NG } = scene_;
 const UP = frame.up_axis, H = [0,1,2].filter(a => a !== UP), sgn = frame.down_sign;
-const mapped = items.filter(i => i.tag);
-const byTag = Object.fromEntries(mapped.map(i => [i.tag, i]));
+let mapped = items.filter(i => i.tag);
+let byTag = Object.fromEntries(mapped.map(i => [i.tag, i]));
+const REM_KEY = "fsn_removed_v1";
+let removedStore = [];
+try { removedStore = JSON.parse(localStorage.getItem(REM_KEY) || "[]"); } catch { removedStore = []; }
 
 // ---------- nav grid (same map the Python planner built)
 const b64 = (s) => Uint8Array.from(atob(s), c => c.charCodeAt(0));
@@ -236,6 +275,37 @@ function plan(startCell, it) {
   const g = goalNear(it); const raw = g && astar(startCell, g);
   return raw ? simplify(raw).map(([i, j]) => worldOf(i, j)) : null;
 }
+function recomputeClearance() {
+  const INF = 1e6, dist = new Float32Array(GH * GW);
+  for (let k = 0; k < GH * GW; k++) dist[k] = walk[k] ? INF : 0;
+  for (let i = 0; i < GH; i++) for (let j = 0; j < GW; j++) {
+    const k = i * GW + j;
+    if (!walk[k]) continue;
+    let m = dist[k];
+    if (i > 0) m = Math.min(m, dist[(i - 1) * GW + j] + 1);
+    if (j > 0) m = Math.min(m, dist[i * GW + j - 1] + 1);
+    dist[k] = m;
+  }
+  for (let i = GH - 1; i >= 0; i--) for (let j = GW - 1; j >= 0; j--) {
+    const k = i * GW + j;
+    if (!walk[k]) { clear[k] = 0; continue; }
+    let m = dist[k];
+    if (i < GH - 1) m = Math.min(m, dist[(i + 1) * GW + j] + 1);
+    if (j < GW - 1) m = Math.min(m, dist[i * GW + j + 1] + 1);
+    clear[k] = Math.min(255, Math.round(m));
+  }
+}
+function freeGridCells(it, pad = 0.03) {
+  const lo = [], hi = [];
+  for (const a of H) { lo.push(it.center[a] - it.size[a] / 2 - pad); hi.push(it.center[a] + it.size[a] / 2 + pad); }
+  for (let i = 0; i < GH; i++) for (let j = 0; j < GW; j++) {
+    const w = worldOf(i, j);
+    const x = w.getComponent(NG.horiz[0]), z = w.getComponent(NG.horiz[1]);
+    if (x >= lo[0] && x <= hi[0] && z >= lo[1] && z <= hi[1]) walk[i * GW + j] = 1;
+  }
+  recomputeClearance();
+  mapDirty = true;
+}
 
 // ---------- backend routing. Static hosting has no backend, so the page falls back to the in-page planner.
 let backend = false, gridName = "fine";
@@ -292,16 +362,158 @@ function askForPly() {
 let src; try { src = await loadBundled(); } catch { src = await askForPly(); }
 $("loadtxt") && ($("loadtxt").textContent = "Decoding splats…");
 const splat = new SplatMesh(src); world.add(splat); await splat.initialized;
+const splatRemover = new SplatEdit({ rgbaBlendMode: SplatEditRgbaBlendMode.MULTIPLY });
+splat.add(splatRemover);
+function splatHideBox(it, pad = 0.025) {
+  const sdf = new SplatEditSdf({ type: SplatEditSdfType.BOX, opacity: 0, radius: 0.02 });
+  sdf.position.set(it.center[0], it.center[1], it.center[2]);
+  sdf.scale.set(it.size[0] / 2 + pad, it.size[1] / 2 + pad, it.size[2] / 2 + pad);
+  splatRemover.add(sdf);
+  return sdf;
+}
 $("load").remove();
 
-// ---------- boxes
+// ---------- health degradation beacons (centre blinkers, independent of box visibility)
+const HEALTH_BEACON_COL = { attention_required: 0xff5d5d, degraded: 0xff8a3d };
+const healthBeaconKind = (it) => (it.tag && (it.state === "attention_required" || it.state === "degraded")) ? it.state : null;
+function makeHealthBeacon(state) {
+  const color = HEALTH_BEACON_COL[state];
+  const mat = (op, add = false) => new THREE.MeshBasicMaterial({
+    color, transparent: true, opacity: op, depthWrite: false, depthTest: false,
+    blending: add ? THREE.AdditiveBlending : THREE.NormalBlending, toneMapped: false });
+  const halo = new THREE.Mesh(new THREE.SphereGeometry(1.7, 10, 10), mat(0.09, true));
+  const glow = new THREE.Mesh(new THREE.SphereGeometry(1, 12, 12), mat(0.28, true));
+  const core = new THREE.Mesh(new THREE.SphereGeometry(0.38, 10, 10), mat(0.92));
+  const g = new THREE.Group();
+  g.add(halo, glow, core);
+  g.userData = { state, core, glow, halo };
+  g.renderOrder = 600;
+  return g;
+}
+function sizeHealthBeacon(g, it) {
+  const extent = Math.max(...it.size);
+  g.scale.setScalar(Math.max(0.052, extent * 0.28));
+}
+function pulseHealthBeacon(g, phase) {
+  const fast = g.userData.state === "attention_required";
+  const wave = 0.5 + 0.5 * Math.sin(phase * (fast ? 4.6 : 2.9));
+  const hi = 0.35 + 0.65 * wave;
+  g.userData.core.material.opacity = hi;
+  g.userData.glow.material.opacity = 0.1 + 0.26 * hi;
+  g.userData.halo.material.opacity = 0.05 + 0.14 * hi;
+  g.userData.glow.scale.setScalar(0.88 + 0.42 * wave);
+  g.userData.halo.scale.setScalar(0.95 + 0.55 * wave);
+}
+const healthBeacons = new THREE.Group();
+world.add(healthBeacons);
+
+// ---------- boxes (thick wireframe edges — GL line width is always 1px)
 const boxObjs = items.map(it => {
-  const g = new THREE.BoxGeometry(...it.size);
-  const edges = new THREE.LineSegments(new THREE.EdgesGeometry(g), new THREE.LineBasicMaterial({ color: stateCol(it), transparent:true, opacity:0.9 }));
-  const fill = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: stateCol(it), transparent:true, opacity:0.12, depthWrite:false }));
+  const size = it.size;
+  const cls = itemCls(it);
+  const col = classCol(cls);
+  const hx = size[0] / 2, hy = size[1] / 2, hz = size[2] / 2;
+  const edges = thickWireBox(hx, hy, hz, edgeRadius(size), col);
+  const g = new THREE.BoxGeometry(...size);
+  const fill = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: BOX_FILL_DIM, depthWrite: false, toneMapped: false }));
   const grp = new THREE.Group(); grp.add(edges, fill); grp.position.set(...it.center); grp.visible = false; world.add(grp);
-  return { it, grp, edges, fill, cls: it.label || human(it.asset_class || "unknown"), src: it.source || "unknown" };   // mapped assets carry their Excel class, not a detector label
+  let beacon = null;
+  const hb = healthBeaconKind(it);
+  if (hb) {
+    beacon = makeHealthBeacon(hb);
+    sizeHealthBeacon(beacon, it);
+    beacon.position.set(...it.center);
+    healthBeacons.add(beacon);
+  }
+  return { it, grp, edges, fill, cls, src: it.source || "unknown", beacon };
 });
+async function removeObject(b, { skipConfirm = false, skipPersist = false } = {}) {
+  const it = b.it;
+  const tag = it.tag;
+  const onRoute = tag && (stops.some(st => st.tag === tag) || $("target").value === tag);
+  if (!skipConfirm && (tag || onRoute)) {
+    const msg = tag ? `Remove mapped asset ${tag} from this session? Routes and copilot will ignore it until you restore.`
+      : `Remove ${it.id} from the scene?`;
+    if (!confirm(msg)) return;
+  }
+  if (backend) {
+    try { await api(`api/objects/${encodeURIComponent(it.id)}/remove`, {}); }
+    catch (e) { navNote(`Could not remove on server: ${e.message}`, true); return; }
+  }
+  splatHideBox(it);
+  freeGridCells(it);
+  goalCache.delete(it.id);
+  world.remove(b.grp);
+  b.grp.traverse(o => { o.geometry?.dispose(); if (o.material) { (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m.dispose()); } });
+  if (b.beacon) {
+    healthBeacons.remove(b.beacon);
+    b.beacon.traverse(o => { o.geometry?.dispose(); if (o.material) { (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m.dispose()); } });
+    b.beacon = null;
+  }
+  const ix = boxObjs.indexOf(b);
+  if (ix >= 0) boxObjs.splice(ix, 1);
+  const jx = items.indexOf(it);
+  if (jx >= 0) items.splice(jx, 1);
+  if (!skipPersist) { removedStore.push({ id: it.id, it: JSON.parse(JSON.stringify(it)) }); saveRemovedStore(); updateRestoreBtn(); }
+  if (tag) {
+    stops = stops.filter(st => st.tag !== tag);
+    refreshAssetSelects();
+    if ($("target").value && byTag[$("target").value]) routeTo($("target").value);
+  }
+  if (selBox === b) clearAnalysis();
+  lastList = "";
+  fillFilters();
+  drawMap();
+}
+async function applyStoredRemovals() {
+  if (!removedStore.length) return;
+  for (const { id } of removedStore) {
+    const b = boxObjs.find(x => x.it.id === id);
+    if (b) await removeObject(b, { skipConfirm: true, skipPersist: true });
+  }
+  updateRestoreBtn();
+}
+async function syncRemovedToBackend() {
+  if (!backend || !removedStore.length) return;
+  for (const { id } of removedStore) {
+    try { await api(`api/objects/${encodeURIComponent(id)}/remove`, {}); } catch {}
+  }
+}
+
+// ---------- BIM GLB overlay (stages 8–12)
+let bimRoot = null, bimVisible = false, bimLoaded = false, bimIndexByGid = {}, bimByMesh = new Map();
+fetch("data/bim/index.json").then(r => r.ok ? r.json() : null).then(j => {
+  if (!j?.elements) return;
+  for (const e of j.elements) bimIndexByGid[e.global_id] = e;
+  $("bimbtn").style.display = "";
+  if (new URLSearchParams(location.search).has("bim")) $("bimbtn").click();
+}).catch(() => {});
+$("bimbtn").onclick = async () => {
+  if (!bimLoaded) {
+    $("bimbtn").disabled = true;
+    try {
+      const gltf = await new GLTFLoader().loadAsync("data/bim/equipment_room.glb");
+      bimRoot = gltf.scene;
+      bimRoot.traverse(o => {
+        if (!o.isMesh) return;
+        o.material = o.material.clone();
+        const hasVtxCol = !!(o.geometry?.attributes?.color);
+        o.material.vertexColors = hasVtxCol;
+        o.material.transparent = true;
+        o.material.opacity = hasVtxCol ? 0.9 : 0.4;
+        o.material.depthWrite = !hasVtxCol;
+        o.material.toneMapped = false;
+        const meta = bimIndexByGid[o.name];
+        if (meta) bimByMesh.set(o, meta);
+      });
+      world.add(bimRoot);
+      bimLoaded = true;
+    } finally { $("bimbtn").disabled = false; }
+  }
+  bimVisible = !bimVisible;
+  if (bimRoot) bimRoot.visible = bimVisible;
+  $("bimbtn").classList.toggle("on", bimVisible);
+};
 
 // ---------- avatar (scaled to the scan: ceiling is ~2.1 units above the floor)
 const AVATAR_H = 0.75;
@@ -391,7 +603,7 @@ scene.add(startMarker);
 // ---------- route state: a route is a list of legs, each ending at a stop (an asset)
 let pts = [], cum = [0], pathLen = 0, stops = [], stopIdx = 0, pathLine = null;
 let startCell = cellOf(new THREE.Vector3(...scene_.path[0]));
-let s = 0, playing = false, finished = false, camMode = "fp", showAll = false, radius = 1.5, speed = 1.0;
+let s = 0, playing = false, finished = false, camMode = "fp", showAll = false, showHealthBeacons = true, radius = 1.5, speed = 1.0;
 let focusTag = null;                                             // asset whose copilot is shown
 let mapDirty = true, showMap = true;
 const drawMap = () => { mapDirty = true; };
@@ -430,7 +642,7 @@ function setRoute(legs) {                    // legs: [{ tag, pts:[Vector3...] }
   s = 0; stopIdx = 0; playing = false; finished = false; focusTag = null; selBox = null;
   if (typeof manual !== "undefined") { manual = false; $("drive").style.display = "none"; }
   $("copilot").classList.remove("show"); $("play").textContent = "▶ Start";
-  renderMission(); snapCam(); drawMap();
+  snapCam(); drawMap();
 }
 async function routeTo(tag, position) {
   if (backend) {
@@ -441,7 +653,7 @@ async function routeTo(tag, position) {
     return;
   }
   const p = plan(startCell, byTag[tag]);
-  if (!p) { $("mission").innerHTML = `<b>No walkable route to ${tag}</b><div class="mut">Try another start point.</div>`; return; }
+  if (!p) { navNote(`No walkable route to ${tag}. Try another start point.`, true); return; }
   setRoute([{ tag, pts: p }]);
 }
 const navNote = (text, bad) => { $("navmsg").textContent = text; $("navmsg").style.color = bad ? "#ff5d5d" : ""; };
@@ -553,17 +765,27 @@ function card(it, d) {
     ${vlmLine(it)}
     ${showXYZ ? `<div class="mut" style="font-family:ui-monospace,monospace">centre ${it.center.map(v => v.toFixed(2)).join(", ")} · size ${it.size.map(v => v.toFixed(2)).join(" × ")}</div>` : ""}</div>`;
 }
-function renderMission() {
-  if (!stops.length) { $("mission").innerHTML = `<div class="row"><b>Mission</b><span class="mut">${pathLen.toFixed(1)} m</span></div><div class="mut">Walking to a floor cell.</div>`; return; }
-  const list = stops.map((st, k) => { const it = byTag[st.tag];
-    return `<div class="stop ${k < stopIdx ? "done" : ""}"><i style="background:${stateCol(it)}"></i>${k+1}. <b>${st.tag}</b>
-      <span class="mut">${human(it.state)} · ${it.health} · ${st.d.toFixed(1)} m</span></div>`; }).join("");
-  $("mission").innerHTML = `<div class="row"><b>${stops.length > 1 ? "Inspection round" : "Mission"}</b>
-    <span class="mut">${pathLen.toFixed(1)} m</span></div>${list}
-    <div class="mut" style="margin-top:4px">${items.length} objects extracted, ${mapped.filter(i => i.matched !== false).length} of ${mapped.length} assets on a matching object.</div>`;
+const assetOpt = (i) => `<option value="${i.tag}">${i.tag} · ${human(i.asset_class)} · ${human(i.state)} · ${i.health}</option>`;
+function refreshAssetSelects() {
+  const opts = [...items.filter(i => i.tag)].sort((a, b) => a.health - b.health);
+  const html = opts.map(assetOpt).join("");
+  const cur = $("target").value;
+  $("target").innerHTML = html;
+  $("to").innerHTML = html;
+  mapped = opts;
+  byTag = Object.fromEntries(mapped.map(i => [i.tag, i]));
+  if (cur && byTag[cur]) { $("target").value = cur; $("to").value = cur; }
+  else if (opts[0]) { $("target").value = opts[0].tag; $("to").value = opts[0].tag; }
 }
-const opts = [...mapped].sort((a, b) => a.health - b.health);
-$("target").innerHTML = opts.map(i => `<option value="${i.tag}">${i.tag} · ${human(i.state)} · ${i.health}</option>`).join("");
+refreshAssetSelects();
+function saveRemovedStore() { try { localStorage.setItem(REM_KEY, JSON.stringify(removedStore)); } catch {} }
+function updateRestoreBtn() {
+  const n = removedStore.length;
+  $("restorebtn").style.display = n ? "" : "none";
+  $("restorebtn").textContent = n ? `Restore removed (${n})` : "Restore removed";
+}
+updateRestoreBtn();
+$("restorebtn").onclick = () => { if (removedStore.length && confirm("Reload the page and bring back all removed objects?")) { removedStore = []; saveRemovedStore(); location.reload(); } };
 
 function sparkline(tr) {
   const W = 360, Hh = 90, n = tr.A.length, ys = [...tr.A, ...tr.B];
@@ -603,23 +825,19 @@ function showCopilot(tag) {
   aiBlock(tag);
 }
 
-// ---------- AI through the backend, which holds any API key. The provider and model are picked in the page.
+// ---------- AI through the backend (provider/model auto-selected when backend is up)
 const llm = { on: false, model: "", provider: "", list: [] };
 function showProvider() {
   const p = llm.list.find(x => x.name === llm.provider); if (!p) return;
-  $("modelsel").innerHTML = p.models.map(m => `<option>${m}</option>`).join("") || `<option value="">none available</option>`;
   llm.on = p.available; llm.model = p.models[0] || "";
-  $("provmsg").textContent = p.detail; $("provmsg").style.color = p.available ? "" : "#f5b942";
 }
 async function loadProviders() {
   try {
     llm.list = await (await fetch("api/providers")).json();
-    $("prov").innerHTML = llm.list.map(p => `<option value="${p.name}">${p.label}${p.available ? "" : " (not ready)"}</option>`).join("");
-    llm.provider = (llm.list.find(p => p.available) || llm.list[0]).name; $("prov").value = llm.provider; showProvider();
-  } catch { $("provmsg").textContent = "AI needs the backend."; }
+    llm.provider = (llm.list.find(p => p.available) || llm.list[0]).name;
+    showProvider();
+  } catch { llm.on = false; }
 }
-$("prov").onchange = (e) => { llm.provider = e.target.value; showProvider(); };
-$("modelsel").onchange = (e) => { llm.model = e.target.value; };
 loadProviders();
 let nearTags = [];
 const esc = (t) => t.replace(/[&<>]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;" })[c]);
@@ -635,46 +853,11 @@ function md(t) {
   }
   return html + (list ? `</${list}>` : "");
 }
-// ---------- assistant: the backend picks and routes, the page only follows what comes back
-const chatHistory = [];
-function resultTable(t) {
-  if (!t) return "";
-  const head = t.columns.map(c => `<th scope="col">${esc(c)}</th>`).join("");
-  const body = t.rows.map(r => `<tr>${r.map(v => `<td>${esc(String(v ?? ""))}</td>`).join("")}</tr>`).join("");
-  return `<div class="tw"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>
-    <details class="mut"><summary>Show query</summary><code>${esc(t.sql)}</code><div>${esc(JSON.stringify(t.params))}</div></details>`;
-}
-function followAction(action) {
-  if (!action) return;
-  setRoute(action.type === "round" ? action.legs.map(L => ({ tag: L.target, pts: L.points.map(toVec) }))
-                                   : [{ tag: action.target, pts: action.points.map(toVec) }]);
-  $("play").click();
-}
-$("chatform").onsubmit = async (e) => {
-  e.preventDefault();
-  const message = $("chatin").value.trim(); if (!message) return;
-  const log = $("chatlog"), line = document.createElement("div");
-  line.innerHTML = `<div class="q">${esc(message)}</div><div class="mut">Thinking…</div>`;
-  log.append(line); log.scrollTop = log.scrollHeight;
-  $("chatin").value = "";
-  try {
-    if (!backend) throw new Error("The assistant needs the backend.");
-    const j = await api("api/agent/chat", { ...startBody(), message, provider: llm.provider, model: llm.model, history: chatHistory.slice(-12) });
-    followAction(j.action);
-    const flag = j.unverified_citations.length ? `<div style="color:#f5b942">Not in the evidence: ${j.unverified_citations.map(esc).join(", ")}</div>` : "";
-    const ids = j.evidence_ids.length ? ` · evidence: ${j.evidence_ids.map(i => `<code>${esc(i)}</code>`).join(" ")}` : "";
-    line.innerHTML = `<div class="q">${esc(message)}</div>${md(j.reply)}${resultTable(j.table)}${flag}<div class="mut">${j.mode === "rules" ? "rule-based" : esc(j.model || "")}${ids}</div>`;
-    chatHistory.push({ role: "user", content: message }, { role: "assistant", content: j.reply.slice(0, 2000) });
-  } catch (err) {
-    line.innerHTML = `<div class="q">${esc(message)}</div><div style="color:#ff5d5d">${esc(String(err.message || err))}</div>`;
-  }
-  log.scrollTop = log.scrollHeight;
-};
 function aiBlock(tag) {
   const box = document.createElement("div"); box.className = "card"; box.style.borderColor = "#5aa9ff";
   $("copilot").appendChild(box);
   if (!llm.on) {
-    box.innerHTML = `<b>AI analysis</b><div class="mut">No AI provider is ready. ${esc($("provmsg").textContent)} Choose one under AI provider.</div>`;
+    box.innerHTML = `<b>AI analysis</b><div class="mut">No AI provider is ready on the server. Set the API key in the backend environment and reload.</div>`;
     return;
   }
   box.innerHTML = `<div class="row"><b>AI analysis</b><span class="mut">${esc(llm.model)}</span></div>
@@ -702,7 +885,7 @@ function aiBlock(tag) {
 }
 
 // controls
-$("target").onchange = (e) => routeTo(e.target.value);
+$("target").onchange = (e) => { $("to").value = e.target.value; routeTo(e.target.value); };
 $("round").onclick = () => routeRound();
 $("play").onclick = () => {
   if (manual) { manual = false; $("drive").style.display = "none"; snapCam(); }   // back to the planned route where it was left
@@ -711,10 +894,11 @@ $("play").onclick = () => {
   playing = !playing; $("play").textContent = playing ? "❚❚ Pause" : "▶ Continue";
 };
 $("reset").onclick = () => { manual = false; $("drive").style.display = "none"; s = 0; stopIdx = 0; playing = false; finished = false; focusTag = null; selBox = null;
-  $("copilot").classList.remove("show"); $("play").textContent = "▶ Start"; renderMission(); snapCam(); };
+  $("copilot").classList.remove("show"); $("play").textContent = "▶ Start"; snapCam(); };
 $("follow").onclick = () => setCamMode({ fp:"follow", follow:"free", free:"fp" }[camMode]);
 addEventListener("keydown", (e) => { if (e.code === "KeyV" && e.target.tagName !== "INPUT" && e.target.tagName !== "SELECT") $("follow").click(); });
 $("allbox").onclick = () => { showAll = !showAll; $("allbox").classList.toggle("on", showAll); };
+$("healthbtn").onclick = () => { showHealthBeacons = !showHealthBeacons; $("healthbtn").classList.toggle("on", showHealthBeacons); healthBeacons.visible = showHealthBeacons; };
 const filters = { cls: "", src: "" };
 const inFilter = (b, skip) => (skip === "cls" || !filters.cls || b.cls === filters.cls) && (skip === "src" || !filters.src || b.src === filters.src);
 function fillFilter(key, id, all) {                // counts follow the other filter
@@ -757,20 +941,42 @@ function boxAt(ev) {                               // nearest box under the curs
   const hit = boxRay.intersectObjects(boxObjs.filter(b => inFilter(b)).map(b => b.fill), false)[0];
   return hit && boxObjs.find(b => b.fill === hit.object);
 }
+function bimAt(ev) {
+  if (!bimVisible || !bimRoot) return null;
+  boxRay.setFromCamera(new THREE.Vector2(ev.clientX / innerWidth * 2 - 1, -(ev.clientY / innerHeight) * 2 + 1), camera);
+  const hit = boxRay.intersectObject(bimRoot, true)[0];
+  if (!hit) return null;
+  let o = hit.object;
+  while (o && !bimByMesh.has(o)) o = o.parent;
+  return o ? bimByMesh.get(o) : null;
+}
+function showBimInfo(meta) {
+  selBox = null;
+  $("copilot").innerHTML = `<h2>BIM element</h2><div class="card">
+    <div class="row"><b>${esc(meta.name || meta.global_id)}</b><span><button class="x">✕</button></span></div>
+    <div class="mut">${esc(meta.ifc_class || "")}${meta.tag ? ` · tag ${esc(meta.tag)}` : ""}</div>
+    <div class="kv"><span>GlobalId</span><span>${esc(meta.global_id)}</span>
+    ${meta.page_item_id ? `<span>Scene id</span><span>${esc(meta.page_item_id)}</span>` : ""}
+    ${meta.fit_within_frac != null ? `<span>Fit ≤5cm</span><span>${(100 * meta.fit_within_frac).toFixed(0)}%</span>` : ""}
+    </div></div>`;
+  $("copilot").classList.add("show");
+  $("copilot").querySelector(".x").onclick = clearAnalysis;
+}
 function analyze(b) {
   selBox = b; lastList = "";
   if (b.it.tag && copilot[b.it.tag]) {
     showCopilot(b.it.tag);
     const bar = document.createElement("div"); bar.className = "row"; bar.style.margin = "0 0 6px";
-    bar.innerHTML = `<span class="mut">Selected by click</span><span><button class="go">Route here</button> <button class="x">✕</button></span>`;
+    bar.innerHTML = `<span class="mut">Selected by click</span><span><button class="go">Route here</button> <button class="del" title="Remove from scene (Delete)">Delete object</button> <button class="x">✕</button></span>`;
     bar.querySelector(".go").onclick = () => { $("target").value = b.it.tag; routeTo(b.it.tag); };
     bar.querySelector(".x").onclick = clearAnalysis;
+    wireDelete(bar);
     $("copilot").insertBefore(bar, $("copilot").children[1]);
     return;
   }
   const it = b.it, v = it.vlm, d = distToBox(manual ? mPos : posAt(s).p, it);
   $("copilot").innerHTML = `<h2>AI object analysis</h2><div class="card" style="border-color:${stateCol(it)}">
-    <div class="row"><b>${it.id}</b><span><span class="pill" style="color:${stateCol(it)};border-color:${stateCol(it)}">unmapped</span> <button class="x">✕</button></span></div>
+    <div class="row"><b>${it.id}</b><span><span class="pill" style="color:${stateCol(it)};border-color:${stateCol(it)}">unmapped</span> <button class="del" title="Remove from scene (Delete)">Delete object</button> <button class="x">✕</button></span></div>
     <div class="mut">${d.toFixed(1)} m away · size ${it.size.map(x => x.toFixed(2)).join(" × ")}${it.label ? ` · detector: ${esc(it.label)}` : ""}</div>
     <h3>Observation</h3><ul>
     ${v ? `<li>VLM sees <b>${esc(v.label)}</b> (${human(v.asset_class)}), confidence ${v.confidence}.</li>
@@ -783,6 +989,7 @@ function analyze(b) {
       `<div class="mut">Choose a ready AI provider to identify it with the vision model.</div>`}</div>`;
   $("copilot").classList.add("show");
   $("copilot").querySelector(".x").onclick = clearAnalysis;
+  wireDelete($("copilot"));
   const btn = $("copilot").querySelector(".idv");
   if (btn) btn.onclick = async () => {
     const out = $("copilot").querySelector(".idv-out");
@@ -800,14 +1007,27 @@ function analyze(b) {
   };
 }
 function clearAnalysis() { selBox = null; lastList = ""; $("copilot").classList.remove("show"); }
+function wireDelete(root) {
+  const btn = root?.querySelector(".del");
+  if (btn) btn.onclick = () => { const b = selBox; if (b) removeObject(b); };
+}
 renderer.domElement.addEventListener("pointerdown", (e) => downAt = { x: e.clientX, y: e.clientY });
 renderer.domElement.addEventListener("click", (ev) => {
   if (picking || !downAt || Math.hypot(ev.clientX - downAt.x, ev.clientY - downAt.y) > 5) return;
-  const b = boxAt(ev); if (b) analyze(b);
+  const b = boxAt(ev);
+  if (b) analyze(b);
+  else {
+    const m = bimAt(ev);
+    if (m?.page_item_id) {
+      const bo = boxObjs.find(x => x.it.id === m.page_item_id);
+      if (bo) analyze(bo);
+      else showBimInfo(m);
+    } else if (m) showBimInfo(m);
+  }
 });
 renderer.domElement.addEventListener("pointermove", (ev) => {
   if (ev.buttons || picking) return;
-  renderer.domElement.style.cursor = boxAt(ev) ? "pointer" : "";
+  renderer.domElement.style.cursor = (boxAt(ev) || bimAt(ev)) ? "pointer" : "";
 });
 $("near").onclick = (e) => { const c = e.target.closest("[data-box]"); if (c) analyze(boxObjs.find(b => b.it.id === c.dataset.box)); };
 addEventListener("resize", () => { camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
@@ -909,8 +1129,10 @@ $("goto").onsubmit = (e) => {
 };
 
 // ---------- first route: the default faulty target
-$("target").value = byTag["CV-003"] ? "CV-003" : opts[0].tag;
-routeTo($("target").value);
+const defTag = byTag["CV-003"] ? "CV-003" : opts[0].tag;
+$("target").value = defTag;
+$("to").value = defTag;
+routeTo(defTag);
 
 setCamMode("fp");
 
@@ -947,28 +1169,25 @@ const parseSpot = (text) => {           // a tag or cell number anywhere in the 
 fetch("api/grids").then(r => r.ok ? r.json() : Promise.reject()).then(list => {
   backend = true;
   $("gridsel").innerHTML = list.map(g => `<option value="${g.name}">${g.label}</option>`).join("");
+  syncRemovedToBackend();
 }).catch(() => { $("gridsel").innerHTML = `<option value="fine">Fine 5 cm (in page)</option>`; $("gridsel").disabled = true; navNote("No backend: routes run in the page."); });
 $("gridsel").onchange = (e) => { gridName = e.target.value; drawOverlay(); drawMap(); if (stops.length === 1) routeTo(stops[0].tag); };
 $("navform").onsubmit = async (e) => {
   e.preventDefault();
   if (!backend) { navNote("The backend is not running.", true); return; }
-  const from = parseSpot($("from").value), to = parseSpot($("to").value);
-  if (to.here) { navNote("Enter a tag or a cell number in To.", true); return; }
+  const from = parseSpot($("from").value);
+  const toTag = $("to").value;
+  if (!toTag || !byTag[toTag]) { navNote("Choose a destination asset.", true); return; }
   if (from.text) { navNote("From takes here, a tag or a cell number.", true); return; }
-  if (to.text) {                         // words like "the worst pump": let the assistant choose
-    $("chatin").value = /^(go|take|walk|route|navigate|bring|lead|head)\b/i.test(to.text) ? to.text : `go to ${to.text}`;
-    $("chatform").requestSubmit(); navNote("Asked the assistant."); return;
-  }
-  const body = { grid: from.cell || to.cell ? "cells" : gridName };
+  const body = { grid: from.cell ? "cells" : gridName, target: toTag };
   if (from.cell) body.start_cell = from.cell;
   else if (from.tag) { const it = byTag[from.tag]; if (!it) { navNote(`Unknown tag ${from.tag}`, true); return; } const c = worldOf(...goalNear(it)); body.position = [c.x, c.y, c.z]; }
   else { const p = here(); body.position = [p.x, p.y, p.z]; }
-  if (to.cell) body.target_cell = to.cell; else body.target = to.tag;
   try {
     const r = await api("api/route", body);
     if (body.grid !== gridName) { gridName = body.grid; $("gridsel").value = gridName; drawOverlay(); }
     setRoute([{ tag: r.target && byTag[r.target] ? r.target : null, pts: r.points.map(toVec) }]);
-    if (r.target && byTag[r.target]) $("target").value = r.target;
+    if (r.target && byTag[r.target]) { $("target").value = r.target; $("to").value = r.target; }
     navNote(`${r.length.toFixed(1)} m on the ${gridName} grid`); $("play").click();
   } catch (err) { navNote(String(err.message || err), true); }
 };
@@ -1026,7 +1245,8 @@ $("gridbtn").onclick = () => { overlay.visible = !overlay.visible; $("gridbtn").
 $("mapbtn").onclick = () => { showMap = !showMap; $("mapbtn").classList.toggle("on", showMap); mapCanvas.style.display = showMap ? "block" : "none"; };
 mapCanvas.style.display = "block";
 addEventListener("keydown", (e) => { if (["INPUT", "SELECT"].includes(e.target.tagName)) return;
-  if (e.code === "KeyG") $("gridbtn").click(); if (e.code === "KeyM") $("mapbtn").click(); });
+  if (e.code === "KeyG") $("gridbtn").click(); if (e.code === "KeyM") $("mapbtn").click(); if (e.code === "KeyH") $("healthbtn").click();
+  if ((e.code === "Delete" || e.code === "Backspace") && selBox && !picking) { e.preventDefault(); removeObject(selBox); } });
 
 // ---------- loop
 const clock = new THREE.Clock(); let lastList = "";
@@ -1038,7 +1258,7 @@ renderer.setAnimationLoop(() => {
     const st = stops[stopIdx];
     if (!st && s >= pathLen) { playing = false; finished = true; $("play").textContent = "✓ Done"; }
     if (st && s >= st.d - 1e-6) {             // reached a stop: pause and diagnose
-      s = st.d; playing = false; focusTag = st.tag; selBox = null; stopIdx++; showCopilot(st.tag); renderMission();
+      s = st.d; playing = false; focusTag = st.tag; selBox = null; stopIdx++; showCopilot(st.tag);
       finished = stopIdx >= stops.length;
       $("play").textContent = finished ? "✓ Done" : `▶ Continue to ${stops[stopIdx].tag}`;
     }
@@ -1064,9 +1284,11 @@ renderer.setAnimationLoop(() => {
     const inR = d <= radius && listed, isSel = b === selBox;      // by default only assets on a matching object
     const picked = filtering && inFilter(b), lit = filtering ? picked && d <= radius : inR;
     b.grp.visible = filtering ? picked : showAll || inR || isT || isSel;
-    b.fill.material.opacity = camMode === "fp" ? (lit && d > 0.4 ? 0.1 : 0) : lit ? 0.22 : 0.06;   // fills turn into walls up close
-    b.edges.material.opacity = picked || inR || isT || isSel ? 1 : 0.35;
-    b.edges.material.color.set(isSel ? 0xffffff : stateCol(b.it));
+    b.fill.material.opacity = camMode === "fp" ? (lit && d > 0.4 ? 0.06 : 0) : lit ? BOX_FILL_LIT : BOX_FILL_DIM;
+    b.fill.material.color.set(classCol(b.cls));
+    const hi = picked || inR || isT || isSel;
+    setEdgeOpacity(b.edges, hi ? BOX_EDGE_HI : BOX_EDGE_DIM);
+    setEdgeColor(b.edges, isSel ? "#ffffff" : classCol(b.cls));
     if (inR) near.push({ it: b.it, d });
     if (lit) shown.push({ it: b.it, d });
   }
@@ -1076,8 +1298,9 @@ renderer.setAnimationLoop(() => {
   for (const { it } of filtering ? boxObjs.filter(b => inFilter(b)) : shown) {
     const top = new THREE.Vector3(...it.center); top.setComponent(UP, it.center[UP] - sgn*it.size[UP]/2);
     const v = toScene(top).project(camera); if (v.z > 1) continue;
-    const el = document.createElement("div"); el.className = "lbl"; const c = stateCol(it);
-    el.style.color = c; el.style.borderColor = c; el.textContent = it.tag ? `${it.tag} · ${human(it.state)}` : it.id;
+    const el = document.createElement("div"); el.className = "lbl"; const c = classCol(itemCls(it));
+    el.style.color = c; el.style.borderColor = c; el.style.background = "rgba(12,15,20,.92)";
+    el.textContent = it.tag ? `${it.tag} · ${human(it.state)}` : `${itemCls(it)} · ${it.id}`;
     el.style.left = ((v.x+1)/2*innerWidth) + "px"; el.style.top = ((1-v.y)/2*innerHeight) + "px"; labels.appendChild(el);
   }
   // fade the walker when the camera is close so it never blocks the view
@@ -1090,6 +1313,15 @@ renderer.setAnimationLoop(() => {
     const v = avatar.position.clone().add(new THREE.Vector3(0, figTop * av.size + 0.05, 0)).project(camera);
     const n = $("avname"); n.style.display = v.z > 1 || camMode === "fp" ? "none" : "block";
     n.style.left = ((v.x+1)/2*innerWidth) + "px"; n.style.top = ((1-v.y)/2*innerHeight) + "px";
+  }
+  if (showHealthBeacons) {
+    const t0 = clock.elapsedTime;
+    for (const b of boxObjs) {
+      if (!b.beacon) continue;
+      const kind = healthBeaconKind(b.it);
+      b.beacon.visible = !!kind;
+      if (kind) pulseHealthBeacon(b.beacon, t0 + b.it.tag.length * 0.41);
+    }
   }
   const key = shown.map(n => n.it.id + n.d.toFixed(1)).join() + stopIdx + filters.cls + "|" + filters.src;
   if (key !== lastList) { lastList = key; $("near").innerHTML = shown.map(n => card(n.it, n.d)).join("") || `<div class="mut">${filtering ? "No matching box" : "Nothing"} within ${radius.toFixed(1)} m.</div>`; $("ncount").textContent = `(${shown.length})`; }
@@ -1105,6 +1337,7 @@ renderer.setAnimationLoop(() => {
   $("status").textContent = `${s.toFixed(1)} / ${pathLen.toFixed(1)} m` + (nxt ? ` · next stop ${nxt.tag} in ${(nxt.d - s).toFixed(1)} m` : " · route complete");
   renderer.render(scene, camera);
 });
+applyStoredRemovals();
 </script>
 </body>
 </html>

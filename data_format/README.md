@@ -130,6 +130,23 @@ regenerated, and the build stops if a join or the pack's dashboard figures do no
 
 The tests run examples 1 to 4, so they stay correct as the code changes.
 
+## Synthetic equipment supplement (grounded-sam-2)
+
+Ten grounded-sam-2 detections (electrical cabinets, handwheel valves, valve actuator) carry asset metadata
+that is **not** in `builder_pack.xlsx`. It lives in `data/synthetic/equipment_supplement.json` and is merged
+when the scene and data layer are built.
+
+To regenerate the supplement (deterministic) and re-apply tags on the export file:
+
+```bash
+python pipeline/make_supplement.py
+```
+
+Tags for those objects are also listed under `app_export.tags` in
+`Objects-Extraction/GroundingDino-SAM2/config.yaml` so stage 7 keeps them on re-export. Known-tag checks
+include supplement tags as well as the pack. Synthetic rows are labelled `synthetic_record` in the JSON; they
+have no telemetry in the pack time series.
+
 ## When something goes wrong
 
 The checker and the build name the file, the object and the fix. The common ones:
@@ -137,7 +154,7 @@ The checker and the build name the file, the object and the fix. The common ones
 | Message | Fix |
 |---|---|
 | `id ... is already used` | Pick an id no other object has. |
-| `tag ... is not in the builder pack` | Use one of the 30 tags, or leave `tag` out. |
+| `tag ... is not in the builder pack` | Use a pack tag or a supplement tag (`EC-`, `HV-`, `VA-`), or leave `tag` out. |
 | `box.min must be below box.max` | Swap the values on the axis it names. Remember that y points down. |
 | `unknown field(s)` | Check the spelling against the format table. |
 | The box is in the wrong place | Check y: a box with a y above 1.167 is under the floor. |

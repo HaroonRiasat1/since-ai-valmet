@@ -1,0 +1,1409 @@
+{
+  "scene": "equipment_room_all_objects",
+  "elements": [
+    {
+      "global_id": "3dA6$TSXfOyxN1nBswuRgp",
+      "category": "wall",
+      "ifc_class": "IfcWall",
+      "name": "Wall 1"
+    },
+    {
+      "global_id": "1zHev8QSjLVvkvCL$8Cy_J",
+      "category": "wall",
+      "ifc_class": "IfcWall",
+      "name": "Wall 2"
+    },
+    {
+      "global_id": "0QKkpFLEvNIv6d4ijw_Hdz",
+      "category": "wall",
+      "ifc_class": "IfcWall",
+      "name": "Wall 3"
+    },
+    {
+      "global_id": "0T5Yo9q5TPQg6EG3B0sK2C",
+      "category": "wall",
+      "ifc_class": "IfcWall",
+      "name": "Wall 4"
+    },
+    {
+      "global_id": "3CkZAxyITMwOewBC5V3eVT",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Box_00",
+      "tag": null,
+      "page_item_id": "box_00",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0$hLuxzP5Mvhz5rEkUIumL",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Box_01",
+      "tag": null,
+      "page_item_id": "box_01",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "1BS3JQcWvQ_PrM51YYJuHt",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Box_02",
+      "tag": null,
+      "page_item_id": "box_02",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3hSCcCwCfHnRI79_KD_$q0",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Box_03",
+      "tag": null,
+      "page_item_id": "box_03",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "2kpUl$bWbJGRK0SzgahmLe",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Box_04",
+      "tag": null,
+      "page_item_id": "box_04",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0LQfwiENrOVAye4zo$8the",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Box_05",
+      "tag": null,
+      "page_item_id": "box_05",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0IQa7KKbfIneO2p6s8EYBh",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Box_06",
+      "tag": null,
+      "page_item_id": "box_06",
+      "category": "equipment",
+      "fit_within_frac": 0.5265700483091788,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "2xwoFCS7TI9eXcZw$2sXqE",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Box_07",
+      "tag": null,
+      "page_item_id": "box_07",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "2$Le6Oa51K_BJzR_aKYwoz",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Box_08",
+      "tag": null,
+      "page_item_id": "box_08",
+      "category": "equipment",
+      "fit_within_frac": 0.9862542955326461,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "09thsv3BvVgPEagZ3UTZY0",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Box_09",
+      "tag": null,
+      "page_item_id": "box_09",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0YJV4nXWbNHQ7FoMagcz$U",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Box_10",
+      "tag": null,
+      "page_item_id": "box_10",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "37Y99lJDnQZgnu1UIbRE_Z",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Box_11",
+      "tag": null,
+      "page_item_id": "box_11",
+      "category": "equipment",
+      "fit_within_frac": 0.8072289156626506,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0cfnmZUSrMywatazV2bqdV",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Box_12",
+      "tag": null,
+      "page_item_id": "box_12",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "37RhJPdbvSSxozn7ZFk1UB",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Box_13",
+      "tag": null,
+      "page_item_id": "box_13",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "1F3e7jJ89T2QR$wgjR20ZZ",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Box_14",
+      "tag": null,
+      "page_item_id": "box_14",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "07CSQhwavKxuHzG8_MTZaD",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Box_15",
+      "tag": null,
+      "page_item_id": "box_15",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "02cARedUvJ8etIPTfZf3WS",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Box_16",
+      "tag": null,
+      "page_item_id": "box_16",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3BlhWeluHN9xNMc3LqE_tR",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Box_17",
+      "tag": null,
+      "page_item_id": "box_17",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "2PaL$_VhnI$grPTNh6nuFl",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Box_18",
+      "tag": null,
+      "page_item_id": "box_18",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "23yes5i2jT4uIgUPJz9S5i",
+      "ifc_class": "IfcFurniture",
+      "name": "Ladder_00",
+      "tag": null,
+      "page_item_id": "ladder_00",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0SMnc4DHjLc8tBDoZJUKEF",
+      "ifc_class": "IfcFurniture",
+      "name": "Ladder_01",
+      "tag": null,
+      "page_item_id": "ladder_01",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0yQXE2aQfQqh$Fp3ayW95x",
+      "ifc_class": "IfcFurniture",
+      "name": "Ladder_02",
+      "tag": null,
+      "page_item_id": "ladder_02",
+      "category": "equipment",
+      "fit_within_frac": 0.8366606170598911,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0STlnOvG5OLfecTjL5vH1m",
+      "ifc_class": "IfcFurniture",
+      "name": "Ladder_03",
+      "tag": null,
+      "page_item_id": "ladder_03",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "2oN5zCNwLM2Bj5ggbLdaIW",
+      "ifc_class": "IfcFurniture",
+      "name": "Ladder_04",
+      "tag": null,
+      "page_item_id": "ladder_04",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "2bEXDMwkjUBQYGtwh6W_eq",
+      "ifc_class": "IfcFurniture",
+      "name": "Ladder_05",
+      "tag": null,
+      "page_item_id": "ladder_05",
+      "category": "equipment",
+      "fit_within_frac": 0.993993993993994,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "19ULA5SCvRdPUuJ7uNpbQp",
+      "ifc_class": "IfcElectricAppliance",
+      "name": "Appliance_00",
+      "tag": null,
+      "page_item_id": "appliance_00",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0dVoDm3U5NigyyTh2LIHvM",
+      "ifc_class": "IfcElectricAppliance",
+      "name": "Appliance_01",
+      "tag": null,
+      "page_item_id": "appliance_01",
+      "category": "equipment",
+      "fit_within_frac": 0.9556451612903226,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3f9kGI3J5VZfnO0Y8WJ_IE",
+      "ifc_class": "IfcElectricAppliance",
+      "name": "Appliance_02",
+      "tag": null,
+      "page_item_id": "appliance_02",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "1u9HR0EjHSc8gFPG0tFA7S",
+      "ifc_class": "IfcElectricAppliance",
+      "name": "Appliance_03",
+      "tag": null,
+      "page_item_id": "appliance_03",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "2PnijdrJjOOOITaoYBoMdN",
+      "ifc_class": "IfcElectricAppliance",
+      "name": "Appliance_04",
+      "tag": null,
+      "page_item_id": "appliance_04",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0Uxy9yktDHJwNJKBvTlXsW",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Cart_00",
+      "tag": null,
+      "page_item_id": "cart_00",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3GbvtXWLvMPvj3bEI7hLmc",
+      "ifc_class": "IfcValve",
+      "name": "Handwheel_valve_00",
+      "tag": null,
+      "page_item_id": "handwheel_valve_00",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3_dN0QdjLPYRLmUfyCSx_X",
+      "ifc_class": "IfcValve",
+      "name": "Handwheel_valve_01",
+      "tag": null,
+      "page_item_id": "handwheel_valve_01",
+      "category": "equipment",
+      "fit_within_frac": 0.0625,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0t4fkvka1HkhSqL$1b$5Lz",
+      "ifc_class": "IfcValve",
+      "name": "Handwheel_valve_02",
+      "tag": null,
+      "page_item_id": "handwheel_valve_02",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "2DMKSZ0r5JFvtmB7FnMokF",
+      "ifc_class": "IfcValve",
+      "name": "Handwheel_valve_03",
+      "tag": null,
+      "page_item_id": "handwheel_valve_03",
+      "category": "equipment",
+      "fit_within_frac": 0.663013698630137,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "13lGulfj9K_8n2VJJlhrs7",
+      "ifc_class": "IfcValve",
+      "name": "Handwheel_valve_04",
+      "tag": null,
+      "page_item_id": "handwheel_valve_04",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "16jrB3_tfTURFMxe7GMBoZ",
+      "ifc_class": "IfcValve",
+      "name": "Handwheel_valve_05",
+      "tag": null,
+      "page_item_id": "handwheel_valve_05",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3lJx_iUiDOBgpNa2bKr_u$",
+      "ifc_class": "IfcValve",
+      "name": "Handwheel_valve_06",
+      "tag": null,
+      "page_item_id": "handwheel_valve_06",
+      "category": "equipment",
+      "fit_within_frac": 0.7631578947368421,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "1xFPLHD2HI689N6Drn$Pka",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_flexible_hose_00",
+      "tag": null,
+      "page_item_id": "black_flexible_hose_00",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "1pLgveh3HV0BUeYklZBuQG",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_flexible_hose_01",
+      "tag": null,
+      "page_item_id": "black_flexible_hose_01",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0G2RnqvurG_g4nud6qZBGJ",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_flexible_hose_02",
+      "tag": null,
+      "page_item_id": "black_flexible_hose_02",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "1LB5aVz2jQKPmCSS33ZAlF",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_flexible_hose_03",
+      "tag": null,
+      "page_item_id": "black_flexible_hose_03",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "1ZdO$IDMbJ1BH$M92KvEvv",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_flexible_hose_04",
+      "tag": null,
+      "page_item_id": "black_flexible_hose_04",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "12C6MXFYTQyRGOYZBJg13S",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_flexible_hose_05",
+      "tag": null,
+      "page_item_id": "black_flexible_hose_05",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3SQHvCHZvNnx1d5pGdCF54",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_flexible_hose_06",
+      "tag": null,
+      "page_item_id": "black_flexible_hose_06",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "1YLc8uxVHU0etJHD9DVAgV",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_flexible_hose_07",
+      "tag": null,
+      "page_item_id": "black_flexible_hose_07",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "2IWW3sxijRWgMJmhxyx914",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_flexible_hose_08",
+      "tag": null,
+      "page_item_id": "black_flexible_hose_08",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "32y8sq$g1SvxalDxAZqEFd",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_flexible_hose_09",
+      "tag": null,
+      "page_item_id": "black_flexible_hose_09",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "07xoXYygbPT9aBThdrBj7v",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_plastic_bag_00",
+      "tag": null,
+      "page_item_id": "black_plastic_bag_00",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "2sY1zyAeXU4fCpB8RIKccr",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_plastic_bag_01",
+      "tag": null,
+      "page_item_id": "black_plastic_bag_01",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3VGvXqMDDTkvs0SREoLV03",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_plastic_bag_02",
+      "tag": null,
+      "page_item_id": "black_plastic_bag_02",
+      "category": "equipment",
+      "fit_within_frac": 0.9619047619047619,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0ZfbvauRbHQvkvMii5VnQo",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_plastic_bag_03",
+      "tag": null,
+      "page_item_id": "black_plastic_bag_03",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "338TWUvVLOrhNc93ssBglM",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_plastic_bag_04",
+      "tag": null,
+      "page_item_id": "black_plastic_bag_04",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0OmR1EjnXH4QPTHrX5qCgB",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_plastic_bag_05",
+      "tag": null,
+      "page_item_id": "black_plastic_bag_05",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "1DbGg$RDjIhOVZM3EeE$27",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_plastic_bag_06",
+      "tag": null,
+      "page_item_id": "black_plastic_bag_06",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3eXnZc66vT8vpLvzUtM8p3",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_plastic_bag_07",
+      "tag": null,
+      "page_item_id": "black_plastic_bag_07",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "2DECZqvM9JYumNNBZw7Vks",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_plastic_bag_08",
+      "tag": null,
+      "page_item_id": "black_plastic_bag_08",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "161x2rj01Jc9GDWgLIzmNr",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_plastic_bag_09",
+      "tag": null,
+      "page_item_id": "black_plastic_bag_09",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "2jZNf9BmvMJPU9zk_AULrd",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_plastic_bag_10",
+      "tag": null,
+      "page_item_id": "black_plastic_bag_10",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0kSU1lW2nOPRugQjM0Dsxm",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Black_plastic_bag_11",
+      "tag": null,
+      "page_item_id": "black_plastic_bag_11",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "1rZjuIsJ1Ti8X2iw5o6dTZ",
+      "ifc_class": "IfcFurniture",
+      "name": "Chair_00",
+      "tag": null,
+      "page_item_id": "chair_00",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "1Unu$DkbTLYBhnnjn6G5$n",
+      "ifc_class": "IfcFurniture",
+      "name": "Chair_01",
+      "tag": null,
+      "page_item_id": "chair_01",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "30I8dadM9LEAsJ5utCs1x3",
+      "ifc_class": "IfcElectricDistributionBoard",
+      "name": "Electrical_cabinet_00",
+      "tag": null,
+      "page_item_id": "electrical_cabinet_00",
+      "category": "equipment",
+      "fit_within_frac": 0.9953762084909626,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0xXTe_Q5fP8hXxTZovFz41",
+      "ifc_class": "IfcElectricDistributionBoard",
+      "name": "Electrical_cabinet_01",
+      "tag": null,
+      "page_item_id": "electrical_cabinet_01",
+      "category": "equipment",
+      "fit_within_frac": 0.5276967930029155,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "2Uks_jYgnGvhqbxwhLFoLE",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Fan_00",
+      "tag": null,
+      "page_item_id": "fan_00",
+      "category": "equipment",
+      "fit_within_frac": 0.9422492401215805,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "14LMLttwPSnedN_zn1FPM8",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Fan_01",
+      "tag": null,
+      "page_item_id": "fan_01",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "21xXri8MHQkfFidz$w5mU2",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Insulated_panel_00",
+      "tag": null,
+      "page_item_id": "insulated_panel_00",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3QUZptlJ9P$xuUeG3e3a7H",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Insulated_panel_01",
+      "tag": null,
+      "page_item_id": "insulated_panel_01",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0Vo9w_DiXU_8KPGd3Rx7JS",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Insulated_panel_02",
+      "tag": null,
+      "page_item_id": "insulated_panel_02",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3dLpN4iy5OAAFJdA9GixR3",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Insulated_panel_03",
+      "tag": null,
+      "page_item_id": "insulated_panel_03",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0RgIz1WuHSoh8wfJXiAktB",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Insulated_panel_04",
+      "tag": null,
+      "page_item_id": "insulated_panel_04",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "2j1ECpeezS$fR7Zz1KHXas",
+      "ifc_class": "IfcPipeFitting",
+      "name": "Pipe_fitting_00",
+      "tag": null,
+      "page_item_id": "pipe_fitting_00",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3NNcXqOI9Ia9dWtiaV5$2q",
+      "ifc_class": "IfcPipeFitting",
+      "name": "Pipe_fitting_01",
+      "tag": null,
+      "page_item_id": "pipe_fitting_01",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3waxPw3bXKzBk4wL3K4bTh",
+      "ifc_class": "IfcPipeFitting",
+      "name": "Pipe_fitting_02",
+      "tag": null,
+      "page_item_id": "pipe_fitting_02",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "2Zrj9ukI1Ihf2w$CBWBahI",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Red_bucket_00",
+      "tag": null,
+      "page_item_id": "red_bucket_00",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "1qD$nJCijHVx6uJWJzgjGp",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Red_bucket_01",
+      "tag": null,
+      "page_item_id": "red_bucket_01",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "01myVqcETHsxL$RhnEluVa",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Red_bucket_02",
+      "tag": null,
+      "page_item_id": "red_bucket_02",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0kOsNvK3rPvhUb5snIH63e",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Red_bucket_03",
+      "tag": null,
+      "page_item_id": "red_bucket_03",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "1vyMUbs1HMJPm6F6ffKBJ7",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Red_bucket_04",
+      "tag": null,
+      "page_item_id": "red_bucket_04",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3iJ59s49THfPzfXIiVOVpH",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Red_bucket_05",
+      "tag": null,
+      "page_item_id": "red_bucket_05",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "114y4KqKrKqOYb3KJDuU84",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Red_bucket_06",
+      "tag": null,
+      "page_item_id": "red_bucket_06",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0YhnuOazzTJhoXpD3CqP9p",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Red_bucket_07",
+      "tag": null,
+      "page_item_id": "red_bucket_07",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3_8nrQ37LM8B4_ebNXRgR4",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Red_bucket_08",
+      "tag": null,
+      "page_item_id": "red_bucket_08",
+      "category": "equipment",
+      "fit_within_frac": 0.8793103448275862,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0iJY015dTSkBWo8CDzw53C",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Red_bucket_09",
+      "tag": null,
+      "page_item_id": "red_bucket_09",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0$FriZn29Giw8QBa5gd7h9",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Red_bucket_10",
+      "tag": null,
+      "page_item_id": "red_bucket_10",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0ofI3GPkXQhwXlo4pNVNgf",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Red_bucket_11",
+      "tag": null,
+      "page_item_id": "red_bucket_11",
+      "category": "equipment",
+      "fit_within_frac": 0.9967105263157895,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0d43xB2x9OweqwKfBX5Pvx",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Red_bucket_12",
+      "tag": null,
+      "page_item_id": "red_bucket_12",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3XxfvDvyvJcP8wft5jeHUj",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "Red_bucket_13",
+      "tag": null,
+      "page_item_id": "red_bucket_13",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3DI5KEuprH2ughkucXEBOf",
+      "ifc_class": "IfcValve",
+      "name": "Valve_actuator_00",
+      "tag": null,
+      "page_item_id": "valve_actuator_00",
+      "category": "equipment",
+      "fit_within_frac": 0.7922077922077922,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0Qp0VMb2vLbvhMki4ugUoq",
+      "ifc_class": "IfcPipeSegment",
+      "name": "Pipe_00",
+      "tag": null,
+      "page_item_id": "pipe_00",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3vvhTlI1LJHP6mzQ5cSui3",
+      "ifc_class": "IfcPipeSegment",
+      "name": "Pipe_01",
+      "tag": null,
+      "page_item_id": "pipe_01",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "2T8oWFmjbGdxbaTeRo91F8",
+      "ifc_class": "IfcPipeSegment",
+      "name": "Pipe_02",
+      "tag": null,
+      "page_item_id": "pipe_02",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3KTA5h16nJrem73vb48tTS",
+      "ifc_class": "IfcPipeSegment",
+      "name": "Pipe_03",
+      "tag": null,
+      "page_item_id": "pipe_03",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "1uJ75UiaTIcBK4GO3UMLes",
+      "ifc_class": "IfcPipeSegment",
+      "name": "Pipe_04",
+      "tag": null,
+      "page_item_id": "pipe_04",
+      "category": "equipment",
+      "fit_within_frac": 0.109375,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0CTt8h539K_hqbVwX4QGTn",
+      "ifc_class": "IfcPipeSegment",
+      "name": "Pipe_05",
+      "tag": null,
+      "page_item_id": "pipe_05",
+      "category": "equipment",
+      "fit_within_frac": 0.9945054945054945,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "23IBqUg_TQYhhYrxKVDGYB",
+      "ifc_class": "IfcPipeSegment",
+      "name": "Pipe_06",
+      "tag": null,
+      "page_item_id": "pipe_06",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3kbnU$3ZrOkh_UYj4o3WbX",
+      "ifc_class": "IfcPipeSegment",
+      "name": "Pipe_07",
+      "tag": null,
+      "page_item_id": "pipe_07",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "1A7icNLObGqOQiilNYZ7Zy",
+      "ifc_class": "IfcPipeSegment",
+      "name": "Pipe_08",
+      "tag": null,
+      "page_item_id": "pipe_08",
+      "category": "equipment",
+      "fit_within_frac": 0.1517094017094017,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "2joHi_hKLP1Oqj3t3u74EB",
+      "ifc_class": "IfcPipeSegment",
+      "name": "Pipe_09",
+      "tag": null,
+      "page_item_id": "pipe_09",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3s8vbPPU1M_Q9HGZn51c7r",
+      "ifc_class": "IfcPipeSegment",
+      "name": "Pipe_10",
+      "tag": null,
+      "page_item_id": "pipe_10",
+      "category": "equipment",
+      "fit_within_frac": 0.11612903225806452,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3JlmRPNhnVbBANJ76T06f7",
+      "ifc_class": "IfcPipeSegment",
+      "name": "Pipe_11",
+      "tag": null,
+      "page_item_id": "pipe_11",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0vv34bnWDMzQRABcwOBak_",
+      "ifc_class": "IfcPipeSegment",
+      "name": "Pipe_12",
+      "tag": null,
+      "page_item_id": "pipe_12",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "1VMCM1s5bL1BlLXQ3vxYOq",
+      "ifc_class": "IfcPipeSegment",
+      "name": "Pipe_13",
+      "tag": null,
+      "page_item_id": "pipe_13",
+      "category": "equipment",
+      "fit_within_frac": 0.9896157840083074,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0Zlss8MUjQdudvHQNXjL2w",
+      "ifc_class": "IfcPipeSegment",
+      "name": "Pipe_14",
+      "tag": null,
+      "page_item_id": "pipe_14",
+      "category": "equipment",
+      "fit_within_frac": 0.16230366492146597,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "37_AtEUz1UFuaFG1Z2YEkw",
+      "ifc_class": "IfcPipeSegment",
+      "name": "Pipe_15",
+      "tag": null,
+      "page_item_id": "pipe_15",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0fFEZy5qTHXxDt6ubhhl6o",
+      "ifc_class": "IfcPipeSegment",
+      "name": "Pipe_16",
+      "tag": null,
+      "page_item_id": "pipe_16",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3J6cdZOlrJ1fUTep7lGBgi",
+      "ifc_class": "IfcPipeSegment",
+      "name": "Pipe_17",
+      "tag": null,
+      "page_item_id": "pipe_17",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "1ahjkbfcbKIf1EjTBHraqU",
+      "ifc_class": "IfcPipeSegment",
+      "name": "Pipe_18",
+      "tag": null,
+      "page_item_id": "pipe_18",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "0TjCZg8B1O5O84s0f_w$CV",
+      "ifc_class": "IfcElectricAppliance",
+      "name": "Washing_machine_00",
+      "tag": null,
+      "page_item_id": "washing_machine_00",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3jnDHGYYzOlR7z5YuINXMi",
+      "ifc_class": "IfcValve",
+      "name": "CV-002",
+      "tag": "CV-002",
+      "page_item_id": "cls_007",
+      "category": "equipment",
+      "fit_within_frac": 0.2158273381294964,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "0LlnrY4fnJUeQODTmLKutS",
+      "ifc_class": "IfcValve",
+      "name": "CV-004",
+      "tag": "CV-004",
+      "page_item_id": "cls_015",
+      "category": "equipment",
+      "fit_within_frac": 0.21567739012233803,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "3qKQJ0eoLRlw0jAWqBVC3v",
+      "ifc_class": "IfcPump",
+      "name": "P-003",
+      "tag": "P-003",
+      "page_item_id": "cls_020",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "1TwqHB86rI6Rw08f1UiIRN",
+      "ifc_class": "IfcTank",
+      "name": "cls_031",
+      "tag": null,
+      "page_item_id": "cls_031",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3KrC89C4nIIxEBw9VE$vH8",
+      "ifc_class": "IfcTank",
+      "name": "cls_032",
+      "tag": null,
+      "page_item_id": "cls_032",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "35MOcL3VjG6RjRUdDwUCoN",
+      "ifc_class": "IfcPump",
+      "name": "P-005",
+      "tag": "P-005",
+      "page_item_id": "cls_044",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "3yPqVr$q9QERctvSY1NcJe",
+      "ifc_class": "IfcValve",
+      "name": "CV-003",
+      "tag": "CV-003",
+      "page_item_id": "cls_055",
+      "category": "equipment",
+      "fit_within_frac": 0.3893129770992366,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "1oQ1BdmWrMvw4lx6PqF7ZD",
+      "ifc_class": "IfcValve",
+      "name": "CV-005",
+      "tag": "CV-005",
+      "page_item_id": "cls_081",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "3B6C5iodXGoxJiYZ7KWpcG",
+      "ifc_class": "IfcPump",
+      "name": "P-006",
+      "tag": "P-006",
+      "page_item_id": "cls_083",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "02PZsRPHnQDBlTDKppDhqH",
+      "ifc_class": "IfcValve",
+      "name": "CV-009",
+      "tag": "CV-009",
+      "page_item_id": "cls_113",
+      "category": "equipment",
+      "fit_within_frac": 0.29493087557603687,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "3Ne4ZuAXHGAx_KepuVWsow",
+      "ifc_class": "IfcValve",
+      "name": "CV-006",
+      "tag": "CV-006",
+      "page_item_id": "cls_123",
+      "category": "equipment",
+      "fit_within_frac": 0.4115566037735849,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "0tyi2_fsXVeQhdSfkw$XLA",
+      "ifc_class": "IfcValve",
+      "name": "CV-008",
+      "tag": "CV-008",
+      "page_item_id": "cls_133",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "1Xxxtp79TNK9Ks3ElyYHSQ",
+      "ifc_class": "IfcValve",
+      "name": "CV-010",
+      "tag": "CV-010",
+      "page_item_id": "cls_185",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "3Fx6jbQuPHqAAWBqhd7Oad",
+      "ifc_class": "IfcSensor",
+      "name": "PT-001",
+      "tag": "PT-001",
+      "page_item_id": "cls_210",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "2JDd9fQqnJegHFBCt1uoL0",
+      "ifc_class": "IfcTank",
+      "name": "obj_001",
+      "tag": null,
+      "page_item_id": "obj_001",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "1R5QTrjWrRB8EuOQ3MIORl",
+      "ifc_class": "IfcElectricDistributionBoard",
+      "name": "obj_017",
+      "tag": null,
+      "page_item_id": "obj_017",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3lFvwYq5LHUORox16hJZ4q",
+      "ifc_class": "IfcPump",
+      "name": "P-004",
+      "tag": "P-004",
+      "page_item_id": "obj_034",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "3Cgi46ImLJbvxsSl8_cobi",
+      "ifc_class": "IfcSensor",
+      "name": "PT-002",
+      "tag": "PT-002",
+      "page_item_id": "obj_079",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "3Tjv_83_nSL8F2gEK5n02o",
+      "ifc_class": "IfcSensor",
+      "name": "PT-003",
+      "tag": "PT-003",
+      "page_item_id": "obj_098",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "24aOhFT2nTfuvQHJG_NNw9",
+      "ifc_class": "IfcPump",
+      "name": "P-002",
+      "tag": "P-002",
+      "page_item_id": "vlm_010",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "0vxiZEz4nLmQyDVBw7$i3n",
+      "ifc_class": "IfcValve",
+      "name": "CV-012",
+      "tag": "CV-012",
+      "page_item_id": "vlm_011",
+      "category": "equipment",
+      "fit_within_frac": 0.6842105263157895,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "3VbhCJ5KbOORtanoPoIYJj",
+      "ifc_class": "IfcPump",
+      "name": "P-001",
+      "tag": "P-001",
+      "page_item_id": "vlm_012",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "27spAvYQTT6eKw3yNCfZaJ",
+      "ifc_class": "IfcElectricMotor",
+      "name": "M-006",
+      "tag": "M-006",
+      "page_item_id": "vlm_013",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "1Vu03ws0jHfwnxSMvbUaGZ",
+      "ifc_class": "IfcValve",
+      "name": "CV-007",
+      "tag": "CV-007",
+      "page_item_id": "vlm_018",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "1TOWSHGMHQPBMyytvynCZR",
+      "ifc_class": "IfcTank",
+      "name": "vlm_019",
+      "tag": null,
+      "page_item_id": "vlm_019",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "24gH6EL8LOiQZSgustrbCx",
+      "ifc_class": "IfcElectricMotor",
+      "name": "M-004",
+      "tag": "M-004",
+      "page_item_id": "vlm_021",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": true
+    },
+    {
+      "global_id": "076vFYppvKTRe4ntS3lis6",
+      "ifc_class": "IfcBuildingElementProxy",
+      "name": "vlm_022",
+      "tag": null,
+      "page_item_id": "vlm_022",
+      "category": "equipment",
+      "fit_within_frac": 1.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "3XLWIhNBbTofL3eVPLy6Wv",
+      "ifc_class": "IfcTank",
+      "name": "vlm_033",
+      "tag": null,
+      "page_item_id": "vlm_033",
+      "category": "equipment",
+      "fit_within_frac": 0.0,
+      "position_confirmed": false
+    },
+    {
+      "global_id": "1eN4VvsdzHo9JY6dubHtww",
+      "ifc_class": "IfcValve",
+      "name": "CV-001",
+      "tag": "CV-001",
+      "page_item_id": "vlm_051",
+      "category": "equipment",
+      "fit_within_frac": 0.6875,
+      "position_confirmed": true
+    }
+  ]
+}

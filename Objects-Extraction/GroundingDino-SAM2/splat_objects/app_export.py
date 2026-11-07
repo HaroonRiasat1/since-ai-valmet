@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import re
 from pathlib import Path
 from typing import Any
@@ -152,11 +153,16 @@ def load_app_checker(app_root: Path) -> Any:
     return mod
 
 
-def known_tags_from_layer(layer: dict[str, Any]) -> set[str]:
+def known_tags_from_layer(layer: dict[str, Any], app_root: Path | None = None) -> set[str]:
     tags: set[str] = set()
     for obj in layer.get("objects", []):
         if obj.get("asset") and obj["asset"].get("master"):
             t = obj["asset"]["master"].get("tag")
             if t:
                 tags.add(str(t))
+    if app_root is not None:
+        sup_path = app_root / "data" / "synthetic" / "equipment_supplement.json"
+        if sup_path.is_file():
+            payload = json.loads(sup_path.read_text(encoding="utf-8"))
+            tags |= {r["tag"] for r in payload.get("Asset_Master", []) if r.get("tag")}
     return tags

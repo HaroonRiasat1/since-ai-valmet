@@ -112,7 +112,7 @@ def test_data_question_runs_a_spec_and_returns_the_table(scene, monkeypatch):
 def test_invented_figure_is_replaced_by_the_rows(scene, monkeypatch):
     script(monkeypatch, tool_call("run_report", name="health_by_class"), text("PROCESS_PUMP_007 had 45 hours of downtime on P-999."))
     out = ask(scene, "which class is healthiest?")
-    assert "45" not in out["reply"] and "P-999" not in out["reply"] and out["reply"].startswith("5 rows")
+    assert "45" not in out["reply"] and "P-999" not in out["reply"] and out["reply"].startswith("8 rows")
 
 
 def test_answer_using_the_rows_is_kept(scene, monkeypatch):

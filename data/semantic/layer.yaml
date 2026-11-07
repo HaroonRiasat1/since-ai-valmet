@@ -5,8 +5,8 @@ entities:
   label: Asset
   kind: dimension
   grain: one asset
-  description: The 30 plant assets with class, area, criticality, install date and
-    service interval.
+  description: Plant assets with class, area, criticality, install date and service
+    interval (pack assets plus grounded-sam-2 supplement).
   synonyms:
   - equipment
   - device
@@ -16,6 +16,9 @@ entities:
   - motor
   - transmitter
   - sensor
+  - cabinet
+  - handwheel
+  - actuator
   joins:
   - name: state
     to: asset_state
@@ -38,37 +41,6 @@ entities:
     label: Asset ID
     role: key
     type: text
-    values:
-    - ASSET-001
-    - ASSET-002
-    - ASSET-003
-    - ASSET-004
-    - ASSET-005
-    - ASSET-006
-    - ASSET-007
-    - ASSET-008
-    - ASSET-009
-    - ASSET-010
-    - ASSET-011
-    - ASSET-012
-    - ASSET-013
-    - ASSET-014
-    - ASSET-015
-    - ASSET-016
-    - ASSET-017
-    - ASSET-018
-    - ASSET-019
-    - ASSET-020
-    - ASSET-021
-    - ASSET-022
-    - ASSET-023
-    - ASSET-024
-    - ASSET-025
-    - ASSET-026
-    - ASSET-027
-    - ASSET-028
-    - ASSET-029
-    - ASSET-030
   - name: tag
     label: Asset tag
     role: key
@@ -77,37 +49,6 @@ entities:
     - asset
     - device
     - tag
-    values:
-    - CV-001
-    - CV-002
-    - CV-003
-    - CV-004
-    - CV-005
-    - CV-006
-    - CV-007
-    - CV-008
-    - CV-009
-    - CV-010
-    - CV-011
-    - CV-012
-    - M-001
-    - M-002
-    - M-003
-    - M-004
-    - M-005
-    - M-006
-    - P-001
-    - P-002
-    - P-003
-    - P-004
-    - P-005
-    - P-006
-    - PT-001
-    - PT-002
-    - PT-003
-    - VS-001
-    - VS-002
-    - VS-003
   - name: asset_class
     label: Asset class
     role: attribute
@@ -118,9 +59,12 @@ entities:
     - device type
     values:
     - CONTROL_VALVE
+    - ELECTRICAL_CABINET
     - ELECTRIC_MOTOR
+    - HANDWHEEL_VALVE
     - PRESSURE_TRANSMITTER
     - PROCESS_PUMP
+    - VALVE_ACTUATOR
     - VIBRATION_SENSOR
   - name: area_id
     label: Area ID
@@ -142,17 +86,22 @@ entities:
     - location
     values:
     - Chemical Preparation
+    - Dry End
     - Machine Hall
     - Stock Preparation
     - Utility Island
     - Water Treatment
+    - Wet End
   - name: process_context
     label: Process context
     role: attribute
     type: text
     values:
+    - chemical
     - continuous_process
+    - dry_process
     - utilities
+    - wet_end
     - wet_process
   - name: criticality
     label: Criticality
@@ -182,116 +131,27 @@ entities:
     role: attribute
     type: text
     values:
+    - ETHERNET
     - FOUNDATION_FIELDBUS
     - HART
+    - MANUAL
+    - MODBUS
     - MQTT_EDGE
     - OPC_UA
+    - PNEUMATIC
     - SIMULATED_API
   - name: scene_anchor_id
     label: Scene anchor id
     role: key
     type: text
-    values:
-    - ANCHOR-001
-    - ANCHOR-002
-    - ANCHOR-003
-    - ANCHOR-004
-    - ANCHOR-005
-    - ANCHOR-006
-    - ANCHOR-007
-    - ANCHOR-008
-    - ANCHOR-009
-    - ANCHOR-010
-    - ANCHOR-011
-    - ANCHOR-012
-    - ANCHOR-013
-    - ANCHOR-014
-    - ANCHOR-015
-    - ANCHOR-016
-    - ANCHOR-017
-    - ANCHOR-018
-    - ANCHOR-019
-    - ANCHOR-020
-    - ANCHOR-021
-    - ANCHOR-022
-    - ANCHOR-023
-    - ANCHOR-024
-    - ANCHOR-025
-    - ANCHOR-026
-    - ANCHOR-027
-    - ANCHOR-028
-    - ANCHOR-029
-    - ANCHOR-030
   - name: qr_id
     label: Qr id
     role: key
     type: text
-    values:
-    - QR-SYN-0001
-    - QR-SYN-0002
-    - QR-SYN-0003
-    - QR-SYN-0004
-    - QR-SYN-0005
-    - QR-SYN-0006
-    - QR-SYN-0007
-    - QR-SYN-0008
-    - QR-SYN-0009
-    - QR-SYN-0010
-    - QR-SYN-0011
-    - QR-SYN-0012
-    - QR-SYN-0013
-    - QR-SYN-0014
-    - QR-SYN-0015
-    - QR-SYN-0016
-    - QR-SYN-0017
-    - QR-SYN-0018
-    - QR-SYN-0019
-    - QR-SYN-0020
-    - QR-SYN-0021
-    - QR-SYN-0022
-    - QR-SYN-0023
-    - QR-SYN-0024
-    - QR-SYN-0025
-    - QR-SYN-0026
-    - QR-SYN-0027
-    - QR-SYN-0028
-    - QR-SYN-0029
-    - QR-SYN-0030
   - name: nfc_id
     label: Nfc id
     role: key
     type: text
-    values:
-    - NFC-SYN-0001
-    - NFC-SYN-0002
-    - NFC-SYN-0003
-    - NFC-SYN-0004
-    - NFC-SYN-0005
-    - NFC-SYN-0006
-    - NFC-SYN-0007
-    - NFC-SYN-0008
-    - NFC-SYN-0009
-    - NFC-SYN-0010
-    - NFC-SYN-0011
-    - NFC-SYN-0012
-    - NFC-SYN-0013
-    - NFC-SYN-0014
-    - NFC-SYN-0015
-    - NFC-SYN-0016
-    - NFC-SYN-0017
-    - NFC-SYN-0018
-    - NFC-SYN-0019
-    - NFC-SYN-0020
-    - NFC-SYN-0021
-    - NFC-SYN-0022
-    - NFC-SYN-0023
-    - NFC-SYN-0024
-    - NFC-SYN-0025
-    - NFC-SYN-0026
-    - NFC-SYN-0027
-    - NFC-SYN-0028
-    - NFC-SYN-0029
-    - NFC-SYN-0030
 - name: asset_state
   source: Current_State
   label: Current condition
@@ -341,73 +201,11 @@ entities:
     label: Asset ID
     role: key
     type: text
-    values:
-    - ASSET-001
-    - ASSET-002
-    - ASSET-003
-    - ASSET-004
-    - ASSET-005
-    - ASSET-006
-    - ASSET-007
-    - ASSET-008
-    - ASSET-009
-    - ASSET-010
-    - ASSET-011
-    - ASSET-012
-    - ASSET-013
-    - ASSET-014
-    - ASSET-015
-    - ASSET-016
-    - ASSET-017
-    - ASSET-018
-    - ASSET-019
-    - ASSET-020
-    - ASSET-021
-    - ASSET-022
-    - ASSET-023
-    - ASSET-024
-    - ASSET-025
-    - ASSET-026
-    - ASSET-027
-    - ASSET-028
-    - ASSET-029
-    - ASSET-030
   - name: tag
     label: Asset tag
     role: key
     type: text
     synonyms: *id001
-    values:
-    - CV-001
-    - CV-002
-    - CV-003
-    - CV-004
-    - CV-005
-    - CV-006
-    - CV-007
-    - CV-008
-    - CV-009
-    - CV-010
-    - CV-011
-    - CV-012
-    - M-001
-    - M-002
-    - M-003
-    - M-004
-    - M-005
-    - M-006
-    - P-001
-    - P-002
-    - P-003
-    - P-004
-    - P-005
-    - P-006
-    - PT-001
-    - PT-002
-    - PT-003
-    - VS-001
-    - VS-002
-    - VS-003
   - name: asset_class
     label: Asset class
     role: attribute
@@ -415,9 +213,12 @@ entities:
     synonyms: *id002
     values:
     - CONTROL_VALVE
+    - ELECTRICAL_CABINET
     - ELECTRIC_MOTOR
+    - HANDWHEEL_VALVE
     - PRESSURE_TRANSMITTER
     - PROCESS_PUMP
+    - VALVE_ACTUATOR
     - VIBRATION_SENSOR
   - name: area_name
     label: Plant area
@@ -426,10 +227,12 @@ entities:
     synonyms: *id003
     values:
     - Chemical Preparation
+    - Dry End
     - Machine Hall
     - Stock Preparation
     - Utility Island
     - Water Treatment
+    - Wet End
   - name: criticality
     label: Criticality
     role: attribute
@@ -474,12 +277,17 @@ entities:
     - CAVITATION_RISK
     - CURRENT_IMBALANCE
     - FOULING
+    - HANDWHEEL_STIFF
     - MISALIGNMENT
     - MOUNTING_ISSUE
     - NORMAL
     - OVERHEATING
+    - PANEL_OVERTEMP
     - POSITION_DEVIATION
+    - POSITION_UNVERIFIED
     - SEAL_DEGRADATION
+    - STEM_PACKING_WEEP
+    - SUPPLY_PRESSURE_LOW
   - name: issue_summary
     label: Issue
     role: attribute
@@ -491,9 +299,15 @@ entities:
     - Coupling/alignment-related vibration pattern
     - Current/load imbalance signature
     - Efficiency loss / fouling-like signature
+    - Enclosure running warm
+    - Handwheel turning stiff
     - Hydraulic instability / cavitation-like signature
+    - Line-up not confirmed
+    - Minor packing weep noted
     - Mounting-quality signature
     - No significant deviation
+    - Packing trace on body
+    - Pneumatic supply below target
     - Position calibration drift
     - Position tracking deviation
     - Rotating-equipment alignment signature
@@ -521,12 +335,18 @@ entities:
     - inspect cooling and load
     - inspect electrical condition
     - inspect for leakage
+    - inspect handwheel and stem
     - inspect hydraulic path
     - inspect process conditions
     - inspect sensor mounting
     - monitor
+    - verify air supply and actuator linkage
     - verify calibration
     - verify control and mechanics
+    - verify door seal and ventilation
+    - verify packing during next round
+    - verify stem packing on site
+    - verify valve position and line-up
   - name: model_confidence
     label: Model confidence
     role: measure
@@ -543,9 +363,12 @@ entities:
     type: text
     values:
     - DOC-CONTROL_VALVE-CORE
+    - DOC-ELECTRICAL_CABINET-CORE
     - DOC-ELECTRIC_MOTOR-CORE
+    - DOC-HANDWHEEL_VALVE-CORE
     - DOC-PRESSURE_TRANSMITTER-CORE
     - DOC-PROCESS_PUMP-CORE
+    - DOC-VALVE_ACTUATOR-CORE
     - DOC-VIBRATION_SENSOR-CORE
 - name: telemetry
   source: Telemetry_Sample_3d
@@ -1326,11 +1149,14 @@ entities:
     values:
     - DOC-3D-MAPPING
     - DOC-CONTROL_VALVE-CORE
+    - DOC-ELECTRICAL_CABINET-CORE
     - DOC-ELECTRIC_MOTOR-CORE
     - DOC-FIELD-SAFETY
+    - DOC-HANDWHEEL_VALVE-CORE
     - DOC-PRESSURE_TRANSMITTER-CORE
     - DOC-PROCESS_PUMP-CORE
     - DOC-RAG-GUIDE
+    - DOC-VALVE_ACTUATOR-CORE
     - DOC-VIBRATION_SENSOR-CORE
   - name: title
     label: Title
@@ -1340,10 +1166,13 @@ entities:
     - 3D scene-to-asset mapping contract
     - Control valve diagnostic context
     - Electric motor condition context
+    - Electrical cabinet condition context
     - Evidence-grounded AI response contract
     - Field-service safety guardrail
+    - Handwheel valve inspection context
     - Pressure transmitter validation
     - Process pump condition context
+    - Valve actuator diagnostic context
     - Vibration sensor quality context
   - name: scope
     label: Scope
@@ -1352,9 +1181,12 @@ entities:
     values:
     - ALL
     - CONTROL_VALVE
+    - ELECTRICAL_CABINET
     - ELECTRIC_MOTOR
+    - HANDWHEEL_VALVE
     - PRESSURE_TRANSMITTER
     - PROCESS_PUMP
+    - VALVE_ACTUATOR
     - VIBRATION_SENSOR
   - name: content
     label: Content
@@ -1373,10 +1205,19 @@ entities:
     - The assistant must not replace site procedures, lockout/tagout, permits, OEM
       instructions or qualified personnel. Recommend verification and escalation rather
       than autonomous physical action.
+    - Use enclosure temperature, door seal condition, termination tightness and recent
+      panel work together. Treat elevated internal temperature, moisture ingress or
+      loose terminals as signals to inspect on site, not as proof of failure.
     - Use position, controller diagnostics, pneumatic condition, process context and
       service history together. Treat friction/stiction, position deviation, abnormal
       load, supply pressure and device alerts as investigation signals, not standalone
       proof.
+    - Use stem packing condition, handwheel motion, visible leakage and line isolation
+      status together. Stiff motion, weeping packing or an unverified line-up are
+      reasons to verify manually before changing the valve position.
+    - Use supply pressure, actuator travel, feedback consistency and linkage condition
+      together. Low supply, sluggish travel or drifting feedback warrant pneumatic
+      and mechanical checks, not immediate replacement.
     - Use vibration, bearing temperature, current/load and operating history. Prefer
       trend evidence over isolated thresholds.
     - Use vibration, bearing temperature, pressure, flow and motor load together.
@@ -1562,72 +1403,10 @@ entities:
     role: key
     type: text
     synonyms: *id001
-    values:
-    - CV-001
-    - CV-002
-    - CV-003
-    - CV-004
-    - CV-005
-    - CV-006
-    - CV-007
-    - CV-008
-    - CV-009
-    - CV-010
-    - CV-011
-    - CV-012
-    - M-001
-    - M-002
-    - M-003
-    - M-004
-    - M-005
-    - M-006
-    - P-001
-    - P-002
-    - P-003
-    - P-004
-    - P-005
-    - P-006
-    - PT-001
-    - PT-002
-    - PT-003
-    - VS-001
-    - VS-002
-    - VS-003
   - name: object_id
     label: Object id
     role: key
     type: text
-    values:
-    - cls_007
-    - cls_015
-    - cls_020
-    - cls_031
-    - cls_032
-    - cls_044
-    - cls_055
-    - cls_081
-    - cls_083
-    - cls_113
-    - cls_123
-    - cls_133
-    - cls_185
-    - cls_210
-    - obj_001
-    - obj_017
-    - obj_034
-    - obj_079
-    - obj_098
-    - vlm_010
-    - vlm_011
-    - vlm_012
-    - vlm_013
-    - vlm_018
-    - vlm_019
-    - vlm_021
-    - vlm_022
-    - vlm_025
-    - vlm_033
-    - vlm_051
   - name: x
     label: X
     role: attribute
@@ -1648,6 +1427,9 @@ entities:
     - 'extraction: control valve matches control valve'
     - 'extraction: pressure transmitter matches pressure transmitter'
     - 'extraction: process pump matches process pump'
+    - 'grounded-sam-2: electrical cabinet linked by tag'
+    - 'grounded-sam-2: handwheel valve linked by tag'
+    - 'grounded-sam-2: valve actuator linked by tag'
     - procedural, on a electrical cabinet
     - procedural, on a other
     - procedural, on a tank

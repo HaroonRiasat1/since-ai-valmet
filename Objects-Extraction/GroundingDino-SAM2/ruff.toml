@@ -6,3 +6,5 @@ extend = "../../pyproject.toml"
 "docs/build_figures.py" = ["E402"]
 "tests/test_attribution.py" = ["E402"]
 "tests/test_app_export.py" = ["E402"]
+"tests/test_bim_*.py" = ["E402"]
+"splat_objects/bim/ifc_writer.py" = ["I001"]

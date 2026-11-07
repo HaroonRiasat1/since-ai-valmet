@@ -180,4 +180,14 @@ def assets():
     return [{k: a.get(k) for k in keys} for a in get_scene().assets()]
 
 
+@app.post("/api/objects/{obj_id}/remove")
+def remove_object(obj_id: str):
+    scene = get_scene()
+    try:
+        item = scene.remove(obj_id)
+    except RouteError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from error
+    return {"ok": True, "id": item["id"], "tag": item.get("tag"), "objects": len(scene.items)}
+
+
 app.mount("/", StaticFiles(directory=get_settings().web_dir, html=True), name="web")

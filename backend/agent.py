@@ -24,8 +24,18 @@ NAV_WORDS = re.compile(r"\b(go|goes|take|walk|route|navigate|bring|lead|head|sho
 ROUND_WORDS = re.compile(r"\b(round|inspect (all|every)|all (the )?(faulty|faults|unhealthy|problems))\b", re.I)
 WORST_WORDS = re.compile(r"\b(worst|faulty|fault|broken|failing|degraded|problem|unhealthy|lowest health)\b", re.I)
 NUMBER = re.compile(r"(?<![\w.-])\d+(?:\.\d+)?(?![\w-])")
-CLASS_WORDS = {"valve": "CONTROL_VALVE", "pump": "PROCESS_PUMP", "motor": "ELECTRIC_MOTOR",
-               "transmitter": "PRESSURE_TRANSMITTER", "sensor": "VIBRATION_SENSOR"}
+CLASS_MATCH = (
+    ("handwheel", "HANDWHEEL_VALVE"),
+    ("actuator", "VALVE_ACTUATOR"),
+    ("cabinet", "ELECTRICAL_CABINET"),
+    ("valve", "CONTROL_VALVE"),
+    ("pump", "PROCESS_PUMP"),
+    ("motor", "ELECTRIC_MOTOR"),
+    ("transmitter", "PRESSURE_TRANSMITTER"),
+    ("sensor", "VIBRATION_SENSOR"),
+)
+CLASS_WORDS = dict(CLASS_MATCH)
+ASSET_CLASS_ENUM = sorted({cls for _, cls in CLASS_MATCH})
 
 SYSTEM = """You are the field-service assistant inside an industrial digital twin. The technician is walking in a scanned equipment room.
 First work out what the technician wants, then use tools. Never invent tags, distances, numbers or readings.
@@ -58,7 +68,7 @@ NOT_FOUND = "I could not answer that from the plant data, so I am not guessing. 
 TOOLS = [
     {"type": "function", "function": {"name": "search_assets", "description": "List assets with health and state, nearest walk first or lowest health first.", "parameters": {
         "type": "object", "properties": {
-            "asset_class": {"type": "string", "enum": sorted(CLASS_WORDS.values())},
+            "asset_class": {"type": "string", "enum": ASSET_CLASS_ENUM},
             "unhealthy_only": {"type": "boolean"},
             "area": {"type": "string", "description": "Plant area, exactly as shown in the area field of a row"},
             "order": {"type": "string", "enum": ["walk", "health"]}}}}},
@@ -187,7 +197,7 @@ def rule_based(turn: Turn, message: str) -> str | None:
     if not NAV_WORDS.search(message):
         return None
     lowered = message.lower()
-    asset_class = next((cls for word, cls in CLASS_WORDS.items() if word in lowered), None)
+    asset_class = next((cls for word, cls in CLASS_MATCH if word in lowered), None)
     worst = bool(WORST_WORDS.search(message))
     area = next((a for a in {i.get("area") for i in turn.scene.assets()} if a and a.lower() in lowered), None)
     if not asset_class and not worst and not area:

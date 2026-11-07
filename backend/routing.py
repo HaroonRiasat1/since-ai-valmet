@@ -8,6 +8,7 @@ import heapq
 from dataclasses import dataclass
 
 import numpy as np
+from scipy import ndimage
 
 from pipeline import navigator
 
@@ -83,6 +84,17 @@ class FineGrid:
 
     def route(self, position, item):
         return self.plan(self.nearest_free(self.cell_of(position)), self.goal_for(item))
+
+    def free_box(self, item, pad=0.03):
+        """Mark floor cells under an object's footprint walkable and refresh clearance."""
+        center, size = np.asarray(item["center"], float), np.asarray(item["size"], float)
+        half = size[self.horiz] / 2 + pad
+        low, high = center[self.horiz] - half, center[self.horiz] + half
+        for cell in np.ndindex(self.walk.shape):
+            point = self.origin + (np.array(cell) + 0.5) * self.cell
+            if low[0] <= point[0] <= high[0] and low[1] <= point[1] <= high[1]:
+                self.walk[cell] = True
+        self.clear = ndimage.distance_transform_edt(self.walk) * self.cell
 
 
 class CellGrid:
@@ -176,6 +188,17 @@ class CellGrid:
         if self.sizes[goal] == 0:
             raise RouteError(f"cell {number} is blocked")
         return self.plan(self.nearest_free(self.cell_of(position)), goal)
+
+    def free_box(self, item, pad=0.03):
+        """Re-open cell-grid tiles covered by an object's footprint."""
+        center, size = np.asarray(item["center"], float), np.asarray(item["size"], float)
+        low_x, high_x = center[0] - size[0] / 2 - pad, center[0] + size[0] / 2 + pad
+        low_z, high_z = center[2] - size[2] / 2 - pad, center[2] + size[2] / 2 + pad
+        for col in range(self.cells):
+            for row in range(self.cells):
+                pos = self.world_of((col, row))
+                if low_x <= pos[0] <= high_x and low_z <= pos[2] <= high_z and self.sizes[col, row] == 0:
+                    self.sizes[col, row] = 3
 
 
 def nearest_next(grid, position, items):

@@ -37,3 +37,30 @@ def test_round_visits_unhealthy_assets_only(client):
 
 def test_route_needs_a_target(client):
     assert client.post("/api/route", json={"grid": "fine"}).status_code == 422
+
+
+def test_remove_unmapped_object(client, scene):
+    scene.data["items"].append({"id": "obj_c", "center": [0.5, 0, 0.5], "size": [0.1, 0.1, 0.1]})
+    scene.by_id["obj_c"] = scene.data["items"][-1]
+    body = client.post("/api/objects/obj_c/remove").json()
+    assert body["ok"] and body["id"] == "obj_c"
+    assert "obj_c" not in scene.by_id
+    assert client.get("/api/health").json()["objects"] == len(scene.items)
+
+
+def test_remove_mapped_asset(client, scene):
+    body = client.post("/api/objects/P-001/remove").json()
+    assert body["tag"] == "P-001"
+    assert "P-001" not in scene.by_tag
+    tags = {a["tag"] for a in client.get("/api/assets").json()}
+    assert "P-001" not in tags
+
+
+def test_remove_unknown_is_404(client):
+    assert client.post("/api/objects/no-such-id/remove").status_code == 404
+
+
+def test_route_to_removed_object_fails(client, scene):
+    client.post("/api/objects/P-001/remove")
+    r = client.post("/api/route", json={"grid": "fine", "position": [0.2, 1, 0.2], "target": "P-001"})
+    assert r.status_code == 422 and "unknown" in r.json()["error"]

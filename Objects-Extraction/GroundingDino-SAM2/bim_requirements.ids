@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ids xmlns="http://standards.buildingsmart.org/IDS" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <info><title>Since-AI BIM requirements</title><version>1.0</version></info>
+  <specifications>
+    <specification name="Extraction source" ifcVersion="IFC4">
+      <applicability><entity><name><simpleValue>IfcElement</simpleValue></name></entity></applicability>
+      <requirements>
+        <property dataType="xs:string">
+          <propertySet><simpleValue>SinceAI_Extraction</simpleValue></propertySet>
+          <baseName><simpleValue>Source</simpleValue></baseName>
+        </property>
+      </requirements>
+    </specification>
+    <specification name="Wall thickness flag" ifcVersion="IFC4">
+      <applicability><entity><name><simpleValue>IfcWall</simpleValue></name></entity></applicability>
+      <requirements>
+        <property dataType="xs:boolean">
+          <propertySet><simpleValue>SinceAI_Structure</simpleValue></propertySet>
+          <baseName><simpleValue>ThicknessAssumed</simpleValue></baseName>
+        </property>
+      </requirements>
+    </specification>
+  </specifications>
+</ids>

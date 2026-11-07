@@ -14,6 +14,7 @@ import numpy as np, pandas as pd
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import navigator as nv
+import supplement as sup_mod
 
 ply, xlsx, items_path, web = sys.argv[1:5]
 os.makedirs(f"{web}/data", exist_ok=True)
@@ -75,13 +76,19 @@ def semantic_items(layer):
 
 if SEMANTIC:   # objects dropped into data/objects/ join the extracted ones (format: data_format/README.md)
     import added_objects
-    layer = added_objects.merge(items, added_objects.load(), set(pd.read_excel(xlsx, sheet_name="Asset_Master")["tag"]))
+    pack_tags = set(pd.read_excel(xlsx, sheet_name="Asset_Master")["tag"])
+    known = pack_tags | sup_mod.known_tags(sup_mod.load())
+    layer = added_objects.merge(items, added_objects.load(), known)
     items = semantic_items(layer)
 
 # ---------------------------------------------------------------- Excel
 xl = {s: pd.read_excel(xlsx, s) for s in
       ["Asset_Master", "Current_State", "Telemetry_Sample_3d", "Alarms_Events",
        "Maintenance_History", "Historical_Service_Cases", "Knowledge_Docs", "Data_Quality"]}
+supplement = sup_mod.load()
+if supplement:
+    for sheet in ("Asset_Master", "Current_State", "Knowledge_Docs"):
+        xl[sheet] = pd.concat([xl[sheet], pd.DataFrame(supplement[sheet])], ignore_index=True)
 cur = xl["Current_State"].set_index("tag")
 master = xl["Asset_Master"].set_index("tag")
 tel = xl["Telemetry_Sample_3d"].sort_values("timestamp")
@@ -97,7 +104,7 @@ KEY = {
 def telemetry(tag, cls):
     t = tel[tel.tag == tag]
     out = {}
-    for c in KEY[cls]:
+    for c in KEY.get(cls, []):
         s = t[c].dropna()
         if len(s):
             out[c] = dict(last=round(float(s.iloc[-1]), 2),
@@ -229,6 +236,9 @@ assert raw_path, f"no walkable path to {target_box['id']}"
 
 def mapping_of(it, cls):
     if it["_how"] == "semantic" and it["_method"] == "manual":
+        if it.get("_source") == "grounded-sam-2":
+            conf = LAYER_CONF.get(it["_class_conf"], 0.4)
+            return dict(mapping=f"grounded-sam-2: {it['_class']} linked by tag", mapping_conf=conf, matched=False)
         return dict(mapping="manual (data/objects)", mapping_conf=0.9, matched=True)
     if it["_how"] == "semantic":
         matched = it["_method"] == "class_match"
@@ -283,23 +293,28 @@ def evidence_for(tg):
     dq = xl["Data_Quality"]; dq = dq[dq.tag == tg]
     t = tel[tel.tag == tg]
     shifts = []
-    for k in KEY[cls]:
+    for k in KEY.get(cls, []):
         s_ = t[k].dropna()
         if len(s_) > 60:
             a, b = float(s_.iloc[-48:].mean()), float(s_.iloc[:-48].mean())
             shifts.append(dict(metric=k, last24h=round(a, 2), before=round(b, 2),
                                change_pct=round((a - b) / (abs(b) or 1) * 100, 1)))
-    if cls == "CONTROL_VALVE":
+    if cls == "CONTROL_VALVE" and len(t):
         dev = (t.position_setpoint_pct - t.position_actual_pct).abs()
         shifts.insert(0, dict(metric="position_error_pct", last24h=round(float(dev.iloc[-48:].mean()), 2),
                               before=round(float(dev.iloc[:-48].mean()), 2),
                               change_pct=round((dev.iloc[-48:].mean() / dev.iloc[:-48].mean() - 1) * 100, 1)))
-    a_, b_ = TREND[cls]
+    trend_pair = TREND.get(cls)
+    if trend_pair and len(t):
+        a_, b_ = trend_pair
+        trend = dict(a=a_, b=b_, A=t[a_].iloc[::2].round(2).fillna(0).tolist(), B=t[b_].iloc[::2].round(2).fillna(0).tolist())
+    else:
+        trend = dict(a=None, b=None, A=[], B=[])
     return dict(
         tag=tg, asset_id=c["asset_id"],
         state={k: (v.item() if hasattr(v, "item") else v) for k, v in c.items() if k != "last_updated"},
         shifts=shifts,
-        trend=dict(a=a_, b=b_, A=t[a_].iloc[::2].round(2).fillna(0).tolist(), B=t[b_].iloc[::2].round(2).fillna(0).tolist()),
+        trend=trend,
         events=ev.head(5)[["event_id", "timestamp", "event_type", "severity", "event_code", "status"]].astype(str).to_dict("records"),
         work_orders=wo.head(3)[["work_order_id", "opened_at", "action", "result"]].astype(str).to_dict("records"),
         cases=case[["case_id", "historical_interpretation", "recommended_next_check"]].head(2).to_dict("records"),

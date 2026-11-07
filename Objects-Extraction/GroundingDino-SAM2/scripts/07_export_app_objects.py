@@ -53,7 +53,7 @@ def main() -> None:
             continue
         other_added.extend(ao.read_file(path))
 
-    known_tags = known_tags_from_layer(layer)
+    known_tags = known_tags_from_layer(layer, app_root)
     try:
         ao.merge(copy.deepcopy(layer), normalised + other_added, known_tags)
     except ao.ObjectError as err:

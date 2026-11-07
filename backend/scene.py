@@ -36,3 +36,17 @@ class Scene:
 
     def default_start(self):
         return self.data["path"][0]
+
+    def remove(self, key: str) -> dict:
+        """Drop an object from the live scene and free its footprint on every grid."""
+        item = self.by_id.get(key) or self.by_tag.get(key)
+        if item is None:
+            raise RouteError(f"unknown asset or object {key}")
+        oid = item["id"]
+        self.items = [i for i in self.items if i["id"] != oid]
+        self.by_id.pop(oid, None)
+        if item.get("tag"):
+            self.by_tag.pop(item["tag"], None)
+        for grid in self.grids.values():
+            grid.free_box(item)
+        return item

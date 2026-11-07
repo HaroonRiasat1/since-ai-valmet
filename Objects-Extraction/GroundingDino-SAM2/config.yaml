@@ -147,4 +147,90 @@ app_export:
     min_detected_views: 5
     min_detect_ratio: 0.5
   same_class_share: 0.5
-  tags: {}
+  tags:
+    Electrical_cabinet_00: EC-001
+    Electrical_cabinet_01: EC-002
+    Handwheel_valve_00: HV-001
+    Handwheel_valve_01: HV-002
+    Handwheel_valve_02: HV-003
+    Handwheel_valve_03: HV-004
+    Handwheel_valve_04: HV-005
+    Handwheel_valve_05: HV-006
+    Handwheel_valve_06: HV-007
+    Valve_actuator_00: VA-001
+
+# Stages 8–12: scan-to-BIM (IFC4 + GLB overlay). Run with config_all_objects.yaml.
+bim:
+  units_to_m: 1.0
+  app_root: ../..
+  semantic_layer: data/semantic_layer.json
+  plant_sqlite: data/semantic/plant.sqlite
+  web_bim_dir: web/data/bim
+  slab_thickness_m: 0.2
+  wall_thickness_m: 0.2
+  assume_right_angles: true
+  surface_voxel_m: 0.02
+  surface_alpha_min: 0.95
+  wall_height_min_m: 0.3
+  wall_height_max_m: 1.9
+  wall_floor_edge_m: 1.0
+  wall_min_length_m: 0.8
+  wall_gap_bridge_m: 1.5
+  wall_slice_m: 0.2
+  wall_peak_min_slices: 3
+  door_open_yaw_deg: 10.0
+  pipe_label_attach_m: 0.3
+  fit_tolerance_m: 0.05
+  floor_snap_m: 0.25
+  mesh:
+    enabled: true
+    voxel_m: 0.015
+    max_voxels_per_axis: 96
+    opacity_min: 0.3
+    iso_percentile: 35.0
+    blur_sigma_voxels: 0.9
+    max_faces: 2000
+    min_faces: 20
+    colour: true
+    volume_ratio_max: 4.0
+  asset_class_ifc:
+    CONTROL_VALVE: {ifc: IfcValve, type: REGULATING, family: valve, shape: valve}
+    ELECTRIC_MOTOR: {ifc: IfcElectricMotor, type: NOTDEFINED, family: motor, shape: cylinder}
+    PRESSURE_TRANSMITTER: {ifc: IfcSensor, type: PRESSURESENSOR, family: sensor, shape: box}
+    PROCESS_PUMP: {ifc: IfcPump, type: NOTDEFINED, family: pump, shape: cylinder}
+    VIBRATION_SENSOR: {ifc: IfcSensor, type: VIBRATIONSENSOR, family: sensor, shape: box}
+  class_map:
+    control valve: {ifc: IfcValve, type: REGULATING, family: valve, shape: valve}
+    handwheel valve: {ifc: IfcValve, type: ISOLATING, family: valve, shape: valve}
+    valve actuator: {ifc: IfcValve, type: REGULATING, family: valve, shape: valve}
+    valve: {ifc: IfcValve, type: NOTDEFINED, family: valve, shape: valve}
+    pipe: {ifc: IfcPipeSegment, type: RIGIDSEGMENT, family: pipe, shape: pipe}
+    pipe fitting: {ifc: IfcPipeFitting, type: NOTDEFINED, family: pipe, shape: box}
+    pipes/fittings: {ifc: IfcPipeFitting, type: NOTDEFINED, family: pipe, shape: box}
+    pipe/fittings: {ifc: IfcPipeFitting, type: NOTDEFINED, family: pipe, shape: box}
+    process pump: {ifc: IfcPump, type: NOTDEFINED, family: pump, shape: cylinder}
+    pump: {ifc: IfcPump, type: NOTDEFINED, family: pump, shape: cylinder}
+    electric motor: {ifc: IfcElectricMotor, type: NOTDEFINED, family: motor, shape: cylinder}
+    motor: {ifc: IfcElectricMotor, type: NOTDEFINED, family: motor, shape: cylinder}
+    pressure transmitter: {ifc: IfcSensor, type: PRESSURESENSOR, family: sensor, shape: box}
+    vibration sensor: {ifc: IfcSensor, type: VIBRATIONSENSOR, family: sensor, shape: box}
+    tank: {ifc: IfcTank, type: NOTDEFINED, family: tank, shape: cylinder}
+    electrical cabinet: {ifc: IfcElectricDistributionBoard, type: DISTRIBUTIONBOARD, family: cabinet, shape: box}
+    cabinet: {ifc: IfcElectricDistributionBoard, type: DISTRIBUTIONBOARD, family: cabinet, shape: box}
+    washing machine: {ifc: IfcElectricAppliance, type: WASHINGMACHINE, family: appliance, shape: box}
+    appliance: {ifc: IfcElectricAppliance, type: NOTDEFINED, family: appliance, shape: box}
+    chair: {ifc: IfcFurniture, type: CHAIR, family: furniture, shape: box}
+    ladder: {ifc: IfcFurniture, type: STEPLADDER, family: ladder, shape: box}
+    door: {ifc: IfcDoor, type: DOOR, family: door, shape: door}
+    insulated panel: {ifc: IfcBuildingElementProxy, family: loose, shape: box, group: Loose items}
+    fan: {ifc: IfcBuildingElementProxy, family: loose, shape: box, group: Loose items}
+    box: {ifc: IfcBuildingElementProxy, family: loose, shape: box, group: Loose items}
+    green pipe label: {ifc: IfcBuildingElementProxy, family: label, shape: label, export: false}
+    pipe label: {ifc: IfcBuildingElementProxy, family: label, shape: label, export: false}
+    default: {ifc: IfcBuildingElementProxy, family: loose, shape: box, group: Loose items}
+  group_areas:
+    AREA-01: Stock Preparation
+    AREA-02: Machine Hall
+    AREA-03: Utility Island
+    AREA-04: Chemical Preparation
+    AREA-05: Water Treatment

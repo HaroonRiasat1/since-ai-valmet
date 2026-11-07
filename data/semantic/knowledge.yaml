@@ -45,8 +45,8 @@ entities:
     label: Asset
     kind: dimension
     grain: one asset
-    description: The 30 plant assets with class, area, criticality, install date and service interval.
-    synonyms: [equipment, device, asset list, valve, pump, motor, transmitter, sensor]
+    description: Plant assets with class, area, criticality, install date and service interval (pack assets plus grounded-sam-2 supplement).
+    synonyms: [equipment, device, asset list, valve, pump, motor, transmitter, sensor, cabinet, handwheel, actuator]
     joins:
       - {name: state, to: asset_state, keys: [tag, tag]}
       - {name: location, to: asset_location, keys: [tag, tag]}

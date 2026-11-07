@@ -32,6 +32,7 @@ source .venv/bin/activate
 python run_pipeline.py --config config_all_objects.yaml               # all prompts, every stage
 python run_pipeline.py --config config_all_objects.yaml --from-stage 4 # retune class thresholds without re-detecting
 python run_pipeline.py --config config_all_objects.yaml --from-stage 7 # refresh the app data/objects file only
+python run_pipeline.py --config config_all_objects.yaml --from-stage 8 # IFC4 + GLB overlay (see docs/bim-export.md)
 python run_pipeline.py --force                                         # the 5-class configuration, re-rendering its view set
 ```
 
