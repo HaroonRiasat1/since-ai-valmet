@@ -98,8 +98,6 @@
   <button id="mapbtn" class="on" title="2D map (M)">Map</button>
   <button id="coordsbtn">XYZ</button>
   <button id="avbtn">Avatar</button>
-  <button id="vlmbtn" title="Render each box from a standing viewpoint and ask a vision-language model what it is">VLM scan</button>
-  <button id="detbtn" title="Ignore the existing boxes: walk a grid of standpoints, let the VLM find equipment in each view (lift to 3D with pipeline/vlm_lift.py)">VLM detect</button>
   <label>radius <input id="rad" type="range" min="0.5" max="3" step="0.1" value="1.5"><span id="radv">1.5 m</span></label>
   <label>speed <input id="spd" type="range" min="0.3" max="3" step="0.1" value="1"><span id="spdv">1.0×</span></label>
 </div>
@@ -804,11 +802,11 @@ function analyze(b) {
 function clearAnalysis() { selBox = null; lastList = ""; $("copilot").classList.remove("show"); }
 renderer.domElement.addEventListener("pointerdown", (e) => downAt = { x: e.clientX, y: e.clientY });
 renderer.domElement.addEventListener("click", (ev) => {
-  if (picking || scanning || !downAt || Math.hypot(ev.clientX - downAt.x, ev.clientY - downAt.y) > 5) return;
+  if (picking || !downAt || Math.hypot(ev.clientX - downAt.x, ev.clientY - downAt.y) > 5) return;
   const b = boxAt(ev); if (b) analyze(b);
 });
 renderer.domElement.addEventListener("pointermove", (ev) => {
-  if (ev.buttons || picking || scanning) return;
+  if (ev.buttons || picking) return;
   renderer.domElement.style.cursor = boxAt(ev) ? "pointer" : "";
 });
 $("near").onclick = (e) => { const c = e.target.closest("[data-box]"); if (c) analyze(boxObjs.find(b => b.it.id === c.dataset.box)); };
@@ -916,39 +914,12 @@ routeTo($("target").value);
 
 setCamMode("fp");
 
-// ---------- VLM scan: stand at a clear spot ~1 m from each box, render the splat, crop around the box
-// with a yellow outline, and ask the server's VLM what it is. Answers land in data/vlm_labels.json;
-// build_scene.py then maps Excel tags by class (DOC-3D-MAPPING: labels are evidence, not identity).
-let scanning = false;
-const nextFrames = (n) => new Promise(r => { const f = () => --n <= 0 ? r() : requestAnimationFrame(f); requestAnimationFrame(f); });
+// ---------- crop a box from the current view (used by "Identify with VLM" on a clicked object)
 function boxCorners(it) {
   const out = [];
   for (const sx of [-1, 1]) for (const sy of [-1, 1]) for (const sz of [-1, 1])
     out.push(new THREE.Vector3(it.center[0] + sx*it.size[0]/2, it.center[1] + sy*it.size[1]/2, it.center[2] + sz*it.size[2]/2));
   return out;
-}
-function viewFor(it) {                           // walkable cell ~1 m from the footprint, line of sight preferred
-  const c = new THREE.Vector3(...it.center), [ci, cj] = cellOf(c), R = Math.ceil(2.2 / NG.cell);
-  const half = [it.size[NG.horiz[0]] / 2, it.size[NG.horiz[1]] / 2];
-  const inFoot = (i, j) => { const w = worldOf(i, j);
-    return Math.abs(w.getComponent(NG.horiz[0]) - c.getComponent(NG.horiz[0])) <= half[0] &&
-           Math.abs(w.getComponent(NG.horiz[1]) - c.getComponent(NG.horiz[1])) <= half[1]; };
-  let best = null;
-  for (let i = ci - R; i <= ci + R; i += 2) for (let j = cj - R; j <= cj + R; j += 2) {
-    if (!isWalk(i, j)) continue;
-    const d = distToBox(worldOf(i, j), it); if (d < 0.5 || d > 2.2) continue;
-    const n = Math.ceil(Math.hypot(i - ci, j - cj)); let blocked = 0;
-    for (let k = 1; k < n; k++) {                // obstacle cells between us and the box (the box's own skirt is ignored)
-      const si = Math.round(i + (ci - i) * k / n), sj = Math.round(j + (cj - j) * k / n);
-      if (inFoot(si, sj) || distToBox(worldOf(si, sj), it) < 0.25) break;
-      if (si < 0 || sj < 0 || si >= GH || sj >= GW || clear[si * GW + sj] === 0) blocked++;
-    }
-    const score = Math.abs(d - 1.0) + 0.15 * blocked - 0.01 * clear[i * GW + j];
-    if (!best || score < best.score) best = { score, cell: [i, j] };
-  }
-  if (!best) return null;
-  const eye = toScene(worldOf(...best.cell)); eye.y += FP_EYE;
-  return { eye, look: toScene(c) };
 }
 function grabCrop(it) {
   renderer.render(scene, camera);                // read the canvas in the same task, before it is cleared
@@ -966,88 +937,6 @@ function grabCrop(it) {
   g.strokeStyle = "#ffd400"; g.lineWidth = 3; g.strokeRect((x0 - cx0) * k, (y0 - cy0) * k, (x1 - x0) * k, (y1 - y0) * k);
   return cv.toDataURL("image/jpeg", 0.85);
 }
-function beginCapture(btn) {                     // camera belongs to the scan; overlays hidden so the VLM sees only the scan
-  scanning = true; $(btn).classList.add("on"); $(btn).dataset.label = $(btn).textContent; $(btn).textContent = "■ Stop";
-  const prevMode = camMode; setCamMode("free"); controls.enabled = false; camera.fov = 60; camera.updateProjectionMatrix();
-  const hidden = [avatar, startMarker, pathLine, ...boxObjs.map(b => b.grp)].filter(Boolean);
-  hidden.forEach(o => o.visible = false); labels.innerHTML = ""; $("avname").style.display = "none";
-  return () => { hidden.forEach(o => o.visible = true); scanning = false; lastList = "";
-    $(btn).classList.remove("on"); $(btn).textContent = $(btn).dataset.label; setCamMode(prevMode); };
-}
-async function vlmScan(ev) {
-  if (scanning) { scanning = false; return; }    // second click stops after the current box
-  const endCapture = beginCapture("vlmbtn");
-  let n = 0, ok = 0;
-  const redo = ev?.shiftKey;                     // shift-click rescans boxes that already have a label
-  for (const b of boxObjs) {
-    if (!scanning) break;
-    if (b.it.vlm && !redo) { n++; continue; }
-    n++; const v = viewFor(b.it);
-    if (!v) { console.log("[vlm]", b.it.id, "no clear viewpoint"); continue; }
-    camera.position.copy(v.eye); camera.lookAt(v.look); controls.target.copy(v.look);
-    $("status").textContent = `VLM scan ${n}/${boxObjs.length}: ${b.it.id}…`;
-    await nextFrames(30);                        // let Spark re-sort splats for the new view
-    const image = grabCrop(b.it); if (!image) continue;
-    try {
-      const r = await (await fetch("api/vlm/label", { method:"POST", headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({ box_id: b.it.id, image, provider: llm.provider, model: llm.model }) })).json();
-      if (r.error) throw new Error(r.error);
-      b.it.vlm = r; ok++; console.log("[vlm]", b.it.id, r.asset_class, r.label, r.confidence);
-    } catch (e) { console.log("[vlm]", b.it.id, "error", e.message); $("status").textContent = `VLM error on ${b.it.id}: ${e.message}`; await nextFrames(60); }
-  }
-  endCapture();
-  $("status").textContent = `VLM scan: ${ok} boxes labelled. Rebuild with build_scene.py to map tags by class.`;
-}
-$("vlmbtn").onclick = vlmScan;
-
-// ---------- VLM detect: ignore the existing boxes. Stand at well-spread open spots, look around in
-// 60° steps, and let the VLM find equipment in each full frame. Each frame is stored with its camera
-// (pose in the .ply frame + projection) so vlm_lift.py can lift the 2D boxes to 3D with splat depth.
-function standpoints(spacing = 1.2) {
-  const cand = [];
-  for (let i = 0; i < GH; i += 2) for (let j = 0; j < GW; j += 2)
-    if (isWalk(i, j) && clear[i * GW + j] * NG.cell >= 0.2) cand.push([i, j, clear[i * GW + j]]);
-  cand.sort((a, b) => b[2] - a[2]);              // most open spots first, then keep them spread out
-  const out = [], r = spacing / NG.cell;
-  for (const c of cand) if (out.every(o => Math.hypot(o[0] - c[0], o[1] - c[1]) >= r)) out.push(c);
-  return out;
-}
-function grabFrame(maxW = 1024) {
-  renderer.render(scene, camera);
-  const src = renderer.domElement, k = Math.min(1, maxW / src.width);
-  const cv = document.createElement("canvas"); cv.width = Math.round(src.width * k); cv.height = Math.round(src.height * k);
-  cv.getContext("2d").drawImage(src, 0, 0, cv.width, cv.height);
-  camera.updateMatrixWorld();
-  const pose = world.matrixWorld.clone().invert().multiply(camera.matrixWorld);   // camera -> .ply frame
-  return { image: cv.toDataURL("image/jpeg", 0.85), width: cv.width, height: cv.height,
-           pose: pose.elements, proj: camera.projectionMatrix.elements };
-}
-async function vlmDetect() {
-  if (scanning) { scanning = false; return; }
-  const endCapture = beginCapture("detbtn");
-  const run = new Date().toISOString().slice(0, 19).replace(/[-:]/g, ""), spots = standpoints(), HEADS = 6;
-  const inflight = new Set(); let views = 0, found = 0, errors = 0;
-  for (let k = 0; k < spots.length && scanning; k++) {
-    const eye = toScene(worldOf(spots[k][0], spots[k][1])); eye.y += FP_EYE;
-    for (let h = 0; h < HEADS && scanning; h++) {
-      const a = h * 2 * Math.PI / HEADS;
-      camera.position.copy(eye); camera.lookAt(eye.clone().add(new THREE.Vector3(Math.sin(a), -0.25, Math.cos(a))));
-      $("status").textContent = `VLM detect: spot ${k + 1}/${spots.length}, view ${h + 1}/${HEADS} · ${found} detections`;
-      await nextFrames(30);
-      const body = { run, view_id: `S${String(k).padStart(2, "0")}_H${h}`, provider: llm.provider, model: llm.model, ...grabFrame() };
-      const p = fetch("api/vlm/detect", { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(body) })
-        .then(r => r.json()).then(r => { if (r.error) throw new Error(r.error); views++; found += r.detections.length;
-          console.log("[detect]", body.view_id, r.detections.map(d => `${d.asset_class}:${d.label}`).join(", ") || "-"); })
-        .catch(e => { errors++; console.log("[detect]", body.view_id, "error", e.message); })
-        .finally(() => inflight.delete(p));
-      inflight.add(p);
-      if (inflight.size >= 4) await Promise.race(inflight);   // a few requests in flight while we keep rendering
-    }
-  }
-  await Promise.all(inflight); endCapture();
-  $("status").textContent = `VLM detect run ${run}: ${views} views, ${found} detections, ${errors} errors. Next: vlm_lift.py`;
-}
-$("detbtn").onclick = vlmDetect;
 
 // ---------- navigation panel: choose a grid, and route between tags, cell numbers or where you stand
 const parseSpot = (text) => {           // a tag or cell number anywhere in the text, else the words themselves
@@ -1144,7 +1033,6 @@ const clock = new THREE.Clock(); let lastList = "";
 const labels = $("labels");
 renderer.setAnimationLoop(() => {
   const dt = Math.min(clock.getDelta(), 0.1);
-  if (scanning) { renderer.render(scene, camera); return; }        // the scan drives the camera itself
   if (playing) {
     s = Math.min(pathLen, s + dt * speed);
     const st = stops[stopIdx];

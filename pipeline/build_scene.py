@@ -130,7 +130,7 @@ for it in items if not SEMANTIC else []:      # items found by vlm_lift.py carry
         visual_evidence=f"VLM detection fused from {it['views']} rendered views", model="vlm_lift")
         if it.get("source") == "vlm" else None)
 n_vlm = sum(1 for it in items if it["_vlm"])
-print(f"VLM labels: {n_vlm} of {len(items)} items" if n_vlm else "VLM labels: none (run 'VLM scan' or 'VLM detect' in the viewer)")
+print(f"VLM labels: {n_vlm} of {len(items)} items" if n_vlm else "VLM labels: none")
 
 
 def vlm_cost(it, cls):
