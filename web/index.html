@@ -395,9 +395,30 @@ let focusTag = null;                                             // asset whose 
 let mapDirty = true, showMap = true;
 const drawMap = () => { mapDirty = true; };
 
+// The walk from pipeline/view_splat.py (smooth_route): resample the path evenly, then round its corners with a
+// moving average. Point-mirrored ends average back to the exact end points, so every stop stays where it was.
+function smoothRoute(p, spacing = 0.03, window = 0.45) {
+  if (p.length < 3) return p;
+  const L = [0]; for (let i = 1; i < p.length; i++) L.push(L[i-1] + p[i].distanceTo(p[i-1]));
+  const total = L.at(-1), line = []; let k = 1;
+  const count = Math.ceil((total + spacing) / spacing);       // same samples as np.arange(0, total + spacing, spacing)
+  for (let i = 0; i < count; i++) {
+    const dd = Math.min(i * spacing, total); while (k < p.length - 1 && L[k] < dd) k++;
+    line.push(p[k-1].clone().lerp(p[k], Math.min(1, Math.max(0, (dd - L[k-1]) / Math.max(1e-9, L[k] - L[k-1])))));
+  }
+  const n = line.length, half = Math.max(1, Math.floor(window / spacing / 2));
+  const at = (i) => i < 0 ? line[0].clone().multiplyScalar(2).sub(line[Math.min(n - 1, -i)])
+    : i >= n ? line[n-1].clone().multiplyScalar(2).sub(line[Math.max(0, 2 * (n - 1) - i)]) : line[i];
+  const onFloor = (v) => isWalk(...cellOf(v));
+  return line.map((raw, i) => {
+    const sum = new THREE.Vector3(); for (let j = i - half; j <= i + half; j++) sum.add(at(j));
+    const smooth = sum.divideScalar(2 * half + 1);
+    return onFloor(smooth) || !onFloor(raw) ? smooth : raw;    // never round a corner off the walkable floor
+  });
+}
 function setRoute(legs) {                    // legs: [{ tag, pts:[Vector3...] }]
   pts = []; stops = [];
-  for (const L of legs) { const add = pts.length ? L.pts.slice(1) : L.pts; pts.push(...add); if (L.tag) stops.push({ tag: L.tag, idx: pts.length - 1 }); }
+  for (const leg of legs) { const L = { ...leg, pts: smoothRoute(leg.pts) }; const add = pts.length ? L.pts.slice(1) : L.pts; pts.push(...add); if (L.tag) stops.push({ tag: L.tag, idx: pts.length - 1 }); }
   cum = [0]; for (let i = 1; i < pts.length; i++) cum.push(cum[i-1] + pts[i].distanceTo(pts[i-1]));
   pathLen = cum.at(-1); stops.forEach(st => st.d = cum[st.idx]);
   if (pathLine) world.remove(pathLine);
@@ -446,11 +467,18 @@ async function routeRound() {                 // visit every non-healthy asset, 
 }
 
 // ---------- motion helpers
+const LOOK_AHEAD = 0.6;                       // the walker faces the path this far ahead, as in view_splat.py
+function pointAt(d) {
+  let i = cum.findIndex(c => c >= d); if (i <= 0) i = 1; if (d >= pathLen) i = pts.length - 1;
+  const a = pts[i-1], b = pts[i], t = Math.min(1, Math.max(0, (d - cum[i-1]) / Math.max(1e-6, cum[i] - cum[i-1])));
+  return a.clone().lerp(b, t);
+}
 function posAt(d) {
   if (pts.length < 2) return { p: pts[0] || new THREE.Vector3(), dir: new THREE.Vector3(1,0,0) };
-  let i = cum.findIndex(c => c >= d); if (i <= 0) i = 1; if (d >= pathLen) i = pts.length - 1;
-  const a = pts[i-1], b = pts[i], t = Math.min(1, (d - cum[i-1]) / Math.max(1e-6, cum[i] - cum[i-1]));
-  return { p: a.clone().lerp(b, t), dir: b.clone().sub(a).normalize() };
+  const p = pointAt(d);
+  const dir = d + LOOK_AHEAD <= pathLen ? pointAt(d + LOOK_AHEAD).sub(p)          // near the end, keep the last heading
+    : pointAt(pathLen).sub(pointAt(Math.max(0, pathLen - LOOK_AHEAD)));
+  return { p, dir: dir.lengthSq() > 1e-12 ? dir.normalize() : new THREE.Vector3(1,0,0) };
 }
 function distToBox(p, it) { let d2 = 0;
   for (const a of H) { const e = Math.max(Math.abs(p.getComponent(a) - it.center[a]) - it.size[a]/2, 0); d2 += e*e; } return Math.sqrt(d2); }
@@ -771,7 +799,8 @@ $("near").onclick = (e) => { const c = e.target.closest("[data-box]"); if (c) an
 addEventListener("resize", () => { camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
 
 // ---------- keyboard driving: W/S or ↑/↓ walk, A/D step sideways, ←/→ turn, Shift faster, R = route from here
-const keys = new Set(); let manual = false, mPos = null, yaw = 0;
+const keys = new Set(); let manual = false, mPos = null, yaw = 0, turnRate = 0;
+const vel = new THREE.Vector3();                 // eases starts, stops and turns instead of jumping to full speed
 const DRIVE = { KeyW:1, KeyS:1, KeyA:1, KeyD:1, ArrowUp:1, ArrowDown:1, ArrowLeft:1, ArrowRight:1 };
 addEventListener("keydown", (e) => {
   if (e.target.tagName === "SELECT" || e.target.tagName === "INPUT") return;
@@ -779,7 +808,7 @@ addEventListener("keydown", (e) => {
     e.preventDefault(); keys.add(e.code);
     if (!manual) {                               // take over from the auto route at the current spot
       const { p, dir } = posAt(s); mPos = p.clone();
-      const dS = toScene(p.clone().add(dir)).sub(toScene(p)); yaw = Math.atan2(dS.x, dS.z);
+      const dS = toScene(p.clone().add(dir)).sub(toScene(p)); yaw = Math.atan2(dS.x, dS.z); vel.set(0, 0, 0); turnRate = 0;
       manual = true; playing = false; $("play").textContent = "▶ Resume route"; $("drive").style.display = "block";
     }
   }
@@ -800,12 +829,14 @@ function drive(dt) {
   const turn = (keys.has("ArrowLeft") ? 1 : 0) - (keys.has("ArrowRight") ? 1 : 0);
   const fwd = (keys.has("KeyW") || keys.has("ArrowUp") ? 1 : 0) - (keys.has("KeyS") || keys.has("ArrowDown") ? 1 : 0);
   const side = (keys.has("KeyD") ? 1 : 0) - (keys.has("KeyA") ? 1 : 0);     // A/D step sideways
-  yaw += turn * 2.2 * dt;
-  if (!fwd && !side) return;
-  const step = 1.1 * fast * speed * dt;
+  const ease = 1 - Math.exp(-dt * 10);           // about 0.3 s to reach full speed or stop
+  turnRate += (turn * 2.2 - turnRate) * ease; yaw += turnRate * dt;
   const meS = toScene(mPos);
-  const dirS = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).multiplyScalar(fwd)
-    .add(new THREE.Vector3(-Math.cos(yaw), 0, Math.sin(yaw)).multiplyScalar(side)).normalize();
+  const want = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).multiplyScalar(fwd)
+    .add(new THREE.Vector3(-Math.cos(yaw), 0, Math.sin(yaw)).multiplyScalar(side)).normalize().multiplyScalar(1.1 * fast * speed);
+  vel.lerp(want, ease);
+  if (vel.lengthSq() < 1e-6) { vel.set(0, 0, 0); return; }
+  const step = vel.length() * dt, dirS = vel.clone().normalize();
   const here = clearAt(mPos);
   const tryMove = (vS) => { const raw = world.worldToLocal(meS.clone().add(vS)); raw.setComponent(UP, mPos.getComponent(UP));
     const c = clearAt(raw);
