@@ -102,7 +102,7 @@
 </div>
 <div id="pick-hint" class="panel">Click on the floor to place the start point (Esc to cancel)</div>
 <div id="drive" class="panel" style="position:fixed;bottom:12px;left:50%;transform:translateX(-50%);padding:6px 12px;display:none">
-  Driving: <b>W/S</b> walk · <b>A/D</b> turn · <b>Shift</b> faster · <b>R</b> route to target from here · <b>▶</b> back to route</div>
+  Driving: <b>W/S</b> walk · <b>A/D</b> step sideways · <b>←/→</b> turn ·<b>Shift</b> faster · <b>R</b> route to target from here · <b>▶</b> back to route</div>
 <div id="keyhint" class="mut" style="position:fixed;bottom:52px;left:12px">Tip: press W/A/S/D or arrow keys to walk yourself</div>
 
 <div id="side" class="panel">
@@ -770,7 +770,7 @@ renderer.domElement.addEventListener("pointermove", (ev) => {
 $("near").onclick = (e) => { const c = e.target.closest("[data-box]"); if (c) analyze(boxObjs.find(b => b.it.id === c.dataset.box)); };
 addEventListener("resize", () => { camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
 
-// ---------- keyboard driving: W/S or ↑/↓ walk, A/D or ←/→ turn, Shift faster, R = route from here
+// ---------- keyboard driving: W/S or ↑/↓ walk, A/D step sideways, ←/→ turn, Shift faster, R = route from here
 const keys = new Set(); let manual = false, mPos = null, yaw = 0;
 const DRIVE = { KeyW:1, KeyS:1, KeyA:1, KeyD:1, ArrowUp:1, ArrowDown:1, ArrowLeft:1, ArrowRight:1 };
 addEventListener("keydown", (e) => {
@@ -797,12 +797,15 @@ const clearAt = (v) => { const [i, j] = cellOf(v); return (i >= 0 && j >= 0 && i
 const walkableRaw = (v) => clearAt(v) >= DRIVE_CLEAR;
 function drive(dt) {
   const fast = keys.has("ShiftLeft") || keys.has("ShiftRight") ? 2.2 : 1;
-  const turn = (keys.has("KeyA") || keys.has("ArrowLeft") ? 1 : 0) - (keys.has("KeyD") || keys.has("ArrowRight") ? 1 : 0);
+  const turn = (keys.has("ArrowLeft") ? 1 : 0) - (keys.has("ArrowRight") ? 1 : 0);
   const fwd = (keys.has("KeyW") || keys.has("ArrowUp") ? 1 : 0) - (keys.has("KeyS") || keys.has("ArrowDown") ? 1 : 0);
+  const side = (keys.has("KeyD") ? 1 : 0) - (keys.has("KeyA") ? 1 : 0);     // A/D step sideways
   yaw += turn * 2.2 * dt;
-  if (!fwd) return;
-  const step = fwd * 1.1 * fast * speed * dt;
-  const meS = toScene(mPos), dirS = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw));
+  if (!fwd && !side) return;
+  const step = 1.1 * fast * speed * dt;
+  const meS = toScene(mPos);
+  const dirS = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).multiplyScalar(fwd)
+    .add(new THREE.Vector3(-Math.cos(yaw), 0, Math.sin(yaw)).multiplyScalar(side)).normalize();
   const here = clearAt(mPos);
   const tryMove = (vS) => { const raw = world.worldToLocal(meS.clone().add(vS)); raw.setComponent(UP, mPos.getComponent(UP));
     const c = clearAt(raw);
