@@ -25,19 +25,22 @@ flowchart TD
     s4["Stage 4: Lift masks to Gaussians"]
     s5["Stage 5: Fuse into 3D instances"]
     s6["Stage 6: Export objects"]
+    s7["Stage 7: App data/objects JSON"]
     a1(["Floor plane, up axis, floor plan, ceiling height, clearance map"])
     a2(["Rendered frames: 147 RGB, depth and alpha views with cameras.json"])
     a3(["Detections: 687 Grounding DINO boxes with SAM 2.1 masks"])
     a4(["Visibility per frame and Gaussian members per mask, 418 masks"])
     a5(["26 instances with votes, confidence and 3D boxes"])
     a6(["Final outputs: 26 object .ply files, objects.json, colored scene"])
-    raw --> s1 --> s2 --> s3 --> s4 --> s5 --> s6
+    a7(["Since-AI: data/objects/grounded_sam2_equipment_room.json"])
+    raw --> s1 --> s2 --> s3 --> s4 --> s5 --> s6 --> s7
     s1 -.-> a1
     s2 -.-> a2
     s3 -.-> a3
     s4 -.-> a4
     s5 -.-> a5
     s6 -.-> a6
+    s7 -.-> a7
     a1 -.->|"camera-safe free space"| s2
     raw -.->|"same Gaussians"| s4
 ```
@@ -51,6 +54,7 @@ flowchart TD
 | 4. Lifting | detections + cameras + raw scene | `outputs/equipment_room/lifting/` |
 | 5. 3D instances | lifted masks | `outputs/equipment_room/instances/` |
 | 6. Final outputs | instances + raw scene | `outputs/equipment_room/objects/` |
+| 7. App export | `objects.json` + scan layer | `Since-AI/data/objects/grounded_sam2_equipment_room.json` |
 
 ---
 
@@ -271,6 +275,25 @@ The goal of this stage is one standalone splat per object, plus a machine-readab
 
 ---
 
+## Stage 7: App `data/objects` export
+
+Stage 6 writes rich pipeline metadata in `objects.json` (oriented boxes, view lists, splat counts). The Since-AI twin consumes a separate, stricter format documented in [`data_format/README.md`](../../../data_format/README.md). Stage 7 maps each of the 26 records into that format and writes `data/objects/grounded_sam2_equipment_room.json`, then validates with the app's `pipeline/added_objects.py` (`normalise` and `merge` against `data/semantic_layer.json`).
+
+| Pipeline field | App field |
+| --- | --- |
+| `class_key` | `class` (spaces, lower case) |
+| `name` suffix | `id` (`Valves_13` → `valve_13`) |
+| `box.aabb_min` / `aabb_max` | `box.min` / `box.max` (4 decimal places) |
+| views + `detect_ratio` | `class_confidence` (`high` / `medium` / `low`) |
+| fixed | `source`: `grounded-sam-2` |
+| evidence + overlap | `note` |
+
+Overlap notes are added when a same-class object in the scan layer covers at least 50% of our axis-aligned box (for example `control valve` matches `valve`). Asset tags are never inferred; set `app_export.tags` in `config.yaml` only for tags verified on site.
+
+To load the objects into the page, from the Since-AI repo root run `python pipeline/added_objects.py`, then rebuild with `build_scene.py` and `build_layer.py` as in the data_format guide.
+
+---
+
 ## Design choices
 
 - **Render, then lift.** 2D foundation models detect and segment far better than any 3D method can classify raw splats. Rendering from cameras placed inside the room yields clean, well-exposed frames with known cameras, whatever the original capture trajectory was.
@@ -303,6 +326,7 @@ All thresholds are in `config.yaml`.
 | 4. Lifting | 42.1 s |
 | 5. 3D instances | 5.3 s |
 | 6. Final outputs | 4.0 s |
+| 7. App export | < 1 s |
 | **Total** | **279.5 s** |
 
 The figures in this document are generated from the pipeline outputs by `docs/build_figures.py`.

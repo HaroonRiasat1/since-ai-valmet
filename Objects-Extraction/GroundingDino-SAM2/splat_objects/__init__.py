@@ -1,6 +1,7 @@
 """3D Gaussian splat object extraction helpers."""
 
 __all__ = [
+    "app_export",
     "cameras",
     "config",
     "detect",

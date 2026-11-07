@@ -9,6 +9,7 @@ Pipeline:
 4. `04_lift_masks.py`: one backward pass through the mlx3d rasterizer gives each Gaussian's exact blending weight (alpha × transmittance) inside every mask, so occluded Gaussians get none.
 5. `05_build_instances.py`: matches masks across views, takes a cross-view vote (with hysteresis growth for attached parts), filters out inconsistent detections, removes floor splats and floaters, resolves Gaussians claimed by several objects, and fits gravity-aligned boxes.
 6. `06_export_objects.py`: one `.ply` per object (original splat rows), `objects.json`, colored and remainder scenes, previews.
+7. `07_export_app_objects.py`: writes [`data/objects/grounded_sam2_equipment_room.json`](../../data/objects/grounded_sam2_equipment_room.json) in the Since-AI [`data_format`](../../data_format/README.md) so `build_scene.py` can merge the 26 objects into the twin.
 
 Rendering uses [mlx3d](https://pypi.org/project/mlx3d/) (Metal) because gsplat needs CUDA. Grounding DINO and SAM 2 run on MPS.
 
@@ -27,7 +28,18 @@ source .venv/bin/activate
 python run_pipeline.py --force        # full run, re-rendering the view set
 python run_pipeline.py --from-stage 3 # reuse saved renders, redo detection onwards
 python run_pipeline.py --from-stage 4 # retune class thresholds without re-detecting
+python run_pipeline.py --from-stage 7 # refresh the app data/objects file after stage 6
 ```
+
+After stage 7, from the Since-AI repo root:
+
+```bash
+python pipeline/added_objects.py data/objects/grounded_sam2_equipment_room.json
+SKIP_SPLAT=1 python pipeline/build_scene.py "Equipment Room.ply" builder_pack.xlsx data/semantic_layer.json web
+python pipeline/build_layer.py builder_pack.xlsx
+```
+
+See [data_format/README.md](../../data_format/README.md) for the object fields and coordinate rules.
 
 ## View in 3D
 
@@ -69,6 +81,7 @@ All of these are regenerated and ignored by git, except `outputs/equipment_room/
   - `scene_segmented_colored.ply`, `scene_remainder.ply`
   - `topdown_boxes.png`
   - `previews/`: each object shown in the scene next to its isolated render
+- `../../data/objects/grounded_sam2_equipment_room.json` (stage 7): 26 objects as `id`, `class`, `box` (AABB min/max in the raw scan frame), `class_confidence`, `source`, and `note`. Boxes are axis-aligned; oriented boxes stay in `objects.json`. Where a same-class object in `data/semantic_layer.json` overlaps by at least 50% of our box volume, the note says which layer id it overlaps (no asset tags are guessed). Optional manual asset links: `app_export.tags` in `config.yaml`, e.g. `Valves_07: CV-006`.
 
 ## Tuning
 
@@ -76,6 +89,8 @@ All of these are regenerated and ignored by git, except `outputs/equipment_room/
 - `classes[].min_gaussians`, `min_height_m`, `min_top_m`, `max_size_m`: physical sanity checks on final objects.
 - `render.levels`, `render.fov_y_deg`, `render.validate`: camera heights, pitch, field of view and view rejection.
 - `instances.core_vote_ratio` / `grow_vote_ratio` / `min_detect_ratio`: how strict 3D voting and cross-view consistency are.
+- `app_export.high` / `app_export.medium`: view-count and detection-ratio thresholds for `class_confidence` in the app file.
+- `app_export.same_class_share`: minimum overlap fraction for an overlap note against the scan layer.
 
 ## Tests
 

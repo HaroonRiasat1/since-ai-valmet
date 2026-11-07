@@ -134,3 +134,17 @@ instances:
   sor_k: 8
   sor_std: 3.0
   min_gaussians: 80
+
+# Stage 7: write Since-AI data/objects/*.json (see data_format/README.md).
+app_export:
+  app_root: ../..
+  file: data/objects/grounded_sam2_equipment_room.json
+  source: grounded-sam-2
+  high:
+    min_detected_views: 20
+    min_detect_ratio: 0.75
+  medium:
+    min_detected_views: 5
+    min_detect_ratio: 0.5
+  same_class_share: 0.5
+  tags: {}

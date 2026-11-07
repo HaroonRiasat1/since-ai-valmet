@@ -5,3 +5,4 @@ extend = "../../pyproject.toml"
 "scripts/*.py" = ["E402"]
 "docs/build_figures.py" = ["E402"]
 "tests/test_attribution.py" = ["E402"]
+"tests/test_app_export.py" = ["E402"]

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the object-extraction stages in order (1 view scene ... 6 export objects)."""
+"""Run the object-extraction stages in order (1 view scene ... 7 export app objects)."""
 from __future__ import annotations
 
 import argparse
@@ -17,14 +17,15 @@ STAGES = [
     ("lift_masks", "scripts/04_lift_masks.py"),
     ("build_instances", "scripts/05_build_instances.py"),
     ("export_objects", "scripts/06_export_objects.py"),
+    ("export_app_objects", "scripts/07_export_app_objects.py"),
 ]
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", type=Path, default=_REPO / "config.yaml")
-    ap.add_argument("--from-stage", type=int, default=1, help="first stage to run (1-6)")
-    ap.add_argument("--to-stage", type=int, default=len(STAGES), help="last stage to run (1-6)")
+    ap.add_argument("--from-stage", type=int, default=1, help="first stage to run (1-7)")
+    ap.add_argument("--to-stage", type=int, default=len(STAGES), help="last stage to run (1-7)")
     ap.add_argument("--force", action="store_true", help="re-render the view set instead of reusing it")
     args = ap.parse_args()
 
