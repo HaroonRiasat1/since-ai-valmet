@@ -87,7 +87,7 @@ Times were measured with several requests running at once. Set `FEATHERLESS_MODE
 
 ## Measured performance
 
-On an RTX 5050 laptop GPU: 1.4 to 1.9 s to load, about 144 fps. Route to CV-003: 32 ms on the fine grid, 2 ms on the
+On a laptop with an RTX 5050: 1.4 to 1.9 s to load and about 144 fps on the NVIDIA GPU, but only 12 fps if the browser stays on the integrated Intel GPU. On Windows, set the browser to High performance in Settings > System > Display > Graphics. Route to CV-003: 32 ms on the fine grid, 2 ms on the
 cell grid. A round of 13 stops: 1.9 s and 0.2 s.
 
 ## Rebuilding the data
